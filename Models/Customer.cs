@@ -15,7 +15,7 @@
 		public string is_active { get; set; }		
 
 		//Relations
-		public virtual List<Favorite_Brand> Customers { get; set; }
+		public virtual List<Favorite_Brand> FavoriteBrands { get; set; }
 
 	}
 }
