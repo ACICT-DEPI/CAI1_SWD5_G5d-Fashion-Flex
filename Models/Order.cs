@@ -16,5 +16,7 @@ namespace Fashion_Flex.Models
         [ForeignKey("Payment")]
         public int? Payment_Id { get; set; }
         public virtual Payment Payment { get; set; }
+
+        public virtual List<Order_Item> OrderItems { get; set; }
     }
 }
