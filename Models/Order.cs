@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace Fashion_Flex.Models
 {
 	public class Order
@@ -10,5 +11,10 @@ namespace Fashion_Flex.Models
 		public string Order_Status { get; set; }
 		public string Shipping_Address{ get; set; }
 		public int Tracking_Number { get; set; }
-	}
+
+        //Relations
+        [ForeignKey("Payment")]
+        public int? Payment_Id { get; set; }
+        public virtual Payment Payment { get; set; }
+    }
 }
