@@ -17,6 +17,7 @@
 		//Relations
 		public virtual List<Favorite_Brand> FavoriteBrands { get; set; }
         public virtual List<Order> Orders { get; set; }
+        public virtual List<Review> Reviews { get; set; }
 
     }
 }
