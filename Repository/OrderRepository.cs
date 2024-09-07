@@ -14,7 +14,6 @@ namespace Fashion_Flex.Repository
         public void Add(Order obj)
         {
             context.Orders.Add(obj);
-            //context.Add(obj);
         }
         public void Update(Order obj)
         {
