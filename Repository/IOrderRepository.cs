@@ -4,10 +4,10 @@ namespace Fashion_Flex.Repository
 {
     public interface IOrderRepository
     {
-        Task<Order> GetOrderByIdAsync(int id);
-        Task<IEnumerable<Order>> GetAllOrdersAsync();
-        Task AddOrderAsync(Order order);
-        Task UpdateOrderAsync(Order order);
-        Task DeleteOrderAsync(int id);
+        public void Add(Order obj);
+        public void Update(Order obj);
+        public void Delete(int id);
+        public Order GetById(int id);
+        public List<Order> GetAll();
     }
 }

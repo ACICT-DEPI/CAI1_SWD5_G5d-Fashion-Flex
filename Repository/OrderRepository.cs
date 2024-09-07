@@ -2,7 +2,7 @@
 
 namespace Fashion_Flex.Repository
 {
-    public class OrderRepository
+    public class OrderRepository: IOrderRepository
     {
         private readonly FFContext context;
 
@@ -33,9 +33,6 @@ namespace Fashion_Flex.Repository
         {
             return context.Orders.ToList();
         }
-        public void Save()
-        {
-            context.SaveChanges();
-        }
+
     }
 }
