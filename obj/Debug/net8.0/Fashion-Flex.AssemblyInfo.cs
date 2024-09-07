@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Fashion-Flex")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fdb2899b0038c425f6bf5a43d53c7a379b4ecca2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+66ddc9d54272d5f74e910d21319c92f3c5d8cf99")]
 [assembly: System.Reflection.AssemblyProductAttribute("Fashion-Flex")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Fashion-Flex")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
