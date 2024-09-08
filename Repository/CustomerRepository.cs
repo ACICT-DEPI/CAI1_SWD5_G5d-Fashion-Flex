@@ -34,5 +34,10 @@ namespace Fashion_Flex.Repository
             return context.Customers.FirstOrDefault(c => c.Id == CustomerId);
         }
 
+        public void Save()
+        {
+            context.SaveChanges();
+        }
+
     }
 }
