@@ -1,0 +1,44 @@
+﻿@model Fashion_Flex.Models.Order
+
+<h2>Create New Order</h2>
+
+<form method="post" action="/Order/SaveNewOrder">
+    <div class="form-group">
+        <label>Customer:</label>
+        <input type="text" name="Customer_Id" class="form-control" value="@Model?.Customer_Id" />
+    </div>
+
+    <div class="form-group">
+        <label>Payment:</label>
+        <input type="text" name="Payment_Id" class="form-control" value="@Model?.Payment_Id" />
+    </div>
+
+    <div class="form-group">
+        <label>Order Date:</label>
+        <input type="date" name="Order_Date" class="form-control" value="@Model?.Order_Date.ToString("yyyy-MM-dd")" />
+    </div>
+
+    <div class="form-group">
+        <label>Total Amount:</label>
+        <input type="number" name="Total_Amount" class="form-control" value="@Model?.Total_Amount" />
+    </div>
+
+    <div class="form-group">
+        <label>Status:</label>
+        <input type="text" name="Order_Status" class="form-control" value="@Model?.Order_Status" />
+    </div>
+
+    <div class="form-group">
+        <label>Shipping Address:</label>
+        <input type="text" name="Shipping_Address" class="form-control" value="@Model?.Shipping_Address" />
+    </div>
+
+    <div class="form-group">
+        <label>Tracking Number:</label>
+        <input type="number" name="Tracking_Number" class="form-control" value="@Model?.Tracking_Number" />
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-success">Submit</button>
+    </div>
+</form>
