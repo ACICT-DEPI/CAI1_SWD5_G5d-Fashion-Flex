@@ -1,3 +1,5 @@
+using Fashion_Flex.Repository;
+
 namespace Fashion_Flex
 {
 	public class Program
@@ -9,7 +11,12 @@ namespace Fashion_Flex
 			// Add services to the container.
 			builder.Services.AddControllersWithViews();
 
-			var app = builder.Build();
+            //register
+            builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+            builder.Services.AddTransient<IOrderItemRepository, OrderItemRepository>();
+
+
+            var app = builder.Build();
 
 			// Configure the HTTP request pipeline.
 			if (!app.Environment.IsDevelopment())

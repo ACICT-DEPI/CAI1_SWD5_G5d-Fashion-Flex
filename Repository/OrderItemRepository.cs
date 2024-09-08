@@ -2,7 +2,7 @@
 
 namespace Fashion_Flex.Repository
 {
-    public class OrderItemRepository
+    public class OrderItemRepository: IOrderItemRepository
     {
         private readonly FFContext context;
 
