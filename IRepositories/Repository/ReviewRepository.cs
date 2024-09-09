@@ -2,7 +2,7 @@ using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fashion_Flex.Repositories
+namespace Fashion_Flex.IRepositories.Repository
 {
     public class ReviewRepository : IReviewRepository
     {
