@@ -1,4 +1,6 @@
+using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace Fashion_Flex
 {
@@ -8,12 +10,14 @@ namespace Fashion_Flex
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
-			// Add services to the container.
-			builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<FFContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            //register
-            builder.Services.AddTransient<IOrderRepository, OrderRepository>();
-            builder.Services.AddTransient<IOrderItemRepository, OrderItemRepository>();
+            // Add services to the container.
+            builder.Services.AddControllersWithViews();
+
+            // Register Repositories
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 
 
             var app = builder.Build();
