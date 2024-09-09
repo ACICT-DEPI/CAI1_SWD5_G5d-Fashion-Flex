@@ -4,6 +4,9 @@ namespace Fashion_Flex.Models
 {
     public class FFContext : DbContext
     {
+        public FFContext(DbContextOptions<FFContext> options): base(options)
+        {
+        }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Favorite_Brand> Favorite_Brands { get; set; }
