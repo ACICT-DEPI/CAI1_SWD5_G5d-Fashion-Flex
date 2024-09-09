@@ -8,6 +8,7 @@ namespace Fashion_Flex.Models
         [ForeignKey("Brand")]
         public int Brand_Id { get; set; }
         public string Name { get; set; }
+        public string Image {  get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
         public int Available_Quantity { get; set; }
