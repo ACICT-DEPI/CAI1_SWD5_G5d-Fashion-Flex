@@ -2,12 +2,12 @@ using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fashion_Flex.Repositories
+namespace Fashion_Flex.IRepositories.Repository
 {
-    public class PaymentRepository:IPaymentRepository
+    public class PaymentRepository : IPaymentRepository
     {
         private readonly FFContext context;
-        public PaymentRepository(FFContext context) 
+        public PaymentRepository(FFContext context)
         {
             this.context = context;
         }
@@ -15,7 +15,7 @@ namespace Fashion_Flex.Repositories
         {
             //context.Payment.Add(obj);
             context.Payment.Add(newpayment);
-            
+
         }
         public void Update(Payment payment)
         {
@@ -26,11 +26,11 @@ namespace Fashion_Flex.Repositories
             var payment = GetById(paymentId);
             context.Payment.Remove(payment);
         }
-        public Payment GetById(int paymentId) 
+        public Payment GetById(int paymentId)
         {
             return context.Payment.FirstOrDefault(p => p.Id == paymentId);
         }
-        public List<Payment> GetAll() 
+        public List<Payment> GetAll()
         {
             return context.Payment.ToList();
         }
