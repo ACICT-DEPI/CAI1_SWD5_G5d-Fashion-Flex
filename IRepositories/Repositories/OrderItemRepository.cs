@@ -1,8 +1,9 @@
 ﻿using Fashion_Flex.Models;
+using Fashion_Flex.Repository;
 
 namespace Fashion_Flex.IRepositories.Repository
 {
-    public class OrderItemRepository
+    public class OrderItemRepository : IOrderItemRepository
     {
         private readonly FFContext context;
 
@@ -35,6 +36,26 @@ namespace Fashion_Flex.IRepositories.Repository
         public void Save()
         {
             context.SaveChanges();
+        }
+
+        public void Add(Order obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Update(Order obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        Order IOrderItemRepository.GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Order> IOrderItemRepository.GetAll()
+        {
+            throw new NotImplementedException();
         }
     }
 }

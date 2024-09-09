@@ -34,5 +34,9 @@ namespace Fashion_Flex.IRepositories.Repository
             return context.Orders.ToList();
         }
 
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
