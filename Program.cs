@@ -10,13 +10,17 @@ namespace Fashion_Flex
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddDbContext<FFContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("Data Source=.;Initial Catalog=FashionFlex_DB;Integrated Security=True;TrustServerCertificate=True;")));
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddDbContext<FFContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("Data Source=.;Initial Catalog=FashionFlex_DB;Integrated Security=True;TrustServerCertificate=True;"))); // Ensure you have the right connection string
-
+            // Register Repositories
+            builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+            builder.Services.AddTransient<IOrderItemRepository, OrderItemRepository>();
             builder.Services.AddTransient<ICustomerRepository, CustomerRepository>();
+
 
             var app = builder.Build();
 

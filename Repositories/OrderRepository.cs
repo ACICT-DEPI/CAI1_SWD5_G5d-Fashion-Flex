@@ -32,6 +32,9 @@ namespace Fashion_Flex.Repository
         {
             return context.Orders.ToList();
         }
-
+        public void Save()
+        {
+            context.SaveChanges();
+        }
     }
 }
