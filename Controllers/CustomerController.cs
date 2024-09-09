@@ -15,5 +15,6 @@ namespace Fashion_Flex.Controllers
         {
             return View(_customerRepository.GetAll());
         }
+
     }
 }
