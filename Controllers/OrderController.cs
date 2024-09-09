@@ -25,7 +25,7 @@ namespace Fashion_Flex.Controllers
         }
 
         [HttpPost]
-        public IActionResult SaveNewOrder(Order order)
+        public IActionResult New(Order order)
         {
             if (ModelState.IsValid)
             {
@@ -48,7 +48,7 @@ namespace Fashion_Flex.Controllers
         }
 
         [HttpPost]
-        public IActionResult SaveEditedOrder(Order order)
+        public IActionResult Edit(Order order)
         {
             if (ModelState.IsValid)
             {
