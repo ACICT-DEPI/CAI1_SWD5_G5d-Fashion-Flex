@@ -1,8 +1,9 @@
 ﻿using Fashion_Flex.Models;
+using Fashion_Flex.Repository;
 
-namespace Fashion_Flex.Repository
+namespace Fashion_Flex.IRepositories.Repository
 {
-    public class OrderItemRepository: IOrderItemRepository
+    public class OrderItemRepository : IOrderItemRepository
     {
         private readonly FFContext context;
 

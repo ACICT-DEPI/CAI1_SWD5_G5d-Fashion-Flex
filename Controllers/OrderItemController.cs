@@ -6,9 +6,9 @@ namespace Fashion_Flex.Controllers
 {
     public class OrderItemController : Controller
     {
-        private readonly OrderItemRepository _orderItemRepository;
+        private readonly IOrderItemRepository _orderItemRepository;
 
-        public OrderItemController(OrderItemRepository orderItemRepository)
+        public OrderItemController(IOrderItemRepository orderItemRepository)
         {
             _orderItemRepository = orderItemRepository;
         }
