@@ -4,13 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fashion_Flex
 {
-	public class Program
-	{
-		public static void Main(string[] args)
-		{
-			var builder = WebApplication.CreateBuilder(args);
-
-            builder.Services.AddDbContext<FFContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -21,27 +19,33 @@ namespace Fashion_Flex
 
 
             var app = builder.Build();
+            builder.Services.AddDbContext<FFContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("Data Source=.;Initial Catalog=FashionFlex_DB;Integrated Security=True;TrustServerCertificate=True;"))); // Ensure you have the right connection string
 
-			// Configure the HTTP request pipeline.
-			if (!app.Environment.IsDevelopment())
-			{
-				app.UseExceptionHandler("/Home/Error");
-				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-				app.UseHsts();
-			}
+            builder.Services.AddSingleton<ICustomerRepository, CustomerRepository>();
 
-			app.UseHttpsRedirection();
-			app.UseStaticFiles();
+            var app = builder.Build();
 
-			app.UseRouting();
+            // Configure the HTTP request pipeline.
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
 
-			app.UseAuthorization();
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
-			app.MapControllerRoute(
-				name: "default",
-				pattern: "{controller=Home}/{action=Index}/{id?}");
+            app.UseRouting();
 
-			app.Run();
-		}
-	}
+            app.UseAuthorization();
+
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            app.Run();
+        }
+    }
 }
