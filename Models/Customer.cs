@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-namespace Fashion_Flex.Models
+﻿namespace Fashion_Flex.Models
 {
 	public class Customer
 	{		
@@ -16,5 +14,10 @@ namespace Fashion_Flex.Models
 		public DateTime Account_Creation_Date { get; set; }
 		public string is_active { get; set; }		
 
-	}
+		//Relations
+		public virtual List<Favorite_Brand> FavoriteBrands { get; set; }
+        public virtual List<Order> Orders { get; set; }
+        public virtual List<Review> Reviews { get; set; }
+
+    }
 }

@@ -11,6 +11,10 @@
 		public string Color { get; set; }
 		public int Discount { get; set; }
 		public DateTime Date_Added { get; set; }
- 
-	}
+
+        //Relations
+        public virtual List<Order_Item> OrderItems { get; set; }  // Product can be ordered multiple times in different Orders
+
+        public virtual List<Review> Reviews { get; set; }
+    }
 }
