@@ -1,0 +1,34 @@
+﻿@model List<Fashion_Flex.Models.Order>
+
+<h2>Orders List</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Order Date</th>
+            <th>Total Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.Customer?.First_Name</td>
+                <td>@order.Order_Date.ToString("MM/dd/yyyy")</td>
+                <td>@order.Total_Amount.ToString("C")</td>
+                <td>@order.Order_Status</td>
+                <td>
+                    <a href="/Order/Edit/@order.Id" class="btn btn-primary">Edit</a>
+                    <a href="/Order/Delete/@order.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="/Order/New" class="btn btn-success">Create New Order</a>

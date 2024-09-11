@@ -1,0 +1,47 @@
+﻿@model List<Customer>
+
+<div class="container mt-4">
+    <h2 class="text-center">Customer List</h2>
+
+    <table class="table table-striped table-bordered table-hover mt-4">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Customer ID</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in Model)
+            {
+                <tr>
+                    <td>@customer.Id</td>
+                    <td>@customer.First_Name</td>
+                    <td>@customer.Last_Name</td>
+                    <td>@customer.Email</td>
+                    <td>
+                        <a href="@Url.Action("Details", "Customer", new { id = customer.Id })" class="btn btn-info btn-sm">
+                            <i class="fas fa-eye"></i> Details
+                        </a>
+                        <a href="@Url.Action("Edit", "Customer", new { id = customer.Id })" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="@Url.Action("Delete", "Customer", new { id = customer.Id })" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a href="@Url.Action("Create", "Customer")" class="btn btn-success">
+        <i class="fas fa-plus"></i> Add New Customer
+    </a>
+</div>
+
+<!-- Optionally include Font Awesome for icons, if not already included -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
