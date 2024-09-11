@@ -1,0 +1,23 @@
+# Ignore build output folders
+bin/
+obj/
+
+# Ignore user-specific files
+*.user
+*.rsuser
+*.suo
+
+# Ignore Visual Studio specific folders
+.vs/
+.vscode/
+
+# Ignore design-time build files
+**/DesignTimeBuild/
+**/FileContentIndex/
+**/v17/
+**/ProjectEvaluation/
+
+# Ignore package files
+*.nupkg
+/desktop.ini
+/.vs/Fashion-Flex/FileContentIndex/2a100dc8-95e0-44c2-84f0-50e7bd4d78b9.vsidx
