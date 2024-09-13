@@ -1,4 +1,6 @@
-﻿namespace Fashion_Flex.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Fashion_Flex.Models
 {
     public class Customer
     {
@@ -14,6 +16,11 @@
         public DateOnly Date_Of_Birth { get; set; }
         public DateTime Account_Creation_Date { get; set; }
         public bool Is_Active { get; set; }
+
+        // Foreign key to ApplicationUser
+        [ForeignKey("ApplicationUser")]
+        public string ApplicationUserId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
 
         //Customer |1--Places-->OM Order 
         public virtual List<Order>? Orders { get; set; }
