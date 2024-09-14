@@ -13,7 +13,7 @@ namespace Fashion_Flex
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddDbContext<FFContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("Data Source=.;Initial Catalog=FashionFlex_DB;Integrated Security=True;TrustServerCertificate=True;")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
 
 			// Register Identity with ApplicationUser model and your custom DbContext (FFContext)
 			builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
