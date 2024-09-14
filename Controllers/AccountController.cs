@@ -1,61 +1,85 @@
 ﻿using Fashion_Flex.Models;
+using Fashion_Flex.Repository;
 using Fashion_Flex.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fashion_Flex.Controllers
 {
-	public class AccountController : Controller
-	{
-		private readonly UserManager<ApplicationUser> _userManager;
-		private readonly SignInManager<ApplicationUser> _signInManager;
-		public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
-		{
-			_userManager = userManager;
-			_signInManager = signInManager;
-		}
+    public class AccountController : Controller
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ICustomerRepository _customerRepository;
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ICustomerRepository customerRepository)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _customerRepository = customerRepository;
+        }
 
-		public IActionResult Index()
-		{
-			return View();
-		}
+        public IActionResult Index()
+        {
+            return View();
+        }
 
-		[HttpGet]
-		public IActionResult Register()
-		{
-			return View();
-		}
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
 
-		[HttpPost]
-		public async Task<IActionResult> Register(RegisterViewModel model)
-		{
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Create new ApplicationUser object
+                var newUser = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                };
 
-			if (ModelState.IsValid)
-			{
-				//save new user in database
-				var newUser = new ApplicationUser
-				{
-					UserName = model.Email,
-					Email = model.Email,
-					PasswordHash = model.Password
-				};
+                // Save new user in the database using Identity
+                var result = await _userManager.CreateAsync(newUser, model.Password);
 
-				var result = await _userManager.CreateAsync(newUser, model.Password);
+                if (result.Succeeded)
+                {
+                    // Create new Customer and link it to the ApplicationUser
+                    var newCustomer = new Customer
+                    {
+                        Account_Creation_Date = DateTime.Now,
+                        Address = model.Address,
+                        Date_Of_Birth = model.Date_Of_Birth,
+                        Email = model.Email,
+                        Phone_Number = model.PhoneNumber,
+                        First_Name = model.First_Name.Trim(),
+                        Last_Name = model.Last_Name.Trim(),
+                        Phone_Country_Code = model.Phone_Country_Code,
+                        Is_Active = model.Is_Active,
+                        ApplicationUserId = newUser.Id // Link to ApplicationUser
+                    };
 
-				//save the register cookies in database
-				if (result.Succeeded)
-				{
-					await _signInManager.SignInAsync(newUser, isPersistent: false);
-					return RedirectToAction("Index"); //if registered succssfuly redirect to home page
-				}
+                    // Save the Customer in the database via the repository
+                    _customerRepository.Add(newCustomer);
+                    _customerRepository.Save();
 
-				foreach (var error in result.Errors)
-				{
-					ModelState.AddModelError("", error.Description);
-				}
+                    // Automatically sign the user in after registration
+                    await _signInManager.SignInAsync(newUser, isPersistent: false);
 
-			}
-			return View(model);
-		}
-	}
+                    return RedirectToAction("Index"); // Redirect to home page after successful registration
+                }
+
+                // Handle errors
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+
+            return View(model);
+        }
+
+    }
 }
