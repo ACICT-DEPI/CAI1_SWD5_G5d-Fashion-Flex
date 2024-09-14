@@ -4,6 +4,7 @@ using Fashion_Flex.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fashion_Flex.Migrations
 {
     [DbContext(typeof(FFContext))]
-    partial class FFContextModelSnapshot : ModelSnapshot
+    [Migration("20240911065906_AddImageToProduct")]
+    partial class AddImageToProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,10 +62,6 @@ namespace Fashion_Flex.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Confirm_Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

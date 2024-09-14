@@ -16,6 +16,7 @@ namespace Fashion_Flex.Models
         public string Color { get; set; }
         public double Discount { get; set; }
         public DateTime Added_Date { get; set; }
+        public string? Image {  get; set; }
 
         //Order_Item OM--refersTo-->|1 Product
         public virtual List<Order_Item>? Order_Items { get; set; }
