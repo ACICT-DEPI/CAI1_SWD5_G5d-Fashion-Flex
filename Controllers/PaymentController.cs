@@ -1,5 +1,7 @@
+using Fashion_Flex.IRepositories.Repository;
 using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -68,14 +70,8 @@ namespace Fashion_Flex.Controllers
 
             return RedirectToAction("Index");
         }
-        public ActionResult Checkout(decimal amount)
-        {
-            var payment = new Payment
-            {
-                Amount = amount
-            };
-            return View(payment);
-        }
+
+       
 
        
     }

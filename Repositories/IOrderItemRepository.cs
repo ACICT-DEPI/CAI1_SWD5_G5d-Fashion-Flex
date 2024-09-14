@@ -11,5 +11,6 @@ namespace Fashion_Flex.Repository
         public List<Order> GetAll();
         public void Save();
         void Update(Order_Item orderItem);
+        Task<bool> DoCheckout(Order model);
     }
 }
