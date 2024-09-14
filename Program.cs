@@ -19,10 +19,10 @@ namespace Fashion_Flex
 			builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 			{
 				// Configure password, lockout, user, and other identity settings here if necessary
-				options.Password.RequireDigit = true;
-				options.Password.RequiredLength = 6;
-				options.Password.RequireNonAlphanumeric = false;
-				options.Lockout.MaxFailedAccessAttempts = 3;
+				//options.Password.RequireDigit = true;
+				//options.Password.RequiredLength = 6;
+				//options.Password.RequireNonAlphanumeric = false;
+				//options.Lockout.MaxFailedAccessAttempts = 3;
 			})
 				.AddEntityFrameworkStores<FFContext>() // Connect Identity to the EF Core DbContext
 				.AddDefaultTokenProviders();

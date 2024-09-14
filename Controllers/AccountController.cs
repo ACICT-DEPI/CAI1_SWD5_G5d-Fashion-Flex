@@ -15,6 +15,11 @@ namespace Fashion_Flex.Controllers
 			_signInManager = signInManager;
 		}
 
+		public IActionResult Index()
+		{
+			return View();
+		}
+
 		[HttpGet]
 		public IActionResult Register()
 		{
@@ -22,13 +27,35 @@ namespace Fashion_Flex.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult Register(RegisterViewModel model)
+		public async Task<IActionResult> Register(RegisterViewModel model)
 		{
+
 			if (ModelState.IsValid)
 			{
-				
+				//save new user in database
+				var newUser = new ApplicationUser
+				{
+					UserName = model.Email,
+					Email = model.Email,
+					PasswordHash = model.Password
+				};
+
+				var result = await _userManager.CreateAsync(newUser, model.Password);
+
+				//save the register cookies in database
+				if (result.Succeeded)
+				{
+					await _signInManager.SignInAsync(newUser, isPersistent: false);
+					return RedirectToAction("Index"); //if registered succssfuly redirect to home page
+				}
+
+				foreach (var error in result.Errors)
+				{
+					ModelState.AddModelError("", error.Description);
+				}
+
 			}
-			return View();
+			return View(model);
 		}
 	}
 }
