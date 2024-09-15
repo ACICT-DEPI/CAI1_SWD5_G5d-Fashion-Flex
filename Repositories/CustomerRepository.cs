@@ -1,4 +1,5 @@
 ﻿using Fashion_Flex.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Fashion_Flex.Repository
 {
@@ -39,5 +40,9 @@ namespace Fashion_Flex.Repository
             context.SaveChanges();
         }
 
+        public async Task<Customer> GetByUserIdAsync(string userId)
+        {
+            return await context.Customers.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+        }
     }
 }
