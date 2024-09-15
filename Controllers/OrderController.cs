@@ -73,5 +73,24 @@ namespace Fashion_Flex.Controllers
 
             return RedirectToAction("Index");
         }
+
+
+        // Get order history for a customer
+        public IActionResult OrderHistory(int customerId)
+        {
+            var orders = _orderRepository.GetOrdersByCustomerId(customerId); //Get all the orders a customer made
+            return View(orders); //
+        }
+
+        // Get details for a specific order
+        public IActionResult OrderDetails(int orderId)
+        {
+            var order = _orderRepository.GetOrderById(orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            return View(order); //
+        }
     }
 }
