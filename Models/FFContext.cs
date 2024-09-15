@@ -16,10 +16,12 @@ namespace Fashion_Flex.Models
         public DbSet<Product> Products { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Payment> Payment { get; set; }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=FashionFlex_DB;Integrated Security=True;TrustServerCertificate=True;");
-            base.OnConfiguring(optionsBuilder);
-        }
+
+
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlServer("ConnectionString");
+        //    base.OnConfiguring(optionsBuilder);
+        //}
     }
 }

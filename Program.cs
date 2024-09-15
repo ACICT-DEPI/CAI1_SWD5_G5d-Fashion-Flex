@@ -14,7 +14,7 @@ namespace Fashion_Flex
 
             builder.Services.AddDbContext<FFContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString
-                    ("Data Source=.;Initial Catalog=FashionFlex_DB;Integrated Security=True;TrustServerCertificate=True;")));
+                    ("ConnectionString")));
 
 
 
