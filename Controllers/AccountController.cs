@@ -106,5 +106,16 @@ namespace Fashion_Flex.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            // Sign out the user
+            await _signInManager.SignOutAsync();
+
+            // Redirect to home page or another page
+            return RedirectToAction("Index", "Home");
+        }
+
     }
 }
