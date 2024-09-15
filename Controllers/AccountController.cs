@@ -68,7 +68,7 @@ namespace Fashion_Flex.Controllers
                     // Automatically sign the user in after registration
                     await _signInManager.SignInAsync(newUser, isPersistent: false);
 
-                    return RedirectToAction("Index"); // Redirect to home page after successful registration
+                    return RedirectToAction("Index", "Home"); // Redirect to the home page upon successful registration
                 }
 
                 // Handle errors
@@ -76,6 +76,31 @@ namespace Fashion_Flex.Controllers
                 {
                     ModelState.AddModelError("", error.Description);
                 }
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index", "Home"); // Redirect to the home page upon successful login
+                }
+
+                //handel error
+                ModelState.AddModelError("", "Invalid login attempt.");
             }
 
             return View(model);

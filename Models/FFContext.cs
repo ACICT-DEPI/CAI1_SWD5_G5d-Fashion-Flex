@@ -18,7 +18,7 @@ namespace Fashion_Flex.Models
         public DbSet<Payment> Payment { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("ConnectionString");
+            optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=FashionFlex_DB;Integrated Security=True;TrustServerCertificate=True;");
             base.OnConfiguring(optionsBuilder);
         }
     }
