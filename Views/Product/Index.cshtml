@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Fashion_Flex.Models.Product>
+
+<h1>Products</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Category</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Name</td>
+                <td>@product.Description</td>
+                <td>@product.Price</td>
+                <td>@product.Category</td>
+                <td>
+                    <a href="@Url.Action("Details", "Product", new { id = product.Id })">Details</a> |
+                    <a href="@Url.Action("Edit", "Product", new { id = product.Id })">Edit</a> |
+                    <a href="@Url.Action("Delete", "Product", new { id = product.Id })">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Create", "Product")">Create New Product</a>
