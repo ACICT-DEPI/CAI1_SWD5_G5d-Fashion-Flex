@@ -38,7 +38,7 @@ namespace Fashion_Flex.IRepositories.Repository
             context.SaveChanges();
         }
 
-        Order IOrderItemRepository.GetById(int id)
+        Order_Item IOrderItemRepository.GetById(int id)
         {
             throw new NotImplementedException();
         }
