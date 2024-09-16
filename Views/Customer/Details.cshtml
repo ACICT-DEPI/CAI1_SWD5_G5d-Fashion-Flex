@@ -1,0 +1,16 @@
+﻿@model Fashion_Flex.ViewModels.ProfileViewModel
+
+<h2>Profile Details</h2>
+
+<div>
+    <h4>@Model.First_Name @Model.Last_Name</h4>
+    <p>Email: @Model.Email</p>
+    <p>Address: @Model.Address</p>
+    <p>Date of Birth: @Model.Date_Of_Birth.ToShortDateString()</p>
+    <p>Phone Number: @Model.Phone_Number</p>
+    <p>Phone Country Code: @Model.Phone_Country_Code</p>
+    <p>Status: @(Model.Is_Active ? "Active" : "Inactive")</p>
+</div>
+<div>
+    <a href="@Url.Action("Edit")" class="btn btn-primary">Edit Profile</a>
+</div>

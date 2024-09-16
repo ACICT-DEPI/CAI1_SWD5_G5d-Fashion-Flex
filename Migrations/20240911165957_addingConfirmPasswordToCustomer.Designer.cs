@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fashion_Flex.Migrations
 {
     [DbContext(typeof(FFContext))]
-    [Migration("20240911065906_AddImageToProduct")]
-    partial class AddImageToProduct
+    [Migration("20240911165957_addingConfirmPasswordToCustomer")]
+    partial class addingConfirmPasswordToCustomer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,6 +62,10 @@ namespace Fashion_Flex.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Confirm_Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

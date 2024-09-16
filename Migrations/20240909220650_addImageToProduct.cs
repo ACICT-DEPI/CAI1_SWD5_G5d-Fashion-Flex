@@ -5,7 +5,7 @@
 namespace Fashion_Flex.Migrations
 {
     /// <inheritdoc />
-    public partial class AddImageToProduct : Migration
+    public partial class addImageToProduct : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -14,7 +14,8 @@ namespace Fashion_Flex.Migrations
                 name: "Image",
                 table: "Products",
                 type: "nvarchar(max)",
-                nullable: true);
+                nullable: true,
+                defaultValue: "");
         }
 
         /// <inheritdoc />
