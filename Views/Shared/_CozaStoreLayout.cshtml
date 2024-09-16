@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Home</title>
+	<title>Fashion Flex</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!--===============================================================================================-->
@@ -45,17 +45,40 @@
 			<div class="top-bar">
 				<div class="content-topbar flex-sb-m h-full container">
 					<div class="left-top-bar">
-						Free shipping for standard order over $100
+						Free shipping on Orders more than $100
 					</div>
 
 					<div class="right-top-bar flex-w h-full">
-						<a href="#" class="flex-c-m trans-04 p-lr-25">
-							Help & FAQs
-						</a>
+						@if (User.Identity.IsAuthenticated)
+						{
+							<a href="@Url.Action("Details", "Customer")" class="flex-c-m trans-04 p-lr-25">
+								My Account
+							</a>
+							
+							@* <!-- Use a form to make POST request for Logout -->
+							<form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+								<button type="submit" class="flex-c-m trans-04 p-lr-25 btn btn-link" style="text-decoration: none;">
+									Logout
+								</button>
+							</form> *@
 
-						<a href="#" class="flex-c-m trans-04 p-lr-25">
-							My Account
-						</a>
+							<!-- Logout link that uses JavaScript to trigger a POST request -->
+							<a href="javascript:void(0);" class="flex-c-m trans-04 p-lr-25" onclick="document.getElementById('logoutForm').submit();">
+								Logout
+							</a>
+							<!-- Hidden logout form -->
+							<form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post" style="display: none;">
+							</form>
+						}
+						else
+						{
+							<a href="@Url.Action("Register", "Account")" class="flex-c-m trans-04 p-lr-25">
+								Register
+							</a>
+							<a href="@Url.Action("Login", "Account")" class="flex-c-m trans-04 p-lr-25">
+								Login
+							</a>
+						}
 
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
 							EN
@@ -63,6 +86,10 @@
 
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
 							USD
+						</a>
+
+						<a href="#" class="flex-c-m trans-04 p-lr-25">
+							Help & FAQs
 						</a>
 					</div>
 				</div>
