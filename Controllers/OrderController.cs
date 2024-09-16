@@ -62,7 +62,7 @@ namespace Fashion_Flex.Controllers
 
         public IActionResult Delete(int id)
         {
-            var order = _orderRepository.GetById(id);
+            var order = _orderRepository.GetOrderById(id);
             if (order == null)
             {
                 return NotFound();
