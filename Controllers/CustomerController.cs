@@ -166,7 +166,7 @@ namespace Fashion_Flex.Controllers
                 Date_Of_Birth = customer.Date_Of_Birth,
                 Phone_Number = customer.Phone_Number,
                 Phone_Country_Code = customer.Phone_Country_Code,
-                Is_Active = customer.Is_Active
+                Is_Active = true //customer.Is_Active
             };
 
             return View(model);
@@ -194,7 +194,7 @@ namespace Fashion_Flex.Controllers
                 customer.Date_Of_Birth = model.Date_Of_Birth;
                 customer.Phone_Number = model.Phone_Number;
                 customer.Phone_Country_Code = model.Phone_Country_Code;
-                customer.Is_Active = model.Is_Active;
+                customer.Is_Active = true; // model.Is_Active;
 
                 _customerRepository.Update(customer);
                 _customerRepository.Save();
