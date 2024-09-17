@@ -1,51 +1,52 @@
 ﻿@model Fashion_Flex.ViewModels.ProfileViewModel
+@{
+    Layout = "_CozaStoreLayout";
+}
 
-<h2>Edit Profile</h2>
+<div class="container m-tb-200">
+    <h2 class="mb-4">Edit Profile</h2>
 
-<form asp-action="Edit" method="post">
-    @Html.AntiForgeryToken()
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
 
-    <div class="form-group">
-        <label asp-for="First_Name" class="control-label"></label>
-        <input asp-for="First_Name" class="form-control" />
-        <span asp-validation-for="First_Name" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Last_Name" class="control-label"></label>
-        <input asp-for="Last_Name" class="form-control" />
-        <span asp-validation-for="Last_Name" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Email" class="control-label"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Address" class="control-label"></label>
-        <input asp-for="Address" class="form-control" />
-        <span asp-validation-for="Address" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Date_Of_Birth" class="control-label"></label>
-        <input asp-for="Date_Of_Birth" class="form-control" type="date" />
-        <span asp-validation-for="Date_Of_Birth" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Phone_Number" class="control-label"></label>
-        <input asp-for="Phone_Number" class="form-control" />
-        <span asp-validation-for="Phone_Number" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Phone_Country_Code" class="control-label"></label>
-        <input asp-for="Phone_Country_Code" class="form-control" />
-        <span asp-validation-for="Phone_Country_Code" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Is_Active" class="control-label"></label>
-        <input asp-for="Is_Active" class="form-control" type="checkbox" />
-        <span asp-validation-for="Is_Active" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary">Save</button>
-    </div>
-</form>
+        <div class="form-group">
+            <label asp-for="First_Name" class="form-label"></label>
+            <input asp-for="First_Name" class="form-control" />
+            <span asp-validation-for="First_Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Last_Name" class="form-label"></label>
+            <input asp-for="Last_Name" class="form-control" />
+            <span asp-validation-for="Last_Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Address" class="form-label"></label>
+            <input asp-for="Address" class="form-control" />
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Date_Of_Birth" class="form-label"></label>
+            <input asp-for="Date_Of_Birth" class="form-control" type="date" />
+            <span asp-validation-for="Date_Of_Birth" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Phone_Number" class="form-label"></label>
+            <input asp-for="Phone_Number" class="form-control" />
+            <span asp-validation-for="Phone_Number" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Phone_Country_Code" class="form-label"></label>
+            <select asp-for="Phone_Country_Code" class="form-control" asp-items="ViewBag.CountryPhoneCodes"></select>
+            <span asp-validation-for="Phone_Country_Code" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </form>
+</div>
