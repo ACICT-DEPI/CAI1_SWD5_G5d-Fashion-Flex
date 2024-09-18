@@ -10,5 +10,6 @@ namespace Fashion_Flex.Repository
         public Order GetById(int id);
         public List<Order> GetAll();
         void Save();
+        Task<bool> DoCheckout(Order_Item model);
     }
 }

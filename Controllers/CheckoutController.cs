@@ -1,3 +1,4 @@
+using Fashion_Flex.IRepositories.Repository;
 using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
 using Microsoft.AspNetCore.Authorization;
@@ -13,22 +14,18 @@ namespace shoppingstore.Controllers
         {
             _orderRepository = orderRepository;
         }
-        private readonly IOrderItemRepository _orderItemRepository;
-        public CheckoutController(IOrderItemRepository orderItemRepository)
-        {
-            _orderItemRepository = orderItemRepository;
-        }
+        
         public IActionResult Checkout()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Checkout(Order model)
+        public async Task<IActionResult> Checkout(Order_Item model)
         {
             if (!ModelState.IsValid)
                 return View(model);
-            bool isCheckedOut = await _orderItemRepository.DoCheckout(model);
+            bool isCheckedOut = await _orderRepository.DoCheckout(model);
             if (!isCheckedOut)
                 return RedirectToAction(nameof(OrderFailure));
             return RedirectToAction(nameof(OrderSuccess));

@@ -11,7 +11,6 @@ namespace Fashion_Flex.Models
         [ForeignKey("Product")]
         public int Product_Id { get; set; }
         public int Quantity { get; set; }
-        public string Order_Status { get; set; }
 
          //Order |1--Includes-->|M Order_Item
          public virtual Order Order { get; set; }
