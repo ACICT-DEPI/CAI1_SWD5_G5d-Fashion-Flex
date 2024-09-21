@@ -38,22 +38,12 @@ namespace Fashion_Flex.IRepositories.Repository
             context.SaveChanges();
         }
 
-        public void Add(Order obj)
+        Order_Item IOrderItemRepository.GetById(int id)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Order obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        Order IOrderItemRepository.GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        List<Order> IOrderItemRepository.GetAll()
+        List<Order_Item> IOrderItemRepository.GetAll()
         {
             throw new NotImplementedException();
         }
