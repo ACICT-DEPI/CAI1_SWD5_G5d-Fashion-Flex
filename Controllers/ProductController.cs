@@ -4,6 +4,7 @@ using Fashion_Flex.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 //Another comment to know what is happening
+//After merge with the final test version
 namespace Fashion_Flex.Controllers
 {
     //public class ProductController : Controller
