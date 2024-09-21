@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 //Another comment to know what is happening
 //After merge with the final test version
+// another comment to use the command line 
 namespace Fashion_Flex.Controllers
 {
     //public class ProductController : Controller
