@@ -156,9 +156,9 @@ namespace Fashion_Flex.Controllers
 						Date_Of_Birth = model.Date_Of_Birth,
 						Email = model.Email,
 						Phone_Number = model.PhoneNumber,
+						Phone_Country_Code = model.Phone_Country_Code,
 						First_Name = model.First_Name.Trim(),
 						Last_Name = model.Last_Name.Trim(),
-						Phone_Country_Code = model.Phone_Country_Code,
 						Is_Active = model.Is_Active,
 						ApplicationUserId = newUser.Id // Link to ApplicationUser
 					};
@@ -176,12 +176,30 @@ namespace Fashion_Flex.Controllers
 				// Handle errors
 				foreach (var error in result.Errors)
 				{
-					ModelState.AddModelError("", error.Description);
+					switch (error.Code)
+					{
+						case "DuplicateUserName":
+						case "InvalidUserName":
+							ModelState.AddModelError(nameof(model.Email), error.Description);
+							break;
+
+						case "PasswordTooShort":
+						case "PasswordRequiresNonAlphanumeric":
+						case "PasswordRequiresDigit":
+						case "PasswordRequiresUpper":
+							ModelState.AddModelError(nameof(model.Password), error.Description);
+							break;
+
+						default:
+							// If the error doesn't map to a specific field, add it as a general error
+							ModelState.AddModelError("", error.Description);
+							break;
+					}
 				}
 			}
 
-            ViewBag.CountryPhoneCodes = countryPhoneCodes;
-            return View(model);
+			ViewBag.CountryPhoneCodes = countryPhoneCodes;
+			return View(model);
 		}
 
 		[HttpGet]

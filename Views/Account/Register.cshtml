@@ -11,8 +11,9 @@
 			<div class="card shadow-sm">
 				<div class="card-body">
 					<h2 class="card-title text-center mb-4">Register</h2>
-
+					
 					<form asp-action="Register" method="post">
+						<div asp-validation-summary="All" class="text-danger"></div>
 						<div class="form-row">
 							<div class="form-group col-md-6">
 								<label asp-for="First_Name" class="form-label">First Name</label>

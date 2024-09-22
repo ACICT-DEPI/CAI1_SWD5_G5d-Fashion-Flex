@@ -56,13 +56,6 @@
 								My Account
 							</a>
 
-							@* <!-- Use a form to make POST request for Logout -->
-						<form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-						<button type="submit" class="flex-c-m trans-04 p-lr-25 btn btn-link" style="text-decoration: none;">
-						Logout
-						</button>
-						</form> *@
-
 							<!-- Logout link that uses JavaScript to trigger a POST request -->
 							<a href="javascript:void(0);" class="flex-c-m trans-04 p-lr-25" onclick="document.getElementById('logoutForm').submit();">
 								Logout
