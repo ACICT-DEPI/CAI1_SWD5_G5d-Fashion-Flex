@@ -62,6 +62,7 @@
 							</a>
 							<!-- Hidden logout form -->
 							<form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post" style="display: none;">
+								@Html.AntiForgeryToken()
 							</form>
 						}
 						else
