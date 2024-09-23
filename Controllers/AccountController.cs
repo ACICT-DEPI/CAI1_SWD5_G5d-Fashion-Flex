@@ -167,6 +167,8 @@ namespace Fashion_Flex.Controllers
 					_customerRepository.Add(newCustomer);
 					_customerRepository.Save();
 
+					//Assign Role for the new Customer
+					await _userManager.AddToRoleAsync(newUser, "Customer");
 					// Automatically sign the user in after registration
 					await _signInManager.SignInAsync(newUser, isPersistent: false);
 

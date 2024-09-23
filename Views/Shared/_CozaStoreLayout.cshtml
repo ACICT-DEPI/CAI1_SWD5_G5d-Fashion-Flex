@@ -52,7 +52,14 @@
 					<div class="right-top-bar flex-w h-full">
 						@if (User.Identity.IsAuthenticated)
 						{
-							<a href="@Url.Action("Details", "Customer")" class="flex-c-m trans-04 p-lr-25">
+							if (User.IsInRole("Admin"))
+							{
+								<a asp-controller="Role" asp-action="AddRole" class="flex-c-m trans-04 p-lr-25">
+									Add Role
+								</a>
+							}
+
+							<a asp-controller="Customer" asp-action="Details" class="flex-c-m trans-04 p-lr-25">
 								My Account
 							</a>
 
@@ -613,7 +620,6 @@
 		<script src="~/js/main.js"></script>
 
 	</div>
-
 
 </body>
 </html>
