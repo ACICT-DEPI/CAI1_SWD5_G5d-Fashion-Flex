@@ -106,7 +106,9 @@ namespace Fashion_Flex.IRepositories.Repository
             return cartItemCount;
         }
 
-        
-
+       /* List<Order_Item> IOrderItemRepository.GetAll()
+        {
+            throw new NotImplementedException();
+        }*/
     }
 }
