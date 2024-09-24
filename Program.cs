@@ -1,5 +1,7 @@
+using Fashion_Flex.IRepositories;
 using Fashion_Flex.IRepositories.Repository;
 using Fashion_Flex.Models;
+using Fashion_Flex.Repositories;
 using Fashion_Flex.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +40,7 @@ namespace Fashion_Flex
             builder.Services.AddTransient<IOrderRepository, OrderRepository>();
             builder.Services.AddTransient<IOrderItemRepository, OrderItemRepository>();
             builder.Services.AddTransient<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddTransient<IProductRepository ,ProductRepository>();
 
 
             var app = builder.Build();
