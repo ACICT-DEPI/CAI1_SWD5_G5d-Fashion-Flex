@@ -7,9 +7,10 @@ namespace Fashion_Flex.Repository
         public void Add(Order obj);
         public void Update(Order obj);
         public void Delete(int id);
-        public Order GetById(int id);
+        public Order GetOrderById(int id);
+        public List<Order> GetOrdersByCustomerId(int id);
         public List<Order> GetAll();
         void Save();
-        Task<bool> DoCheckout(Order_Item model);
+        public void updateOrderStates(int orderId);
     }
 }

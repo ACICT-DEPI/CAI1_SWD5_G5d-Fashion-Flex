@@ -2,6 +2,7 @@ using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace Fashion_Flex.Controllers
@@ -72,16 +73,24 @@ namespace Fashion_Flex.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult ChangeOrderStatus(int orderId)
+        
+
+        public IActionResult OrderConfirmation(int paymentid, int orderid)
         {
-            var order = _orderRepository.GetOrderById(orderId);
-            if (order == null)
-            {
-                throw new InvalidOperationException($"order with id:{orderId} is not found");
-            }
-            order.Order_Status = "Paid/Completed";
+            _paymentRepository.updateOrderStates(paymentid);
+            _orderRepository.updateOrderStates(orderid);
+            Order order = _orderRepository.GetOrderById(orderid);
+            Payment payment = _paymentRepository.GetById(paymentid);
+            _paymentRepository.Save();
             _orderRepository.Save();
-            return View(order);
+            if(order.Order_Status.ToLower() == "complete" && payment.Payment_Status.ToLower() == "paid")
+            {
+                return View("Successful", orderid);
+            }
+            else
+            {
+                return View("Faild", orderid);
+            }
         }
 
 
