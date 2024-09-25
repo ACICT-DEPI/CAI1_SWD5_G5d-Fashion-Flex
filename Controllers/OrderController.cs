@@ -19,6 +19,7 @@ namespace Fashion_Flex.Controllers
             return View(orders);
         }
 
+        [HttpGet]
         public IActionResult New()
         {
             return View();
@@ -37,7 +38,8 @@ namespace Fashion_Flex.Controllers
             return View("New", order);
         }
 
-        public IActionResult Edit(int id)
+		[HttpGet]
+		public IActionResult Edit(int id)
         {
             var order = _orderRepository.GetOrderById(id);
             if (order == null)
@@ -60,7 +62,8 @@ namespace Fashion_Flex.Controllers
             return View("Edit", order);
         }
 
-        public IActionResult Delete(int id)
+		[HttpGet]
+		public IActionResult Delete(int id)
         {
             var order = _orderRepository.GetOrderById(id);
             if (order == null)
