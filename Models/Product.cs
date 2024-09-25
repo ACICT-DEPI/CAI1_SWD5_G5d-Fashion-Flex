@@ -4,9 +4,7 @@ namespace Fashion_Flex.Models
 {
     public class Product
     {
-        public int Id { get; set; }
-        [ForeignKey("Brand")]
-        public int Brand_Id { get; set; }
+        public int Id { get; set; }        
         public string Name { get; set; }
         public string? Image {  get; set; }
         public string Description { get; set; }
@@ -20,8 +18,8 @@ namespace Fashion_Flex.Models
         //Order_Item OM--refersTo-->|1 Product
         public virtual List<Order_Item>? Order_Items { get; set; }
         //Product |1--Recevice-->OM Review
-        public virtual List<Review>? Reviews { get; set; }
-        //Product OM--Own-->|1 Brand
-        public virtual Brand Brand { get; set; }
+        public virtual List<Review>? Reviews { get; set; }      
+        //Product |1--Favoried-->OM User_Favorites
+        public virtual List<FavoriteList>? User_Favorites { get; set; }
     }
 }

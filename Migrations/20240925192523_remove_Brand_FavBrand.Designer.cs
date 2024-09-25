@@ -4,6 +4,7 @@ using Fashion_Flex.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fashion_Flex.Migrations
 {
     [DbContext(typeof(FFContext))]
-    partial class FFContextModelSnapshot : ModelSnapshot
+    [Migration("20240925192523_remove_Brand_FavBrand")]
+    partial class remove_Brand_FavBrand
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,29 +141,6 @@ namespace Fashion_Flex.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("Fashion_Flex.Models.FavoriteList", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Customer_Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Product_Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Customer_Id");
-
-                    b.HasIndex("Product_Id");
-
-                    b.ToTable("FavoriteList");
-                });
-
             modelBuilder.Entity("Fashion_Flex.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -279,6 +259,9 @@ namespace Fashion_Flex.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Available_Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Brand_Id")
                         .HasColumnType("int");
 
                     b.Property<string>("Category")
@@ -492,25 +475,6 @@ namespace Fashion_Flex.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
-            modelBuilder.Entity("Fashion_Flex.Models.FavoriteList", b =>
-                {
-                    b.HasOne("Fashion_Flex.Models.Customer", "Customer")
-                        .WithMany("User_Favorites")
-                        .HasForeignKey("Customer_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Fashion_Flex.Models.Product", "Product")
-                        .WithMany("User_Favorites")
-                        .HasForeignKey("Product_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("Fashion_Flex.Models.Order", b =>
                 {
                     b.HasOne("Fashion_Flex.Models.Customer", "Customer")
@@ -640,8 +604,6 @@ namespace Fashion_Flex.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("User_Favorites");
                 });
 
             modelBuilder.Entity("Fashion_Flex.Models.Order", b =>
@@ -654,8 +616,6 @@ namespace Fashion_Flex.Migrations
                     b.Navigation("Order_Items");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("User_Favorites");
                 });
 #pragma warning restore 612, 618
         }
