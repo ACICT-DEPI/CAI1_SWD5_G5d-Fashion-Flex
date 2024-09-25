@@ -1,5 +1,6 @@
 ﻿using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fashion_Flex.Controllers
@@ -13,6 +14,7 @@ namespace Fashion_Flex.Controllers
             _orderRepository = orderRepository;
         }
 
+        [Authorize(Roles ="Admin")]
         public IActionResult Index()
         {
             var orders = _orderRepository.GetAll();
