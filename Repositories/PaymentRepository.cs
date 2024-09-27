@@ -73,7 +73,7 @@ namespace Fashion_Flex.IRepositories.Repository
 
 
 
-        public void updateOrderStates(int paymentid)
+        public void updatePaymentStates(int paymentid)
         {
             var payment = GetById(paymentid);
             if (payment != null)

@@ -10,7 +10,7 @@ namespace Fashion_Flex.Repository
         public Payment GetById(int paymentId);
         public List<Payment> GetAll();
         public void Save();
-        void updateOrderStates(int paymentid);
+        void updatePaymentStates(int paymentid);
 
     }
 }
