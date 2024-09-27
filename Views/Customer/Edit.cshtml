@@ -1,0 +1,52 @@
+﻿@model Fashion_Flex.ViewModels.ProfileViewModel
+@{
+	Layout = "_CozaStoreLayout";
+}
+
+<div class="container m-tb-200">
+	<h2 class="mb-4">Edit Profile</h2>
+
+	<form asp-action="Edit" method="post">
+		@Html.AntiForgeryToken()
+
+		<div class="form-group">
+			<label asp-for="First_Name" class="form-label"></label>
+			<input asp-for="First_Name" class="form-control" />
+			<span asp-validation-for="First_Name" class="text-danger"></span>
+		</div>
+		<div class="form-group">
+			<label asp-for="Last_Name" class="form-label"></label>
+			<input asp-for="Last_Name" class="form-control" />
+			<span asp-validation-for="Last_Name" class="text-danger"></span>
+		</div>
+		<div class="form-group">
+			<label asp-for="Email" class="form-label"></label>
+			<input asp-for="Email" class="form-control" />
+			<span asp-validation-for="Email" class="text-danger"></span>
+		</div>
+		<div class="form-group">
+			<label asp-for="Address" class="form-label"></label>
+			<input asp-for="Address" class="form-control" />
+			<span asp-validation-for="Address" class="text-danger"></span>
+		</div>
+		<div class="form-group">
+			<label asp-for="Date_Of_Birth" class="form-label"></label>
+			<input asp-for="Date_Of_Birth" class="form-control" type="date" />
+			<span asp-validation-for="Date_Of_Birth" class="text-danger"></span>
+		</div>
+
+		<div class="form-group">
+			<label asp-for="Phone_Number" class="form-label"></label>
+			<div class="input-group">
+				<select asp-for="Phone_Country_Code" class="custom-select" asp-items="ViewBag.CountryPhoneCodes"></select>
+				<input asp-for="Phone_Number" class="form-control" />
+			</div>
+				<span asp-validation-for="Phone_Country_Code" class="text-danger"></span>
+				<span asp-validation-for="Phone_Number" class="text-danger"></span>
+		</div>
+
+		<div class="form-group">
+			<button type="submit" class="btn btn-primary">Save</button>
+		</div>
+	</form>
+</div>

@@ -1,5 +1,6 @@
 ﻿using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fashion_Flex.Controllers
@@ -13,12 +14,14 @@ namespace Fashion_Flex.Controllers
             _orderRepository = orderRepository;
         }
 
+        [Authorize(Roles ="Admin")]
         public IActionResult Index()
         {
             var orders = _orderRepository.GetAll();
             return View(orders);
         }
 
+        [HttpGet]
         public IActionResult New()
         {
             return View();
@@ -37,7 +40,8 @@ namespace Fashion_Flex.Controllers
             return View("New", order);
         }
 
-        public IActionResult Edit(int id)
+		[HttpGet]
+		public IActionResult Edit(int id)
         {
             var order = _orderRepository.GetOrderById(id);
             if (order == null)
@@ -60,7 +64,8 @@ namespace Fashion_Flex.Controllers
             return View("Edit", order);
         }
 
-        public IActionResult Delete(int id)
+		[HttpGet]
+		public IActionResult Delete(int id)
         {
             var order = _orderRepository.GetOrderById(id);
             if (order == null)
@@ -72,6 +77,25 @@ namespace Fashion_Flex.Controllers
             _orderRepository.Save();
 
             return RedirectToAction("Index");
+        }
+
+
+        // Get order history for a customer
+        public IActionResult OrderHistory(int customerId)
+        {
+            var orders = _orderRepository.GetOrdersByCustomerId(customerId); //Get all the orders a customer made
+            return View(orders); //
+        }
+
+        // Get details for a specific order
+        public IActionResult OrderDetails(int orderId)
+        {
+            var order = _orderRepository.GetOrderById(orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            return View(order); //
         }
     }
 }
