@@ -9,6 +9,7 @@ namespace Fashion_Flex.Repository
         public void Update(Customer Customer);
         public void Delete(int CustomerId);
         public Customer GetById(int CustomerId);
+        public Customer GetByApplicationUserId(string ApplicationUserId);
         public List<Customer> GetAll();
         public void Save();
 

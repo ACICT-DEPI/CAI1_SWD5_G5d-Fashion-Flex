@@ -35,6 +35,11 @@ namespace Fashion_Flex.Repository
             return context.Customers.FirstOrDefault(c => c.Id == CustomerId);
         }
 
+        public Customer GetByApplicationUserId(string ApplicationUserId)
+        {
+            return context.Customers.FirstOrDefault(c => c.ApplicationUserId == ApplicationUserId);
+        }
+
         public void Save()
         {
             context.SaveChanges();

@@ -120,12 +120,15 @@ namespace Fashion_Flex.Controllers
             var payment = _paymentRepository.GetAll();
             return View(payment);
         }
-        public IActionResult NewPayment()
+		[HttpGet]
+		public IActionResult NewPayment()
         {
             return View();
         }
+        
+
         [HttpPost]
-        public IActionResult SaveNewPayment(Payment payment)
+        public IActionResult NewPayment(Payment payment)
         {
             if (ModelState.IsValid)
             {
@@ -172,10 +175,10 @@ namespace Fashion_Flex.Controllers
         }
 
         [HttpGet]
-        public IActionResult DataEntry()
+        public IActionResult CheckOut()
         {
 
-            return View(DataEntry);
+            return View();
         }
 
 
