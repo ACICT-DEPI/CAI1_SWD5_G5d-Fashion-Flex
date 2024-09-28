@@ -177,7 +177,6 @@ namespace Fashion_Flex.Controllers
         [HttpGet]
         public IActionResult CheckOut()
         {
-
             return View();
         }
 
