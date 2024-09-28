@@ -13,7 +13,7 @@ namespace Fashion_Flex.Controllers
             _orderItemRepository = orderItemRepository;
         }
 
-        public IActionResult Index()
+       /* public IActionResult Index()
         {
             var orderItems = _orderItemRepository.GetAll();
             return View(orderItems);
@@ -72,6 +72,6 @@ namespace Fashion_Flex.Controllers
             _orderItemRepository.Save();
 
             return RedirectToAction("Index");
-        }
+        }*/
     }
 }

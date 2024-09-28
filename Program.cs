@@ -57,6 +57,7 @@ namespace Fashion_Flex
             builder.Services.AddTransient<IOrderItemRepository, OrderItemRepository>();
             builder.Services.AddTransient<ICustomerRepository, CustomerRepository>();
             builder.Services.AddTransient<IProductRepository ,ProductRepository>();
+			builder.Services.AddTransient<IPaymentRepository, PaymentRepository>();
 
 			var app = builder.Build();
 
