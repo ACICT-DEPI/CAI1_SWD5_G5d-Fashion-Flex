@@ -1,0 +1,87 @@
+@{
+    ViewData["Title"] = "CartDetails";
+    Layout = "_CozaStoreLayout";
+}
+
+<style>
+    #payment-form {
+        margin-top: 80px; /* Adjust margin to prevent overlap with header */
+        width: 100%; /* Set full width */
+        max-width: 600px; /* Limit the maximum width */
+        margin-left: auto; /* Center align */
+        margin-right: auto; /* Center align */
+        padding: 20px; /* Add padding around the form */
+        border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+        border-radius: 5px; /* Optional: Rounded corners */
+        background-color: #f9f9f9; /* Optional: Background color */
+    }
+
+    #card-element {
+        height: 50px; /* Increase the height of the card element */
+        border: 1px solid #ccc; /* Optional: Add border to the card field */
+        border-radius: 4px; /* Optional: Rounded corners */
+        padding: 10px; /* Optional: Padding inside the card field */
+    }
+
+    button {
+        margin-top: 20px; /* Add space above the button */
+        width: 100%; /* Make the button full width */
+        padding: 10px; /* Add padding to the button */
+        font-size: 16px; /* Adjust button text size */
+        background-color: #4CAF50; /* Green background */
+        color: white; /* White text */
+        border: none; /* Remove border */
+        border-radius: 5px; /* Optional: Rounded corners */
+        cursor: pointer; /* Pointer cursor on hover */
+    }
+
+    #card-errors {
+        color: red; /* Error text color */
+        margin-top: 10px; /* Space above error messages */
+    }
+</style>
+
+<script src="https://js.stripe.com/v3/"></script>
+
+<form id="payment-form">
+    <div id="card-element"><!-- Stripe Card Element will be inserted here --></div>
+    <button type="submit">Checkout</button>
+</form>
+<div id="card-errors" role="alert"></div>
+
+<script>
+    var stripe = Stripe('pk_test_51Q4QBrH9Tu9XpeFQYfgwrpFWlwTyDDEa9e9on0QIYuWb9qsI4BtbtdSPxyFg8k8cSHqDGgDgq9bLrzZUzQ2kIzNP00gZBhVn1q');
+    var elements = stripe.elements();
+
+    // Create a card element with postal code hidden
+    var card = elements.create('card', {
+        hidePostalCode: true // This hides the postal code field
+    });
+
+    card.mount('#card-element');
+
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const { clientSecret } = await fetch('/create-payment-intent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: 5000 }) // Example amount: $50.00
+        }).then(r => r.json());
+
+        const result = await stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+                card: card
+            }
+        });
+
+        if (result.error) {
+            document.getElementById('card-errors').textContent = result.error.message;
+        } else {
+            if (result.paymentIntent.status === 'succeeded') {
+                alert('Payment successful!');
+            }
+        }
+    });
+</script>

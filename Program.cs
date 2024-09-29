@@ -5,6 +5,7 @@ using Fashion_Flex.Repositories;
 using Fashion_Flex.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 namespace Fashion_Flex
 {
@@ -59,10 +60,19 @@ namespace Fashion_Flex
             builder.Services.AddTransient<IProductRepository ,ProductRepository>();
 			builder.Services.AddTransient<IPaymentRepository, PaymentRepository>();
 
+
+            // Configure Stripe settings
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+
+            // Configure Stripe API key
+            StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe")["SecretKey"];
+
+            
 			var app = builder.Build();
 
-			// Configure the HTTP request pipeline
-			if (!app.Environment.IsDevelopment())
+
+            // Configure the HTTP request pipeline
+            if (!app.Environment.IsDevelopment())
 			{
 				app.UseExceptionHandler("/Home/Error");
 				app.UseHsts();
