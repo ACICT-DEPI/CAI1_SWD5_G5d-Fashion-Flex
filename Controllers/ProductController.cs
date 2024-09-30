@@ -27,22 +27,23 @@ namespace Fashion_Flex.Controllers
 
 		[HttpPost]
 		public IActionResult AddToCart(int selectedProductId)
-		{			
+		{
 			//if the user isnt loged in redirecting him to login page
 			if (!User.Identity.IsAuthenticated)
 			{
 				return BadRequest();
 			}
 
+			var selectedProduct = _productRepository.GetById(selectedProductId);
 			var customer = _customerRepository.GetByApplicationUserId(User.FindFirstValue(ClaimTypes.NameIdentifier));
 			var pendingOrder = _orderRepository.GetCustomerCurrOrder(customer.Id);
 			//if user have any order else create one
 			if (pendingOrder != null)
 			{
-				//if user added this item before change only its quantity
-				if (_orderItemRepository.OrderItemExist(pendingOrder.Id, selectedProductId))
+				//if user added this item before, change only its quantity
+				if (_orderItemRepository.OrderItemExist(pendingOrder.Id, selectedProduct.Id))
 				{
-					var orderItem = _orderItemRepository.GetByProductAndOrderId(pendingOrder.Id, selectedProductId);
+					var orderItem = _orderItemRepository.GetByProductAndOrderId(pendingOrder.Id, selectedProduct.Id);
 					orderItem.Quantity++;
 					_orderItemRepository.Update(orderItem);
 					_orderItemRepository.Save();
@@ -53,32 +54,37 @@ namespace Fashion_Flex.Controllers
 					var newOrder_Item = new Order_Item
 					{
 						Order_Id = pendingOrder.Id,
-						Product_Id = selectedProductId,
+						Product_Id = selectedProduct.Id,
 						Quantity = 1
 					};
 
 					_orderItemRepository.Add(newOrder_Item);
 					_orderItemRepository.Save();
 				}
+
+				//update total amount of the order price
+				pendingOrder.Total_Amount += selectedProduct.Price;
+				_orderRepository.Update(pendingOrder);
+				_orderItemRepository.Save();
 			}
 			else
 			{
 				var newOrder = new Order
 				{
-					Customer_Id = customer.Id,					
+					Customer_Id = customer.Id,
 					Order_Date = DateTime.Now,
 					Order_Status = "Pending",
 					Shipping_Address = customer.Address,
-					Total_Amount = 0,
+					Total_Amount = selectedProduct.Price,
 					Tracking_Number = 0
 				};
 				_orderRepository.Add(newOrder);
 				_orderItemRepository.Save();
 
 				//if user added this item before change only its quantity
-				if (_orderItemRepository.OrderItemExist(newOrder.Id, selectedProductId))
+				if (_orderItemRepository.OrderItemExist(newOrder.Id, selectedProduct.Id))
 				{
-					var orderItem = _orderItemRepository.GetByProductAndOrderId(newOrder.Id, selectedProductId);
+					var orderItem = _orderItemRepository.GetByProductAndOrderId(newOrder.Id, selectedProduct.Id);
 					orderItem.Quantity++;
 					_orderItemRepository.Update(orderItem);
 					_orderItemRepository.Save();
@@ -89,7 +95,7 @@ namespace Fashion_Flex.Controllers
 					var newOrder_Item = new Order_Item
 					{
 						Order_Id = newOrder.Id,
-						Product_Id = selectedProductId,
+						Product_Id = selectedProduct.Id,
 						Quantity = 1
 					};
 
