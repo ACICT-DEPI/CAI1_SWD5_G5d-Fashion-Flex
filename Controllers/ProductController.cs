@@ -25,7 +25,7 @@ namespace Fashion_Flex.Controllers
 			return View(_productRepository.GetAll());
 		}
 
-		[HttpPost]
+		[HttpGet]
 		public IActionResult AddToCart(int selectedProductId)
 		{
 			//if the user isnt loged in redirecting him to login page
@@ -103,7 +103,7 @@ namespace Fashion_Flex.Controllers
 					_orderItemRepository.Save();
 				}
 			}
-			return Ok();
+			return RedirectToAction("Index","Product");
 		}
 	}
 }

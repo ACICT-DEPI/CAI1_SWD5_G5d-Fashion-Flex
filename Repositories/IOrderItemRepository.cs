@@ -11,6 +11,8 @@ namespace Fashion_Flex.Repository
         public List<Order_Item> GetAll();
         public bool OrderItemExist(int orderId, int productId);
         public Order_Item GetByProductAndOrderId(int orderId, int productId);
-        public void Save();
+        public List<Order_Item> GetByOrderId(int orderId);
+
+		public void Save();
     }
 }
