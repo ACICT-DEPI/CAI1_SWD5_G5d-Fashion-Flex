@@ -22,8 +22,8 @@ namespace Fashion_Flex.IRepositories.Repository
         }
         public void Delete(int id)
         {
-            var dept = GetById(id);
-            context.Order_Items.Remove(dept);
+            var item = GetById(id);
+            context.Order_Items.Remove(item);
         }
         public Order_Item GetById(int id)
         {
@@ -33,19 +33,18 @@ namespace Fashion_Flex.IRepositories.Repository
         {
             return context.Order_Items.ToList();
         }
-        public void Save()
+		public bool OrderItemExist(int orderId, int productId)
+        {
+            return context.Order_Items.Where(i => i.Order_Id==orderId && i.Product_Id==productId).Any();
+        }
+		public Order_Item GetByProductAndOrderId(int orderId, int productId)
+        {
+			var item = context.Order_Items.Where(i => i.Order_Id == orderId && i.Product_Id == productId).FirstOrDefault();
+            return item;
+		}
+		public void Save()
         {
             context.SaveChanges();
-        }
-
-        Order_Item IOrderItemRepository.GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        List<Order_Item> IOrderItemRepository.GetAll()
-        {
-            throw new NotImplementedException();
         }
     }
 }

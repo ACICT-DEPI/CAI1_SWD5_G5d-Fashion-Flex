@@ -9,7 +9,7 @@ namespace Fashion_Flex.Models
         [ForeignKey("Customer")]
         public int Customer_Id { get; set; }
         [ForeignKey("Payment")]
-        public int Payment_Id { get; set; }
+        public int? Payment_Id { get; set; }
         public DateTime Order_Date { get; set; }
         public decimal Total_Amount { get; set; }
         public string Order_Status { get; set; }
