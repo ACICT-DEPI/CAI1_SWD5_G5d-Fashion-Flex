@@ -180,8 +180,6 @@ namespace Fashion_Flex.Controllers
             return View();
         }
 
-
-
         public IActionResult OrderConfirmation(int paymentid, int orderid)
         {
             _paymentRepository.updatePaymentStates(paymentid);
@@ -199,9 +197,6 @@ namespace Fashion_Flex.Controllers
                 return View("Faild", orderid);
             }
         }
-
-
-
     }
 }
 

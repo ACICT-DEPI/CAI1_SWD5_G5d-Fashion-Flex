@@ -80,6 +80,9 @@
 					<div class="right-top-bar flex-w h-full">
 						@if (User.Identity.IsAuthenticated)
 						{
+							<p class="flex-c-m trans-04 p-lr-25">
+								Welcome, @customer.First_Name
+							</p>
 							if (User.IsInRole("Admin"))
 							{
 								<a asp-controller="Role" asp-action="AddRole" class="flex-c-m trans-04 p-lr-25">

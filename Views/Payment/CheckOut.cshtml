@@ -1,10 +1,30 @@
 ﻿@using Fashion_Flex.Repository
 @using System.Security.Claims
-@inject ICustomerRepository CustomerRep
+@using Fashion_Flex.IRepositories
+@inject IOrderItemRepository OrderItemRepository
+@inject IOrderRepository OrderRepository
+@inject ICustomerRepository CustomerRepository
 @{
 	ViewData["Title"] = "CheckOut";
 	Layout = "_CozaStoreLayout";
-	var customer = CustomerRep.GetByApplicationUserId(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+	var customer = new Customer();
+	var customerCurrOrder = new Order();
+	List<Order_Item> customerOrderItems = new List<Order_Item>();
+
+	@if (User.Identity.IsAuthenticated)
+	{
+		customer = CustomerRepository.GetByApplicationUserId(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+		@if (customer != null)
+		{
+			customerCurrOrder = OrderRepository.GetCustomerCurrOrder(customer.Id);
+			@if (customerCurrOrder != null)
+			{
+				customerOrderItems = OrderItemRepository.GetByOrderId(customerCurrOrder.Id);
+			}
+		}
+	}
 }
 
 <div class="m-tb-50">
