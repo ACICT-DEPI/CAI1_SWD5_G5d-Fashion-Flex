@@ -71,15 +71,23 @@
 										<td class="column-3">$ @item.Product.Price</td>
 										<td class="column-4">
 											<div class="wrap-num-product flex-w m-l-auto m-r-0">
-												<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+												@* <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+											<i class="fs-16 zmdi zmdi-minus"></i>
+											</div> *@
+												<!-- Button to decrease quantity -->
+												<button type="button" class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m" onclick="updateQuantity('@item.Id', 'decrease')">
 													<i class="fs-16 zmdi zmdi-minus"></i>
-												</div>
+												</button>
 
-												<input class="mtext-104 cl3 txt-center num-product" type="number" name=@item.Product.Name value="@item.Quantity">
+												<input class="mtext-104 cl3 txt-center num-product" type="number" name=@item.Product.Name value="@item.Quantity" readonly>
 
-												<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+												@* <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+											<i class="fs-16 zmdi zmdi-plus"></i>
+											</div> *@
+												<!-- Button to increase quantity -->
+												<button type="button" class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" onclick="updateQuantity('@item.Id', 'increase')">
 													<i class="fs-16 zmdi zmdi-plus"></i>
-												</div>
+												</button>
 											</div>
 										</td>
 										@{
@@ -186,3 +194,24 @@
 		</div>
 	</form>
 </div>
+
+@section Scripts{
+	<script>
+		function updateQuantity(orderItemId, action) {
+			$.ajax({
+				url: '/OrderItem/' + (action === 'increase' ? 'IncreaseQuantity' : 'DecreaseQuantity'),
+				type: 'POST',
+				data: {
+					orderItemId: orderItemId
+				},
+				success: function (result) {
+					// Optionally, reload part of the page or update the quantities directly.
+					location.reload(); // Refresh the page to show updated data
+				},
+				error: function (xhr, status, error) {
+					console.log(error); // Handle the error
+				}
+			});
+		}
+	</script>
+}

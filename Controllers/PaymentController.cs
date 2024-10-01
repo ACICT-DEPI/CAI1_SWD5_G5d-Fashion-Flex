@@ -114,7 +114,8 @@ namespace Fashion_Flex.Controllers
             _paymentRepository = paymentRepository;
             _orderRepository = orderRepository;
         }
-        
+
+        [HttpGet]
         public IActionResult Index()
         {
             var payment = _paymentRepository.GetAll();
@@ -125,8 +126,6 @@ namespace Fashion_Flex.Controllers
         {
             return View();
         }
-        
-
         [HttpPost]
         public IActionResult NewPayment(Payment payment)
         {
@@ -160,6 +159,7 @@ namespace Fashion_Flex.Controllers
 
             return View("Edit", payment);
         }
+        [HttpGet]
         public IActionResult Delete(int id)
         {
             var payment = _paymentRepository.GetById(id);
@@ -173,13 +173,11 @@ namespace Fashion_Flex.Controllers
 
             return RedirectToAction("Index");
         }
-
         [HttpGet]
         public IActionResult CheckOut()
         {
             return View();
         }
-
         public IActionResult OrderConfirmation(int paymentid, int orderid)
         {
             _paymentRepository.updatePaymentStates(paymentid);
