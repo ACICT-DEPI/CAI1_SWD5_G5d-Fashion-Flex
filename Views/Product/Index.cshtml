@@ -272,13 +272,17 @@
 								<span class="stext-105 cl3">
 									@product.Price.ToString("C")
 								</span>
-								<a asp-controller="Product" asp-action="AddToCart" asp-route-selectedProductId = "@product.Id" class="btn-add-to-cart flex-c-m stext-101 cl2 size-101 bg0 bor1 hov-btn1 p-lr-15 trans-04 m-l-80">
-									Add to Cart
-								</a>
+								@if (User.Identity.IsAuthenticated)
+								{
+									<a asp-controller="Product" asp-action="AddToCart" asp-route-selectedProductId="@product.Id" class="btn-add-to-cart flex-c-m stext-101 cl2 size-101 bg0 bor1 hov-btn1 p-lr-15 trans-04 m-l-80">
+										Add to Cart
+									</a>
+								}
+
 								@*Ajax request*@
 								@* <a href="javascript:void(0)" onclick="addToCart(@product.Id)" class="btn-add-to-cart flex-c-m stext-101 cl2 size-101 bg0 bor1 hov-btn1 p-lr-15 trans-04 m-l-80">
-									Add to Cart
-								</a> *@
+							Add to Cart
+							</a> *@
 
 							</div>
 
@@ -306,7 +310,7 @@
 	</div>
 </div>
 
-@section Scripts{
+@section Scripts {
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");
 	}
