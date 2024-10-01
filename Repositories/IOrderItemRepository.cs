@@ -9,6 +9,10 @@ namespace Fashion_Flex.Repository
         public void Delete(int id);
         public Order_Item GetById(int id);
         public List<Order_Item> GetAll();
-        public void Save();
+        public bool OrderItemExist(int orderId, int productId);
+        public Order_Item GetByProductAndOrderId(int orderId, int productId);
+        public List<Order_Item> GetByOrderId(int orderId);
+
+		public void Save();
     }
 }

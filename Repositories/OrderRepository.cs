@@ -93,9 +93,14 @@ namespace Fashion_Flex.IRepositories.Repository
             }
             else
             {
-                throw new InvalidOperationException($"Order with id:{Order} is not found");
+                throw new InvalidOperationException($"Order with id:{orderid} is not found");
             }
         }
 
-    }
+		public Order GetCustomerCurrOrder(int customerId)
+		{
+			return context.Orders.Where(o => o.Order_Status == "Pending" && o.Customer_Id == customerId).FirstOrDefault();
+		}
+
+	}
 }

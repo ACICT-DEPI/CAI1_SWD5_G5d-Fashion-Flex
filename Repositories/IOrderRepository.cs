@@ -12,5 +12,6 @@ namespace Fashion_Flex.Repository
         public List<Order> GetAll();
         void Save();
         public void updateOrderStates(int orderId);
+        public Order GetCustomerCurrOrder(int customerId);
     }
 }

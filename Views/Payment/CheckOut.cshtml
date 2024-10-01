@@ -1,10 +1,30 @@
 ﻿@using Fashion_Flex.Repository
 @using System.Security.Claims
-@inject ICustomerRepository CustomerRep
+@using Fashion_Flex.IRepositories
+@inject IOrderItemRepository OrderItemRepository
+@inject IOrderRepository OrderRepository
+@inject ICustomerRepository CustomerRepository
 @{
 	ViewData["Title"] = "CheckOut";
 	Layout = "_CozaStoreLayout";
-	var customer = CustomerRep.GetByApplicationUserId(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+	var customer = new Customer();
+	var customerCurrOrder = new Order();
+	List<Order_Item> customerOrderItems = new List<Order_Item>();
+
+	@if (User.Identity.IsAuthenticated)
+	{
+		customer = CustomerRepository.GetByApplicationUserId(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+		@if (customer != null)
+		{
+			customerCurrOrder = OrderRepository.GetCustomerCurrOrder(customer.Id);
+			@if (customerCurrOrder != null)
+			{
+				customerOrderItems = OrderItemRepository.GetByOrderId(customerCurrOrder.Id);
+			}
+		}
+	}
 }
 
 <div class="m-tb-50">
@@ -39,65 +59,56 @@
 									<th class="column-4">Quantity</th>
 									<th class="column-5">Total</th>
 								</tr>
-
-								<tr class="table_row">
-									<td class="column-1">
-										<div class="how-itemcart1">
-											<img src="~/images/item-cart-04.jpg" alt="IMG">
-										</div>
-									</td>
-									<td class="column-2">Fresh Strawberries</td>
-									<td class="column-3">$ 36.00</td>
-									<td class="column-4">
-										<div class="wrap-num-product flex-w m-l-auto m-r-0">
-											<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-												<i class="fs-16 zmdi zmdi-minus"></i>
+								@foreach (var item in customerOrderItems)
+								{
+									<tr class="table_row">
+										<td class="column-1">
+											<div class="how-itemcart1">
+												<img src="~/images/@item.Product.Image" alt="IMG">
 											</div>
+										</td>
+										<td class="column-2">@item.Product.Name</td>
+										<td class="column-3">$ @item.Product.Price</td>
+										<td class="column-4">
+											<div class="wrap-num-product flex-w m-l-auto m-r-0">
+												@* <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+											<i class="fs-16 zmdi zmdi-minus"></i>
+											</div> *@
+												<!-- Button to decrease quantity -->
+												<button type="button" class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m" onclick="updateQuantity('@item.Id', 'decrease')">
+													<i class="fs-16 zmdi zmdi-minus"></i>
+												</button>
 
-											<input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product1" value="@customer.Id">
+												<input class="mtext-104 cl3 txt-center num-product" type="number" name=@item.Product.Name value="@item.Quantity" readonly>
 
-											<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-												<i class="fs-16 zmdi zmdi-plus"></i>
+												@* <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+											<i class="fs-16 zmdi zmdi-plus"></i>
+											</div> *@
+												<!-- Button to increase quantity -->
+												<button type="button" class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" onclick="updateQuantity('@item.Id', 'increase')">
+													<i class="fs-16 zmdi zmdi-plus"></i>
+												</button>
 											</div>
-										</div>
-									</td>
-									<td class="column-5">$ 36.00</td>
-								</tr>
+										</td>
+										@{
+											var total = @item.Product.Price * @item.Quantity;
+										}
+										<td class="column-5">$ @total</td>
+									</tr>
+								}
 
-								<tr class="table_row">
-									<td class="column-1">
-										<div class="how-itemcart1">
-											<img src="~/images/item-cart-05.jpg" alt="IMG">
-										</div>
-									</td>
-									<td class="column-2">Lightweight Jacket</td>
-									<td class="column-3">$ 16.00</td>
-									<td class="column-4">
-										<div class="wrap-num-product flex-w m-l-auto m-r-0">
-											<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-												<i class="fs-16 zmdi zmdi-minus"></i>
-											</div>
 
-											<input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product2" value="1">
-
-											<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-												<i class="fs-16 zmdi zmdi-plus"></i>
-											</div>
-										</div>
-									</td>
-									<td class="column-5">$ 16.00</td>
-								</tr>
 							</table>
 						</div>
 
 						<div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
 							<div class="flex-c-m flex-t p-b-13 ml-auto">
-								<div class="size-208">
+								<div class="">
 									<span class="stext-110 cl2">
 										Subtotal:
-									</span>
+									</span><br />
 									<span class="mtext-110 cl2">
-										$79.65
+										$ @customerCurrOrder.Total_Amount
 									</span>
 								</div>
 							</div>
@@ -105,13 +116,12 @@
 					</div>
 				</div>
 
+				<!-- Billing Address -->
 				<div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
 					<div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
 						<h4 class="mtext-109 cl2 p-b-30">
 							Billing Address
 						</h4>
-
-
 
 						<div class="flex-w flex-t bor12 p-t-15 p-b-30">
 							<div class="size-208 w-full-ssm">
@@ -188,3 +198,24 @@
 		</div>
 	</form>
 </div>
+
+@section Scripts{
+	<script>
+		function updateQuantity(orderItemId, action) {
+			$.ajax({
+				url: '/OrderItem/' + (action === 'increase' ? 'IncreaseQuantity' : 'DecreaseQuantity'),
+				type: 'POST',
+				data: {
+					orderItemId: orderItemId
+				},
+				success: function (result) {
+					// Optionally, reload part of the page or update the quantities directly.
+					location.reload(); // Refresh the page to show updated data
+				},
+				error: function (xhr, status, error) {
+					console.log(error); // Handle the error
+				}
+			});
+		}
+	</script>
+}

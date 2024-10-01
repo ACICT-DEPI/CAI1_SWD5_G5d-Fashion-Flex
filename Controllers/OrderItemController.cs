@@ -1,6 +1,7 @@
 ﻿using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Fashion_Flex.Controllers
 {
@@ -13,7 +14,7 @@ namespace Fashion_Flex.Controllers
             _orderItemRepository = orderItemRepository;
         }
 
-       /* public IActionResult Index()
+        public IActionResult Index()
         {
             var orderItems = _orderItemRepository.GetAll();
             return View(orderItems);
@@ -67,11 +68,45 @@ namespace Fashion_Flex.Controllers
             {
                 return NotFound();
             }
-
+            orderItem.Order.Total_Amount -= orderItem.Product.Price * orderItem.Quantity;
             _orderItemRepository.Delete(id);
             _orderItemRepository.Save();
 
-            return RedirectToAction("Index");
-        }*/
-    }
+            return RedirectToAction("Index","Product");
+        }
+
+		[HttpPost]
+		public IActionResult IncreaseQuantity(int orderItemId)
+		{
+			var orderItem = _orderItemRepository.GetById(orderItemId);
+			if (orderItem != null)
+			{
+				orderItem.Quantity++;
+				orderItem.Order.Total_Amount += orderItem.Product.Price;
+				_orderItemRepository.Save();
+			}
+			return RedirectToAction("CheckOut", "Payment");
+		}
+
+		[HttpPost]
+		public IActionResult DecreaseQuantity(int orderItemId)
+		{
+			var orderItem = _orderItemRepository.GetById(orderItemId);
+			if (orderItem != null)
+			{
+                if (orderItem.Quantity > 1)
+                {
+					orderItem.Quantity--;
+                    orderItem.Order.Total_Amount -= orderItem.Product.Price; 
+					_orderItemRepository.Save();
+				}
+                else
+                {
+                    _orderItemRepository.Delete(orderItemId);
+                    _orderItemRepository.Save();
+                }
+			}
+			return RedirectToAction("CheckOut","Payment");
+		}
+	}
 }

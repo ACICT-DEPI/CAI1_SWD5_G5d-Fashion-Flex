@@ -179,7 +179,7 @@ namespace Fashion_Flex.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Payment_Id")
+                    b.Property<int?>("Payment_Id")
                         .HasColumnType("int");
 
                     b.Property<string>("Shipping_Address")
@@ -521,9 +521,7 @@ namespace Fashion_Flex.Migrations
 
                     b.HasOne("Fashion_Flex.Models.Payment", "Payment")
                         .WithMany()
-                        .HasForeignKey("Payment_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Payment_Id");
 
                     b.Navigation("Customer");
 
