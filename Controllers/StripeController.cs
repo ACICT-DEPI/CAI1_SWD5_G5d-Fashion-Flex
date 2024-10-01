@@ -13,12 +13,6 @@ namespace Fashion_Flex.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet]
-        public IActionResult PayWithCard()
-        {
-            return View();
-        }
-
 
 		//When you hit submit button in frontend
 		//This Function is fired up and calls the request to stripe

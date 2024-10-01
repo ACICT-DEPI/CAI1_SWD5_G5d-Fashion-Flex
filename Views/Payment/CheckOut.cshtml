@@ -1,4 +1,5 @@
-﻿@using Fashion_Flex.Repository
+﻿You said:
+@using Fashion_Flex.Repository
 @using System.Security.Claims
 @using Fashion_Flex.IRepositories
 @inject IOrderItemRepository OrderItemRepository
@@ -16,16 +17,21 @@
 	{
 		customer = CustomerRepository.GetByApplicationUserId(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-		@if (customer != null)
-		{
-			customerCurrOrder = OrderRepository.GetCustomerCurrOrder(customer.Id);
-			@if (customerCurrOrder != null)
+		/*
+			@if (customer != null)
 			{
-				customerOrderItems = OrderItemRepository.GetByOrderId(customerCurrOrder.Id);
+				customerCurrOrder = OrderRepository.GetCustomerCurrOrder(customer.Id);
+				@if (customerCurrOrder != null)
+				{
+					customerOrderItems = OrderItemRepository.GetByOrderId(customerCurrOrder.Id);
+				}
 			}
-		}
+
+		*/
 	}
 }
+
+<script src="https://js.stripe.com/v3/"></script>
 
 <div class="m-tb-50">
 	<!-- breadcrumb -->
@@ -45,7 +51,7 @@
 
 
 	<!-- Shoping Cart -->
-	<form method="post" class="bg0 p-t-75 p-b-85">
+	<form id="payment-form" method="post" class="bg0 p-t-75 p-b-85">
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
@@ -117,6 +123,7 @@
 				</div>
 
 				<!-- Billing Address -->
+
 				<div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
 					<div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
 						<h4 class="mtext-109 cl2 p-b-30">
@@ -153,10 +160,10 @@
 										<input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="postcode" placeholder="Postcode / Zip">
 									</div>
 									<div class="rs1-select2 rs2-select2 bor8 bg0 m-b-12 m-t-9">
-										<select class="js-select2" name="time">
+										<select id="payment-method" class="js-select2" name="time" onchange="changeFunc()">
 											<option>Payment Method...</option>
-											<option>Cash On Delivery</option>
-											<option>By Card</option>
+											<option value="cod">Cash On Delivery</option>
+											<option value="card">By Card</option>
 										</select>
 										<div class="dropDownSelect2"></div>
 									</div>
@@ -170,6 +177,8 @@
 								</div>
 							</div>
 						</div>
+
+						<div id="card-element"><!-- Stripe Card Element will be inserted here --></div>
 
 						<div class="flex-w flex-t p-t-27 p-b-33">
 							<div class="size-208">
@@ -185,13 +194,17 @@
 							</div>
 						</div>
 
+
 						<div class="header-cart-buttons flex-w w-full">
-							
-							<a asp-controller="Stripe" asp-action="PayWithCard" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
+
+							<button type="submit" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
 								Proceed to Checkout
-							</a>
+							</button>
 						</div>
-	
+
+
+						<div id="card-errors" role="alert"></div>
+
 					</div>
 				</div>
 			</div>
@@ -199,7 +212,7 @@
 	</form>
 </div>
 
-@section Scripts{
+@section Scripts {
 	<script>
 		function updateQuantity(orderItemId, action) {
 			$.ajax({
@@ -218,4 +231,92 @@
 			});
 		}
 	</script>
+
+	<!--Change Payment Method => Toggle Card Field visibility-->
+	<script>
+		function changeFunc() {
+			var paymentMethod = document.getElementById('payment-method').value;
+			var cardElement = document.getElementById('card-element');
+
+
+			if (paymentMethod === 'card') {
+				cardElement.style.display = 'block'; // Show the card element
+			} else {
+				cardElement.style.display = 'none'; // Hide the card element
+			}
+		}
+	</script>
+
+
+
+
+	<!--Payment Script-->
+	<script>
+		var stripe = Stripe('pk_test_51Q4QBrH9Tu9XpeFQYfgwrpFWlwTyDDEa9e9on0QIYuWb9qsI4BtbtdSPxyFg8k8cSHqDGgDgq9bLrzZUzQ2kIzNP00gZBhVn1q');
+		var elements = stripe.elements();
+
+		// Create a card element with postal code hidden
+		var card = elements.create('card', {
+			hidePostalCode: true // This hides the postal code field
+		});
+
+		card.mount('#card-element');
+
+		var form = document.getElementById('payment-form');
+		form.addEventListener('submit', async function (event) {
+			event.preventDefault();
+
+			// Get the selected payment method
+			var paymentMethod = document.getElementById('payment-method').value;
+
+			// Only proceed with creating the payment intent if the payment method is 'card'
+			if (paymentMethod === 'card') {
+				// Call backend code (in StripeController/CreatePaymentIntent)
+				const { clientSecret } = await fetch('/create-payment-intent', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ amount: 5000 }) // Example amount: $5000.00
+				}).then(r => r.json());
+
+				const result = await stripe.confirmCardPayment(clientSecret, {
+					payment_method: {
+						card: card
+					}
+				});
+
+				if (result.error) {
+					document.getElementById('card-errors').textContent = result.error.message;
+				} else {
+					if (result.paymentIntent.status === 'succeeded') {
+						alert('Payment successful!');
+					}
+				}
+			} else {
+
+				// Handle the case for other payment methods
+				alert("Payment with cash");
+			}
+		});
+	</script>
+
+
+
+	<!--Style for Card Element-->
+	<style>
+		#card-element {
+			display: none; /* Initially hidden */
+			margin-top: 30px; /* Adjust margin to prevent overlap with header */
+			margin-bottom: 20px; /* Adjust margin to prevent overlap with header */
+			height: 50px; /* Increase the height of the card element */
+			border: 1px solid #ccc; /* Optional: Add border to the card field */
+			border-radius: 4px; /* Optional: Rounded corners */
+			padding: 10px; /* Optional: Padding inside the card field */
+		}
+
+		#card-errors {
+			color: red; /* Error text color */
+			margin-top: 10px; /* Space above error messages */
+		}
+	</style>
+
 }

@@ -13,6 +13,7 @@
 	{
 		customer = CustomerRepository.GetByApplicationUserId(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
+		/*
 		@if (customer != null)
 		{
 			customerCurrOrder = OrderRepository.GetCustomerCurrOrder(customer.Id);
@@ -21,6 +22,7 @@
 				customerOrderItems = OrderItemRepository.GetByOrderId(customerCurrOrder.Id);
 			}
 		}
+		*/
 	}
 }
 
