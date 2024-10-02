@@ -52,69 +52,77 @@
 					<div class="m-l-25 m-r--38 m-lr-0-xl">
 						<div class="wrap-table-shopping-cart">
 							<table class="table-shopping-cart">
-								<tr class="table_head">
-									<th class="column-1">Product</th>
-									<th class="column-2"></th>
-									<th class="column-3">Price</th>
-									<th class="column-4">Quantity</th>
-									<th class="column-5">Total</th>
-								</tr>
-								@foreach (var item in customerOrderItems)
+								@if (customerOrderItems.Count() > 0)
 								{
-									<tr class="table_row">
-										<td class="column-1">
-											<div class="how-itemcart1">
-												<img src="~/images/@item.Product.Image" alt="IMG">
-											</div>
-										</td>
-										<td class="column-2">@item.Product.Name</td>
-										<td class="column-3">$ @item.Product.Price</td>
-										<td class="column-4">
-											<div class="wrap-num-product flex-w m-l-auto m-r-0">
-												@* <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-											<i class="fs-16 zmdi zmdi-minus"></i>
-											</div> *@
-												<!-- Button to decrease quantity -->
-												<button type="button" class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m" onclick="updateQuantity('@item.Id', 'decrease')">
-													<i class="fs-16 zmdi zmdi-minus"></i>
-												</button>
-
-												<input class="mtext-104 cl3 txt-center num-product" type="number" name=@item.Product.Name value="@item.Quantity" readonly>
-
-												@* <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-											<i class="fs-16 zmdi zmdi-plus"></i>
-											</div> *@
-												<!-- Button to increase quantity -->
-												<button type="button" class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" onclick="updateQuantity('@item.Id', 'increase')">
-													<i class="fs-16 zmdi zmdi-plus"></i>
-												</button>
-											</div>
-										</td>
-										@{
-											var total = @item.Product.Price * @item.Quantity;
-										}
-										<td class="column-5">$ @total</td>
+									<tr class="table_head">
+										<th class="column-1">Product</th>
+										<th class="column-2"></th>
+										<th class="column-3">Price</th>
+										<th class="column-4">Quantity</th>
+										<th class="column-5">Total</th>
 									</tr>
+									@foreach (var item in customerOrderItems)
+									{
+										<tr class="table_row">
+											<td class="column-1">
+												<a asp-controller="OrderItem" asp-action="Delete" asp-route-id="@item.Id">
+													<div class="how-itemcart1">
+														<img src="~/images/@item.Product.Image" alt="IMG">
+													</div>
+												</a>
+											</td>
+											<td class="column-2">@item.Product.Name</td>
+											<td class="column-3">$ @item.Product.Price</td>
+											<td class="column-4">
+												<div class="wrap-num-product flex-w m-l-auto m-r-0">
+													
+													<!-- Button to decrease quantity -->
+													<button type="button" class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m" onclick="updateQuantity('@item.Id', 'decrease')">
+														<i class="fs-16 zmdi zmdi-minus"></i>
+													</button>
+
+													<input class="mtext-104 cl3 txt-center num-product" type="number" name=@item.Product.Name value="@item.Quantity" readonly>
+													
+													<!-- Button to increase quantity -->
+													<button type="button" class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" onclick="updateQuantity('@item.Id', 'increase')">
+														<i class="fs-16 zmdi zmdi-plus"></i>
+													</button>
+												</div>
+											</td>
+											@{
+												var total = @item.Product.Price * @item.Quantity;
+											}
+											<td class="column-5">$ @total</td>
+										</tr>
+									}
+
 								}
-
-
+								else
+								{
+									<p class="flex-c-m trans-04 p-lr-25 text-dark">The Cart is empty</p>
+								}
 							</table>
 						</div>
 
-						<div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
-							<div class="flex-c-m flex-t p-b-13 ml-auto">
-								<div class="">
-									<span class="stext-110 cl2">
-										Subtotal:
-									</span><br />
-									<span class="mtext-110 cl2">
-										$ @customerCurrOrder.Total_Amount
-									</span>
+						@if (customerOrderItems.Count() > 0)
+						{
+							<div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
+								<div class="flex-c-m flex-t p-b-13 ml-auto">
+									<div class="">
+										<span class="stext-110 cl2">
+											Subtotal:
+										</span><br />
+										<span class="mtext-110 cl2">
+											$ @customerCurrOrder.Total_Amount
+										</span>
+									</div>
 								</div>
 							</div>
-						</div>
+						}
 					</div>
 				</div>
+
+
 
 				<!-- Billing Address -->
 				<div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
@@ -159,13 +167,7 @@
 											<option>By Card</option>
 										</select>
 										<div class="dropDownSelect2"></div>
-									</div>
-
-									@* <div class="flex-w">
-									<div class="flex-c-m stext-101 cl2 size-115 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer">
-									Update Totals
-									</div>
-									</div> *@
+									</div>									
 
 								</div>
 							</div>
@@ -195,7 +197,7 @@
 	</form>
 </div>
 
-@section Scripts{
+@section Scripts {
 	<script>
 		function updateQuantity(orderItemId, action) {
 			$.ajax({

@@ -102,7 +102,8 @@ namespace Fashion_Flex.Controllers
 				}
                 else
                 {
-                    _orderItemRepository.Delete(orderItemId);
+					orderItem.Order.Total_Amount -= orderItem.Product.Price;
+					_orderItemRepository.Delete(orderItemId);
                     _orderItemRepository.Save();
                 }
 			}
