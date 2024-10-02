@@ -252,6 +252,7 @@
 
 	<!--Payment Script-->
 	<script>
+		//Stripe Publishable Key
 		var stripe = Stripe('pk_test_51Q4QBrH9Tu9XpeFQYfgwrpFWlwTyDDEa9e9on0QIYuWb9qsI4BtbtdSPxyFg8k8cSHqDGgDgq9bLrzZUzQ2kIzNP00gZBhVn1q');
 		var elements = stripe.elements();
 
@@ -275,7 +276,7 @@
 				const { clientSecret } = await fetch('/create-payment-intent', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ amount: 5000 }) // Example amount: $5000.00
+					body: JSON.stringify({ amount: @customerCurrOrder.Total_Amount }) // Example amount: $5000.00
 				}).then(r => r.json());
 
 				const result = await stripe.confirmCardPayment(clientSecret, {
@@ -290,6 +291,7 @@
 					if (result.paymentIntent.status === 'succeeded') {
 						alert('Payment successful!');
 					}
+					//rest of status
 				}
 			} else {
 
