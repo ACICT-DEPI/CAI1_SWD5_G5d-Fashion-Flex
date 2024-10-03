@@ -1,5 +1,7 @@
 ﻿using Fashion_Flex.Models;
 using Fashion_Flex.IRepositories;
+using Microsoft.EntityFrameworkCore;
+using Fashion_Flex.ViewModels;
 
 namespace Fashion_Flex.Repositories
 {
@@ -51,5 +53,17 @@ namespace Fashion_Flex.Repositories
         {
             context.SaveChanges();
         }
-    }
+
+		public PaginatedList<Product> GetPaginatedProducts(int pageIndex, int pageSize)
+		{
+			var totalCount = context.Products.Count();
+			var products = context.Products
+								   .OrderBy(p => p.Name) // Adjust sorting as necessary
+								   .Skip((pageIndex - 1) * pageSize)
+								   .Take(pageSize)
+								   .ToList();
+
+			return new PaginatedList<Product>(products, totalCount, pageIndex, pageSize);
+		}
+	}
 }

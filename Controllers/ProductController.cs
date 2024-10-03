@@ -20,9 +20,10 @@ namespace Fashion_Flex.Controllers
 			this._orderItemRepository = _orderItemRepository;
 			this._customerRepository = _customerRepository;
 		}
-		public IActionResult Index()
+		public IActionResult Index(int pageIndex = 1, int pageSize = 8)
 		{
-			return View(_productRepository.GetAll());
+			var paginatedProducts = _productRepository.GetPaginatedProducts(pageIndex, pageSize);
+			return View(paginatedProducts);
 		}
 
 		[HttpGet]
@@ -103,7 +104,7 @@ namespace Fashion_Flex.Controllers
 					_orderItemRepository.Save();
 				}
 			}
-			return RedirectToAction("Index","Product");
+			return RedirectToAction("Index", "Product");
 		}
 	}
 }
