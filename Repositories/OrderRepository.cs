@@ -47,40 +47,10 @@ namespace Fashion_Flex.IRepositories.Repository
 
 		public void Save()
 		{
-			throw new NotImplementedException();
+			context.SaveChanges();
 		}
-        /*public int generaterandomnum()
-        {
-            int min = 1;
-            int max = 100;
 
-            List<int> numbers = new List<int>();
-
-            for (int i = min; i < max; i++)
-            {
-                numbers.Add(i);
-            }
-
-            // Shuffle the list
-            Shuffle(numbers);
-            return numbers;
-
-        }
-
-
-        static void Shuffle<T>(IList<T> list)
-        {
-            int n = list.Count;
-            while (n > 1)
-            {
-                int k = rng.Next(n--);
-                T value = list[n];
-                list[n] = list[k];
-                list[k] = value;
-            }
-        }*/
-
-        public void updateOrderStates(int orderid)
+        public bool updateOrderStatesAsCompleted(int orderid)
         {
             var Order = GetOrderById(orderid);
             if (Order != null)
@@ -88,12 +58,15 @@ namespace Fashion_Flex.IRepositories.Repository
 
                 Order.Order_Status = "Completed";
                 Order.Order_Date = DateTime.Now;
-                //Order.Tracking_Number = generaterandomnum();
+				//Order.Tracking_Number = generaterandomnum();
 
+				Save();
+				return true;
             }
             else
             {
-                throw new InvalidOperationException($"Order with id:{orderid} is not found");
+				return false;
+				throw new InvalidOperationException($"Order with id:{orderid} is not found");
             }
         }
 
@@ -104,3 +77,35 @@ namespace Fashion_Flex.IRepositories.Repository
 
 	}
 }
+
+
+/*public int generaterandomnum()
+{
+	int min = 1;
+	int max = 100;
+
+	List<int> numbers = new List<int>();
+
+	for (int i = min; i < max; i++)
+	{
+		numbers.Add(i);
+	}
+
+	// Shuffle the list
+	Shuffle(numbers);
+	return numbers;
+
+}
+
+
+static void Shuffle<T>(IList<T> list)
+{
+	int n = list.Count;
+	while (n > 1)
+	{
+		int k = rng.Next(n--);
+		T value = list[n];
+		list[n] = list[k];
+		list[k] = value;
+	}
+}*/

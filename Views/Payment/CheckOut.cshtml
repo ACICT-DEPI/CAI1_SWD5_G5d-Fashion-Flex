@@ -16,10 +16,10 @@
 	{
 		customer = CustomerRepository.GetByApplicationUserId(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-			@if (customer != null)
+	@if (customer != null)
 			{
 				customerCurrOrder = OrderRepository.GetCustomerCurrOrder(customer.Id);
-				@if (customerCurrOrder != null)
+	@if (customerCurrOrder != null)
 				{
 					customerOrderItems = OrderItemRepository.GetByOrderId(customerCurrOrder.Id);
 				}
@@ -251,13 +251,13 @@
 
 	<!--Payment Script-->
 	<script>
-		//Stripe Publishable Key
+		// Stripe Publishable Key
 		var stripe = Stripe('pk_test_51Q4QBrH9Tu9XpeFQYfgwrpFWlwTyDDEa9e9on0QIYuWb9qsI4BtbtdSPxyFg8k8cSHqDGgDgq9bLrzZUzQ2kIzNP00gZBhVn1q');
 		var elements = stripe.elements();
 
 		// Create a card element with postal code hidden
 		var card = elements.create('card', {
-			hidePostalCode: true // This hides the postal code field
+			hidePostalCode: true
 		});
 
 		card.mount('#card-element');
@@ -269,14 +269,47 @@
 			// Get the selected payment method
 			var paymentMethod = document.getElementById('payment-method').value;
 
-			// Only proceed with creating the payment intent if the payment method is 'card'
 			if (paymentMethod === 'card') {
+				// Payment by Card
+				await makePaymentWithCard(stripe, card);
+			} else {
+				// Payment by Cash
+				markOrderAsCompleted(@customerCurrOrder.Id);
+			}
+		});
+
+		// Update Order Status
+		function markOrderAsCompleted(orderId) {
+			$.ajax({
+				url: '/Order/UpdateOrderStatusAsCompleted',
+				type: 'POST',
+				data: { orderId: orderId },
+				success: function (result) {
+					alert(result);
+					window.history.back(); // Exit Cart Page
+				},
+				error: function (xhr, status, error) {
+					alert("An error occurred: " + error);
+					console.error("Error:", error);
+				}
+			});
+		}
+
+		// Make Payment with Credit Card
+		async function makePaymentWithCard(stripe, card) {
+			try {
 				// Call backend code (in StripeController/CreatePaymentIntent)
-				const { clientSecret } = await fetch('/create-payment-intent', {
+				const response = await fetch('/create-payment-intent', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ amount: @customerCurrOrder.Total_Amount }) // Example amount: $5000.00
-				}).then(r => r.json());
+				});
+
+				if (!response.ok) {
+					throw new Error('Failed to create payment intent');
+				}
+
+				const { clientSecret } = await response.json();
 
 				const result = await stripe.confirmCardPayment(clientSecret, {
 					payment_method: {
@@ -286,19 +319,16 @@
 
 				if (result.error) {
 					document.getElementById('card-errors').textContent = result.error.message;
-				} else {
-					if (result.paymentIntent.status === 'succeeded') {
-						alert('Payment successful!');
-					}
-					//rest of status
+				} else if (result.paymentIntent.status === 'succeeded') {
+					markOrderAsCompleted(@customerCurrOrder.Id);
 				}
-			} else {
-
-				// Handle the case for other payment methods
-				alert("Payment with cash");
+			} catch (error) {
+				console.error("Error in makePaymentWithCard:", error);
+				document.getElementById('card-errors').textContent = error.message;
 			}
-		});
+		}
 	</script>
+
 
 
 
