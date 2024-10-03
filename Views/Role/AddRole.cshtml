@@ -1,0 +1,29 @@
+﻿@model Fashion_Flex.ViewModels.AddRoleViewModel
+
+@{
+	ViewData["Title"] = "AddRole";
+	Layout = "_CozaStoreLayout";
+}
+
+<div class="container m-tb-200 m-bb-200">
+	<div class="row justify-content-center">
+		<div class="col-md-6 col-lg-4">
+			<div class="card shadow-sm">
+				<div class="card-body">
+					<h2 class="card-title text-center mb-4">Add Role</h2>
+					<form asp-action="AddRole">
+						<div asp-validation-summary="All" class="text-danger"></div>
+						<div class="form-group">
+							<label asp-for="RoleName" class="control-label"></label>
+							<input asp-for="RoleName" class="form-control" />
+							<span asp-validation-for="RoleName" class="text-danger"></span>
+						</div>
+						<div class="form-group">
+							<input type="submit" value="Create" class="btn btn-primary" />
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

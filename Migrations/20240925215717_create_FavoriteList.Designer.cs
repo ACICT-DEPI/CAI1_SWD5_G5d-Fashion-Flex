@@ -4,6 +4,7 @@ using Fashion_Flex.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fashion_Flex.Migrations
 {
     [DbContext(typeof(FFContext))]
-    partial class FFContextModelSnapshot : ModelSnapshot
+    [Migration("20240925215717_create_FavoriteList")]
+    partial class create_FavoriteList
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -179,7 +182,7 @@ namespace Fashion_Flex.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Payment_Id")
+                    b.Property<int>("Payment_Id")
                         .HasColumnType("int");
 
                     b.Property<string>("Shipping_Address")
@@ -521,7 +524,9 @@ namespace Fashion_Flex.Migrations
 
                     b.HasOne("Fashion_Flex.Models.Payment", "Payment")
                         .WithMany()
-                        .HasForeignKey("Payment_Id");
+                        .HasForeignKey("Payment_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Customer");
 

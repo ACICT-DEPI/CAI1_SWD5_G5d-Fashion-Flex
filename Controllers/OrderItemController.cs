@@ -1,17 +1,21 @@
 ﻿using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Fashion_Flex.Controllers
 {
     public class OrderItemController : Controller
     {
         private readonly IOrderItemRepository _orderItemRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        public OrderItemController(IOrderItemRepository orderItemRepository)
+        public OrderItemController(IOrderItemRepository orderItemRepository, IOrderRepository orderRepository)
         {
             _orderItemRepository = orderItemRepository;
-        }
+            _orderRepository = orderRepository;
+
+		}
 
         public IActionResult Index()
         {
@@ -67,11 +71,50 @@ namespace Fashion_Flex.Controllers
             {
                 return NotFound();
             }
-
+            orderItem.Order.Total_Amount -= orderItem.Product.Price * orderItem.Quantity;
+            if(orderItem.Order.Total_Amount == 0)
+            {
+                _orderRepository.Delete(orderItem.Order.Id);
+            }
             _orderItemRepository.Delete(id);
             _orderItemRepository.Save();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index","Product");
         }
-    }
+
+		[HttpPost]
+		public IActionResult IncreaseQuantity(int orderItemId)
+		{
+			var orderItem = _orderItemRepository.GetById(orderItemId);
+			if (orderItem != null)
+			{
+				orderItem.Quantity++;
+				orderItem.Order.Total_Amount += orderItem.Product.Price;
+				_orderItemRepository.Save();
+			}
+			return RedirectToAction("CheckOut", "Payment");
+		}
+
+		[HttpPost]
+		public IActionResult DecreaseQuantity(int orderItemId)
+		{
+			var orderItem = _orderItemRepository.GetById(orderItemId);
+			if (orderItem != null)
+			{
+                if (orderItem.Quantity > 1)
+                {
+					orderItem.Quantity--;
+                    orderItem.Order.Total_Amount -= orderItem.Product.Price; 
+					_orderItemRepository.Save();
+				}
+                else
+                {
+					orderItem.Order.Total_Amount -= orderItem.Product.Price;
+					_orderItemRepository.Delete(orderItemId);
+                    _orderItemRepository.Save();
+                }
+			}
+			return RedirectToAction("CheckOut","Payment");
+		}
+	}
 }

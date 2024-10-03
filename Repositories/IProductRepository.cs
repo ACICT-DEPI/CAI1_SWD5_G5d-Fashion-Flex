@@ -1,4 +1,5 @@
 ﻿using Fashion_Flex.Models;
+using Fashion_Flex.ViewModels;
 
 namespace Fashion_Flex.IRepositories
 {
@@ -10,5 +11,8 @@ namespace Fashion_Flex.IRepositories
         public Product GetById(int ProductId);
         public List<Product> GetAll();
         public void Save();
-    }
+		PaginatedList<Product> GetPaginatedProducts(int pageIndex, int pageSize);
+	}
 }
+
+
