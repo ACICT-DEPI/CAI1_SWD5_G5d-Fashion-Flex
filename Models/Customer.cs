@@ -10,7 +10,10 @@ namespace Fashion_Flex.Models
 		public string Email { get; set; }
 		public string? Phone_Number { get; set; }
 		public string? Phone_Country_Code { get; set; }
-		public string Address { get; set; }
+		public string Street_Name { get; set; }
+		public string Building_No { get; set; }
+		public string City { get; set; }
+		public string Governorate { get; set; }
 		public DateOnly Date_Of_Birth { get; set; }
 		public DateTime Account_Creation_Date { get; set; }
 		public bool Is_Active { get; set; }

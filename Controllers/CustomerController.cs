@@ -135,7 +135,10 @@ namespace Fashion_Flex.Controllers
 				First_Name = customer.First_Name,
 				Last_Name = customer.Last_Name,
 				Email = customer.Email,
-				Address = customer.Address,
+				Street_Name = customer.Street_Name,
+				Building_No = customer.Building_No,
+				City = customer.City,
+				Governorate = customer.Governorate,
 				Date_Of_Birth = customer.Date_Of_Birth,
 				Phone_Number = customer.Phone_Number,
 				Phone_Country_Code = customer.Phone_Country_Code,
@@ -163,7 +166,10 @@ namespace Fashion_Flex.Controllers
 				First_Name = customer.First_Name,
 				Last_Name = customer.Last_Name,
 				Email = customer.Email,
-				Address = customer.Address,
+				Street_Name = customer.Street_Name,
+				Building_No = customer.Building_No,
+				City = customer.City,
+				Governorate = customer.Governorate,
 				Date_Of_Birth = customer.Date_Of_Birth,
 				Phone_Number = customer.Phone_Number,
 				Phone_Country_Code = customer.Phone_Country_Code,
@@ -191,7 +197,10 @@ namespace Fashion_Flex.Controllers
 				customer.First_Name = model.First_Name;
 				customer.Last_Name = model.Last_Name;
 				customer.Email = model.Email;
-				customer.Address = model.Address;
+				customer.Street_Name = model.Street_Name;
+				customer.Building_No = model.Building_No;
+				customer.City = model.City;
+				customer.Governorate = model.Governorate;
 				customer.Date_Of_Birth = model.Date_Of_Birth;
 				customer.Phone_Number = model.Phone_Number;
 				customer.Phone_Country_Code = model.Phone_Country_Code;

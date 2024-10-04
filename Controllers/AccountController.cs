@@ -152,7 +152,10 @@ namespace Fashion_Flex.Controllers
 					var newCustomer = new Customer
 					{
 						Account_Creation_Date = DateTime.Now,
-						Address = model.Address,
+						Street_Name = model.Street_Name,
+						Building_No = model.Building_No,
+						City = model.City,
+						Governorate = model.Governorate,
 						Date_Of_Birth = model.Date_Of_Birth,
 						Email = model.Email,
 						Phone_Number = model.PhoneNumber,

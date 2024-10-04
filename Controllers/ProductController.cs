@@ -90,7 +90,7 @@ namespace Fashion_Flex.Controllers
 					Customer_Id = customer.Id,
 					Order_Date = DateTime.Now,
 					Order_Status = "Pending",
-					Shipping_Address = customer.Address,
+					Shipping_Address = customer.Street_Name + customer.Building_No + customer.City + customer.Governorate,
 					Total_Amount = selectedProduct.Price,
 					Tracking_Number = 0
 				};
