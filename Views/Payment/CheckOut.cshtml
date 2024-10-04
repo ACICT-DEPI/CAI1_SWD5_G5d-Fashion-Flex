@@ -249,11 +249,11 @@
 
 			if (paymentMethod === 'card') {
 				cardElement.style.display = 'block'; // Show the card element
-				document.getElementById('payment-method-error').textContent = "";
+				document.getElementById('payment-method-error').textContent = ""; //Hide error message
 
 			} else if (paymentMethod === 'cod') {
 				cardElement.style.display = 'none'; // Hide the card element
-				document.getElementById('payment-method-error').textContent = "";
+				document.getElementById('payment-method-error').textContent = ""; //Hide error message
 
 			} else {
 				cardElement.style.display = 'none'; // Hide the card element
