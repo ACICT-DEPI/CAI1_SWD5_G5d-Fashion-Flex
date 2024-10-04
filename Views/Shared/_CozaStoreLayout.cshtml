@@ -622,13 +622,17 @@
 			$('.js-addcart-dialog').each(function () {
 				var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
 				$(this).on('click', function () {
-					swal(nameProduct, "is added to cart !", "success");
+					swal(nameProduct, "is added to cart !", "success").then((willProceed) => {
+						window.history.back(); // Exit Cart Page
+					});
 				});
 			});
 
 			$('.js-addcart-dialog-inside-model').on('click', function (e) {
 				var nameProduct = $(this).data('name'); // Get the product name from the data attribute
-				swal(nameProduct, "is added to cart!", "success");
+				swal(nameProduct, "is added to cart!", "success").then((willProceed) => {
+					window.history.back(); // Exit Cart Page
+				});
 			});
 
 		</script>

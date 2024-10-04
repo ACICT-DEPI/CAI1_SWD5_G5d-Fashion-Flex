@@ -118,7 +118,7 @@ namespace Fashion_Flex.Controllers
 					_orderItemRepository.Save();
 				}
 			}
-			return RedirectToAction("Index", "Product");
+			return Ok("Order is added successfuly!");
 		}
 	}
 }

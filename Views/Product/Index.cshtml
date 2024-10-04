@@ -234,9 +234,9 @@
 								</span>
 								@if (User.Identity.IsAuthenticated)
 								{
-									<a asp-controller="Product" asp-action="AddToCart" asp-route-selectedProductId="@product.Id" class="btn-add-to-cart flex-c-m stext-101 cl2 size-101 bg0 bor1 hov-btn1 p-lr-15 trans-04 m-l-80 js-addcart-dialog">
+									<button data-product-id="@product.Id" data-product-name="@product.Name" class="add-to-cart-button flex-c-m stext-101 cl2 size-101 bg0 bor1 hov-btn1 p-lr-15 trans-04 m-l-80">
 										Add to Cart
-									</a>
+									</button>
 								}
 							</div>
 						</div>
@@ -326,7 +326,7 @@
 									}
 								</div>
 
-								<a href="#" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-dialog-inside-model">
+								<a href="#" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 add-to-cart-button">
 									Add to cart
 								</a>
 							</div>
@@ -350,26 +350,11 @@
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");
 	}
-	@* <script>
-			function addToCart(productId) {
-				$.ajax({
-					url: '/Product/AddToCart',
-					type: 'POST',
-					data: {
-						selectedProductId: productId
-					},
-					success: function (response) {
-						alert('Product added to cart successfully!');
-					},
-					error: function (xhr, status, error) {
-						alert('Error: ' + error);
-					}
-				});
-			}
-		</script> *@
+
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script>
 		$(document).ready(function () {
+
 			// When the "Quick View" button is clicked
 			$('.js-show-modal1').on('click', function (e) {
 				e.preventDefault(); // Prevent the default action
@@ -390,9 +375,9 @@
 				$('.js-description-detail').text(productDescription); // Update description
 				$('.js-image-detail').attr('src', imageUrl); // Update the main image
 				$('.item-slick3').attr('data-thumb', imageUrl); // Update thumbnail if needed
-				// Update the add to cart link in the modal
-				$('.js-addcart-dialog-inside-model').attr('href', '/Product/AddToCart?selectedProductId=' + productId);
-				$('.js-addcart-dialog-inside-model').data('name', productName); // Store the product name as data attribute
+				// Update the add to cart data params
+				$('.add-to-cart-button').data('product-id', productId);
+				$('.add-to-cart-button').data('product-name', productName);
 
 				// Show the modal
 				$('.js-modal1').fadeIn();
@@ -401,6 +386,29 @@
 			// Hide modal when clicking on close button
 			$('.js-hide-modal1').on('click', function () {
 				$('.js-modal1').fadeOut();
+			});
+		});
+	</script>
+
+	<script>
+		$(document).on('click', '.add-to-cart-button', function () {
+			var selectedProductId = $(this).data('product-id');
+			var nameProduct = $(this).data('product-name');
+
+			$.ajax({
+				url: '/Product/AddToCart',
+				type: 'GET',
+				data: { selectedProductId: selectedProductId },
+				success: function (response) {
+					swal(nameProduct, "is added to cart!", "success").then(() => {
+						location.reload();
+					});
+				},
+				error: function (xhr) {
+					swal(nameProduct, "Couldn't be added", "error").then(() => {
+						location.reload();
+					});
+				}
 			});
 		});
 	</script>
