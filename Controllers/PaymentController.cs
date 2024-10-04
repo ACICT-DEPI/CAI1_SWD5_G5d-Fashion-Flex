@@ -1,8 +1,11 @@
 using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
+using Fashion_Flex.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using System.Diagnostics;
 
 namespace Fashion_Flex.Controllers
@@ -126,19 +129,104 @@ namespace Fashion_Flex.Controllers
         {
             return View();
         }
-        [HttpPost]
-        public IActionResult NewPayment(Payment payment)
-        {
-            if (ModelState.IsValid)
-            {
-                _paymentRepository.Add(payment);
-                _paymentRepository.Save();
-                return RedirectToAction("Index");
-            }
+        //[HttpPost]
+        //public IActionResult NewPayment(AddressPaymentViewModel model)
+        //{
+        //    /*if (ModelState.IsValid)
+        //    {
+        //        _paymentRepository.Add(payment);
+        //        _paymentRepository.Save();
+        //        return RedirectToAction("Index");
+        //    }
 
-            return View("New", payment);
+        //    return View("New", payment);*/
+        //    if (ModelState.IsValid)
+        //    {
+        //        // Create new ApplicationUser object
+        //        /*var newpayment = new Payment();
+        //        {
+        //            UserName = model.Email,
+        //            Email = model.Email,
+        //        };
+
+        //        // Save new user in the database using Identity
+        //        var result = await _paymentRepository.CreateAsync(newpayment, model.Email);
+
+        //        if (result.Succeeded)
+        //        {*/
+        //        // Create new Customer and link it to the ApplicationUser
+        //        var newpayment = new Payment
+        //        {
+        //            Payment_Date = DateTime.Now,
+        //            Payment_Status = "Paid",
+        //            Payment_Method = "By Card",
+
+
+        //        };
+
+        //        // Save the Customer in the database via the repository
+        //        _paymentRepository.Add(newpayment);
+        //        _paymentRepository.Save();
+
+
+               
+
+        //    }
+        //    ViewBag.CountryPhoneCodes = countryPhoneCodes;
+        //    return View(model);
+        //}
+
+        [HttpPost]
+        public IActionResult NewPayment(PaymentIntent paymentIntent, int orderId, string paymentmethod, string address)
+        {
+            var order = new Order
+            {
+                Shipping_Address = address,
+                Id = orderId,
+            };
+
+            var payment = new Payment
+            {
+                Transaction_Id = paymentIntent.Id,
+                Payment_Date = DateTime.Now,
+                Payment_Status = paymentIntent.Status,
+                Currency = paymentIntent.Currency,
+                Order_Id = orderId,
+                Payment_Method = paymentmethod,
+                Order = order,
+            };
+
+            _paymentRepository.Add(payment);
+            _paymentRepository.Save();
+            return RedirectToAction("Index", "Home"); // Redirect to the home page upon successful payment
         }
-        public IActionResult Details(int id)
+
+		[HttpPost]
+		public IActionResult NewPayment(int orderId, string paymentmethod, string address)
+		{
+			var order = new Order
+			{
+				Shipping_Address = address,
+				Id = orderId,
+			};
+
+			var payment = new Payment
+			{
+				Payment_Date = DateTime.Now,
+				Payment_Status = "Paid",
+				Order_Id = orderId,
+				Payment_Method = paymentmethod,
+				Order = order,
+                
+			};
+
+			_paymentRepository.Add(payment);
+			_paymentRepository.Save();
+			return RedirectToAction("Index", "Home"); // Redirect to the home page upon successful payment
+		}
+
+
+		public IActionResult Details(int id)
         {
             var payment = _paymentRepository.GetById(id);
             if (payment == null)
