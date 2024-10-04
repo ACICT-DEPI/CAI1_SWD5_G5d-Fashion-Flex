@@ -171,7 +171,8 @@
 											<option value="card">By Card</option>
 										</select>
 										<div class="dropDownSelect2"></div>
-									</div>									
+									</div>		
+									<div id="payment-method-error" role="alert"></div>
 
 								</div>
 							</div>
@@ -239,7 +240,7 @@
 
 
 
-	<!--Change Payment Method => Toggle Card Field visibility-->
+	<!--Change Payment Method => Toggle Card Field visibility && Hide error message-->
 	<script>
 		function changeFunc() {
 			var paymentMethod = document.getElementById('payment-method').value;
@@ -248,6 +249,12 @@
 
 			if (paymentMethod === 'card') {
 				cardElement.style.display = 'block'; // Show the card element
+				document.getElementById('payment-method-error').textContent = "";
+
+			} else if (paymentMethod === 'cod') {
+				cardElement.style.display = 'none'; // Hide the card element
+				document.getElementById('payment-method-error').textContent = "";
+
 			} else {
 				cardElement.style.display = 'none'; // Hide the card element
 			}
@@ -287,10 +294,15 @@
         if (paymentMethod === 'card') {
             // Payment by Card
             await makePaymentWithCard(stripe, card);
-        } else {
+
+        } else if (paymentMethod === 'cod') {
             // Payment by Cash
             await markOrderAsCompleted(@customerCurrOrder.Id);
-        }
+
+        } else {
+			//Not Selected
+			document.getElementById('payment-method-error').textContent = "You have to choose a payment method.";
+		}
 
         // <After request completes, toggle loading indicator>
         checkoutButton.style.display = 'inline-block';
@@ -382,6 +394,11 @@
 		}
 
 		#card-errors {
+			color: red; /* Error text color */
+			margin-top: 10px; /* Space above error messages */
+		}
+
+		#payment-method-error {
 			color: red; /* Error text color */
 			margin-top: 10px; /* Space above error messages */
 		}
