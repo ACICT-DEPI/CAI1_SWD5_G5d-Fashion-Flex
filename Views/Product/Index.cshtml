@@ -1,5 +1,6 @@
 ﻿@model PaginatedList<Product>
 @{
+	ViewData["Title"] = "Store";
 	Layout = "_CozaStoreLayout";
 }
 
@@ -320,10 +321,6 @@
 											<i class="fs-16 zmdi zmdi-plus"></i>
 										</div>
 									</div>
-									@if (Model.HasNextPage)
-									{
-										<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" class="pagination-btn btn btn-secondary ml-1">Next</a>
-									}
 								</div>
 
 								<a href="#" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 add-to-cart-button">
