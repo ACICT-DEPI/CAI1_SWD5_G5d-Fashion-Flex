@@ -77,7 +77,6 @@ namespace Fashion_Flex.Controllers
 					Order_Status = "Pending",
 					Shipping_Address = customer.Address,
 					Total_Amount = selectedProduct.Price,
-					Tracking_Number = 0
 				};
 				_orderRepository.Add(newOrder);
 				_orderItemRepository.Save();

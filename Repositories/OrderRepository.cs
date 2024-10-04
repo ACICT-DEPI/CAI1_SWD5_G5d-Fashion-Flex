@@ -1,11 +1,15 @@
 ﻿using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace Fashion_Flex.IRepositories.Repository
 {
 	public class OrderRepository : IOrderRepository
 	{
+		private static readonly Random random = new Random();
+
+
 		private readonly FFContext context;
         static Random rng = new Random();
         public OrderRepository(FFContext context)
@@ -58,6 +62,7 @@ namespace Fashion_Flex.IRepositories.Repository
 
                 Order.Order_Status = "Completed";
                 Order.Order_Date = DateTime.Now;
+				Order.Tracking_Code = GenerateTrackingCode();
 				//Order.Tracking_Number = generaterandomnum();
 
 				Save();
@@ -75,37 +80,22 @@ namespace Fashion_Flex.IRepositories.Repository
 			return context.Orders.Where(o => o.Order_Status == "Pending" && o.Customer_Id == customerId).FirstOrDefault();
 		}
 
+
+		private string GenerateTrackingCode()
+		{
+			int length = 6;
+
+			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			StringBuilder stringBuilder = new StringBuilder(length);
+
+			for (int i = 0; i < length; i++)
+			{
+				// Directly append characters to StringBuilder
+				stringBuilder.Append(chars[random.Next(chars.Length)]);
+			}
+
+			return stringBuilder.ToString(); // Convert to string at the end
+		}
 	}
 }
 
-
-/*public int generaterandomnum()
-{
-	int min = 1;
-	int max = 100;
-
-	List<int> numbers = new List<int>();
-
-	for (int i = min; i < max; i++)
-	{
-		numbers.Add(i);
-	}
-
-	// Shuffle the list
-	Shuffle(numbers);
-	return numbers;
-
-}
-
-
-static void Shuffle<T>(IList<T> list)
-{
-	int n = list.Count;
-	while (n > 1)
-	{
-		int k = rng.Next(n--);
-		T value = list[n];
-		list[n] = list[k];
-		list[k] = value;
-	}
-}*/
