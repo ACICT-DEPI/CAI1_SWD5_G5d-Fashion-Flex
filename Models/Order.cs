@@ -14,7 +14,7 @@ namespace Fashion_Flex.Models
         public decimal Total_Amount { get; set; }
         public string Order_Status { get; set; }
         public string Shipping_Address { get; set; }
-        public int Tracking_Number { get; set; }
+        public String? Tracking_Code { get; set; }
 
         //Customer |1--Places-->OM Order
         public virtual Customer Customer { get; set; }

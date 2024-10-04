@@ -181,7 +181,7 @@ namespace Fashion_Flex.Controllers
         public IActionResult OrderConfirmation(int paymentid, int orderid)
         {
             _paymentRepository.updatePaymentStates(paymentid);
-            _orderRepository.updateOrderStates(orderid);
+            _orderRepository.updateOrderStatusAsCompleted(orderid);
             Order order = _orderRepository.GetOrderById(orderid);
             Payment payment = _paymentRepository.GetById(paymentid);
             _paymentRepository.Save();

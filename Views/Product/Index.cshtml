@@ -1,7 +1,7 @@
-﻿@{
+﻿@model PaginatedList<Product>
+@{
 	Layout = "_CozaStoreLayout";
 }
-@model PaginatedList<Product>
 
 
 <!-- Product -->
@@ -76,7 +76,7 @@
 
 
 							<li class="p-b-6">
-								<a asp-action="Index" asp-route-sortOrder="date_desc" asp-route-category="@ViewData["CurrentCategory"]" class="filter-link stext-106 trans-04 @(ViewData["CurrentSort"] as string == "newness" ? "filter-link-active" : "")">
+								<a asp-action="Index" asp-route-sortOrder="newness" asp-route-category="@ViewData["CurrentCategory"]" class="filter-link stext-106 trans-04 @(ViewData["CurrentSort"] as string == "newness" ? "filter-link-active" : "")">
 									Newness
 								</a>
 							</li>
@@ -214,13 +214,19 @@
 					<div class="block2">
 						<div class="block2-pic hov-img0">
 							<img src="~/images/@product.Image" alt="IMG-PRODUCT">
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
+							   data-id="@product.Id"
+							   data-name="@product.Name"
+							   data-price="@product.Price.ToString("C")"
+							   data-image="@product.Image"
+							   data-description="@product.Description">
+								<!-- Add description if needed -->
 								Quick View
 							</a>
 						</div>
 						<div class="block2-txt flex-w flex-t p-t-14">
 							<div class="block2-txt-child1 flex-col-l ">
-								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+								<a href="product-detail.html" class="js-name-detail stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
 									@product.Name
 								</a>
 								<span class="stext-105 cl3">
@@ -228,7 +234,7 @@
 								</span>
 								@if (User.Identity.IsAuthenticated)
 								{
-									<a asp-controller="Product" asp-action="AddToCart" asp-route-selectedProductId="@product.Id" class="btn-add-to-cart flex-c-m stext-101 cl2 size-101 bg0 bor1 hov-btn1 p-lr-15 trans-04 m-l-80">
+									<a asp-controller="Product" asp-action="AddToCart" asp-route-selectedProductId="@product.Id" class="btn-add-to-cart flex-c-m stext-101 cl2 size-101 bg0 bor1 hov-btn1 p-lr-15 trans-04 m-l-80 js-addcart-dialog">
 										Add to Cart
 									</a>
 								}
@@ -260,33 +266,143 @@
 
 			@if (Model.HasNextPage)
 			{
-				<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" class="pagination-btn btn btn-secondary ml-1">Next</a>
+				<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" class="btn btn-secondary ml-1">Next</a>
 			}
 		</div>
 
 	</div>
 </div>
 
+<!-- Modal1 -->
+<div class="wrap-modal1 js-modal1 p-t-60 p-b-20" style="display:none;">
+	<!-- Added style to hide the modal by default -->
+	<div class="overlay-modal1 js-hide-modal1"></div>
+
+	<div class="container">
+		<div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
+			<button class="how-pos3 hov3 trans-04 js-hide-modal1">
+				<img src="images/icons/icon-close.png" alt="CLOSE">
+			</button>
+
+			<div class="row">
+				<div class="col-md-6 col-lg-7 p-b-30">
+					<div class="p-l-25 p-r-30 p-lr-0-lg">
+						<div class="wrap-slick3 flex-sb flex-w">
+							<div class="wrap-slick3-dots"></div>
+							<div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
+
+							<img src="~/images/product-detail-01.jpg" alt="IMG-PRODUCT" height="500" width="410" class="js-image-detail">
+
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-6 col-lg-5 p-b-30">
+					<div class="p-r-50 p-t-5 p-lr-0-lg">
+						<h4 class="mtext-105 cl2 js-name-model-detail p-b-14"></h4>
+						<span class="mtext-106 cl2 js-price-detail"></span>
+
+						<p class="stext-102 cl3 p-t-23 js-description-detail">
+							<!-- This will be populated dynamically -->
+						</p>
+
+						<div class="p-t-33">
+							<div class="flex-w flex-r-m p-b-10">
+								<div class="size-204 flex-w flex-m respon6-next">
+									<div class="wrap-num-product flex-w m-r-20 m-tb-10">
+										<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+											<i class="fs-16 zmdi zmdi-minus"></i>
+										</div>
+
+										<input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product" value="1">
+
+										<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+											<i class="fs-16 zmdi zmdi-plus"></i>
+										</div>
+									</div>
+									@if (Model.HasNextPage)
+									{
+										<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" class="pagination-btn btn btn-secondary ml-1">Next</a>
+									}
+								</div>
+
+								<a href="#" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-dialog-inside-model">
+									Add to cart
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
 @section Scripts {
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");
 	}
 	@* <script>
-		function addToCart(productId) {
-			$.ajax({
-				url: '/Product/AddToCart',
-				type: 'POST',
-				data: {
-					selectedProductId: productId
-				},
-				success: function (response) {
-					alert('Product added to cart successfully!');
-				},
-				error: function (xhr, status, error) {
-					alert('Error: ' + error);
-				}
+			function addToCart(productId) {
+				$.ajax({
+					url: '/Product/AddToCart',
+					type: 'POST',
+					data: {
+						selectedProductId: productId
+					},
+					success: function (response) {
+						alert('Product added to cart successfully!');
+					},
+					error: function (xhr, status, error) {
+						alert('Error: ' + error);
+					}
+				});
+			}
+		</script> *@
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			// When the "Quick View" button is clicked
+			$('.js-show-modal1').on('click', function (e) {
+				e.preventDefault(); // Prevent the default action
+
+				// Get the product details from data attributes
+				var productId = $(this).data('id'); // Get product ID
+				var productName = $(this).data('name');
+				var productPrice = $(this).data('price');
+				var productImage = $(this).data('image'); // Assuming this is a relative path
+				var productDescription = $(this).data('description'); // Get product description
+
+				// Construct the image URL using the format provided
+				var imageUrl = 'images/' + productImage;
+
+				// Update modal content
+				$('.js-name-model-detail').text(productName);
+				$('.mtext-106.cl2').text(productPrice);
+				$('.js-description-detail').text(productDescription); // Update description
+				$('.js-image-detail').attr('src', imageUrl); // Update the main image
+				$('.item-slick3').attr('data-thumb', imageUrl); // Update thumbnail if needed
+				// Update the add to cart link in the modal
+				$('.js-addcart-dialog-inside-model').attr('href', '/Product/AddToCart?selectedProductId=' + productId);
+				$('.js-addcart-dialog-inside-model').data('name', productName); // Store the product name as data attribute
+
+				// Show the modal
+				$('.js-modal1').fadeIn();
 			});
-		}
-	</script> *@
+
+			// Hide modal when clicking on close button
+			$('.js-hide-modal1').on('click', function () {
+				$('.js-modal1').fadeOut();
+			});
+		});
+	</script>
 
 }
