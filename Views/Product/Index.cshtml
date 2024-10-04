@@ -69,37 +69,37 @@
 
 						<ul>
 							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04">
+								<a asp-action="Index" asp-route-sortOrder="" class="filter-link stext-106 trans-04 @(String.IsNullOrEmpty(ViewData["CurrentSort"] as string) ? "filter-link-active" : "")">
 									Default
 								</a>
 							</li>
 
-							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04">
+							@* <li class="p-b-6">
+								<a asp-action="Index" asp-route-sortOrder="popularity" class="filter-link stext-106 trans-04 @(ViewData["CurrentSort"] as string == "popularity" ? "filter-link-active" : "")">
 									Popularity
 								</a>
 							</li>
 
 							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04">
+								<a asp-action="Index" asp-route-sortOrder="average_rating" class="filter-link stext-106 trans-04 @(ViewData["CurrentSort"] as string == "average_rating" ? "filter-link-active" : "")">
 									Average rating
 								</a>
-							</li>
+							</li> *@
 
 							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04 filter-link-active">
+								<a asp-action="Index" asp-route-sortOrder="date_desc" class="filter-link stext-106 trans-04 @(ViewData["CurrentSort"] as string == "newness" ? "filter-link-active" : "")">
 									Newness
 								</a>
 							</li>
 
 							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04">
+								<a asp-action="Index" asp-route-sortOrder="price" class="filter-link stext-106 trans-04 @(ViewData["CurrentSort"] as string == "price" ? "filter-link-active" : "")">
 									Price: Low to High
 								</a>
 							</li>
 
 							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04">
+								<a asp-action="Index" asp-route-sortOrder="price_desc" class="filter-link stext-106 trans-04 @(ViewData["CurrentSort"] as string == "price_desc" ? "filter-link-active" : "")">
 									Price: High to Low
 								</a>
 							</li>
@@ -286,24 +286,25 @@
 		<div class="flex-c-m flex-w w-full p-t-45">
 			@if (Model.HasPreviousPage)
 			{
-				<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex - 1)" class="btn btn-secondary mr-1">Previous</a>
+				<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex - 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" class="btn btn-secondary mr-1">Previous</a>
 			}
 
 			@for (int i = 1; i <= Model.TotalPages; i++)
 			{
 				if (i == Model.PageIndex)
 				{
-					<a asp-action="Index" asp-route-pageIndex="@i" style="pointer-events: none;" class="btn btn-primary">@i</a>
+					<a asp-action="Index" asp-route-pageIndex="@i" asp-route-sortOrder="@ViewData["CurrentSort"]" style="pointer-events: none;" class="btn btn-primary">@i</a>
 				}
 				else
 				{
-					<a asp-action="Index" asp-route-pageIndex="@i" class="btn btn-secondary">@i</a>
+					<a asp-action="Index" asp-route-pageIndex="@i" asp-route-sortOrder="@ViewData["CurrentSort"]" class="btn btn-secondary">@i</a>
 				}
 			}
 
 			@if (Model.HasNextPage)
 			{
-				<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" class="btn btn-secondary ml-1">Next</a>
+				<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" class="pagination-btn btn btn-primary">Next</a>
+
 			}
 		</div>
 

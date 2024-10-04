@@ -1,5 +1,10 @@
-﻿public class PaginatedList<T> : List<T>
+﻿using Fashion_Flex.Models;
+
+public class PaginatedList<T> : List<T>
 {
+	private IQueryable<Product> products;
+	private int pageSize;
+
 	public int PageIndex { get; private set; }
 	public int TotalPages { get; private set; }
 	public bool HasPreviousPage => PageIndex > 1;
@@ -13,5 +18,4 @@
 		// Add items to the list
 		this.AddRange(items);
 	}
-
 }

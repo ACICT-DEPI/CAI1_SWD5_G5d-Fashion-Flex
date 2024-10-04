@@ -2,6 +2,7 @@
 using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace Fashion_Flex.Controllers
@@ -20,11 +21,20 @@ namespace Fashion_Flex.Controllers
 			this._orderItemRepository = _orderItemRepository;
 			this._customerRepository = _customerRepository;
 		}
-		public IActionResult Index(int pageIndex = 1, int pageSize = 8)
+		public IActionResult Index(int pageIndex = 1, int pageSize = 8, string sortOrder = "")
 		{
-			var paginatedProducts = _productRepository.GetPaginatedProducts(pageIndex, pageSize);
+			// Track the current sorting order
+			ViewData["CurrentSort"] = sortOrder;
+
+			// Assign sorting parameters for the view (already done previously)
+			ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+			ViewData["PriceSortParam"] = sortOrder == "price" ? "price_desc" : "price";
+			ViewData["DateSortParam"] = sortOrder == "date" ? "date_desc" : "date";			
+
+			var paginatedProducts = _productRepository.GetAllPaginated(pageIndex, pageSize, sortOrder);
 			return View(paginatedProducts);
 		}
+
 
 		[HttpGet]
 		public IActionResult AddToCart(int selectedProductId)
