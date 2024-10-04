@@ -9,7 +9,7 @@ namespace Fashion_Flex.Models
 		public int Order_Id { get; set; }
 		public DateTime Payment_Date { get; set; }
 		public string Payment_Method { get; set; }
-		public string Currency { get; set; }
+		public string? Currency { get; set; }
 		public string Payment_Status { get; set; }
 		public string? Transaction_Id { get; set; }
 
