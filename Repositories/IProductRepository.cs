@@ -11,6 +11,8 @@ namespace Fashion_Flex.IRepositories
 		public Product GetById(int ProductId);
 		public List<Product> GetAll();
 		public void Save();
-		PaginatedList<Product> GetAllPaginated(int pageIndex, int pageSize, string sortOrder);
+		public PaginatedList<Product> GetAllPaginated(int pageIndex, int pageSize, string sortOrder, string category);
+		public IQueryable<Product> FilterByCategory(IQueryable<Product> products, string category);
+		public IEnumerable<string> GetCategories();
 	}
 }

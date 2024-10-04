@@ -54,10 +54,16 @@ namespace Fashion_Flex.Repositories
 			context.SaveChanges();
 		}
 
-		public PaginatedList<Product> GetAllPaginated(int pageIndex, int pageSize, string sortOrder)
+		public PaginatedList<Product> GetAllPaginated(int pageIndex, int pageSize, string sortOrder, string category)
 		{
 			var products = from p in context.Products
 						   select p;
+
+			// Apply filtering by category
+			if (!String.IsNullOrEmpty(category))
+			{
+				products = FilterByCategory(products, category);
+			}
 
 			// Sorting logic based on sortOrder
 			switch (sortOrder)
@@ -95,6 +101,19 @@ namespace Fashion_Flex.Repositories
 								.ToList();
 
 			return new PaginatedList<Product>(items, totalCount, pageIndex, pageSize);
+		}
+
+		public IQueryable<Product> FilterByCategory(IQueryable<Product> products, string category)
+		{
+			return products.Where(p => p.Category == category);
+		}
+
+		public IEnumerable<string> GetCategories()
+		{
+			return context.Products
+					   .Select(p => p.Category)
+					   .Distinct()
+					   .ToList();
 		}
 	}
 }
