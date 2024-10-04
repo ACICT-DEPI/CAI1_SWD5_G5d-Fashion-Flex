@@ -260,7 +260,8 @@
 
 			@if (Model.HasNextPage)
 			{
-				<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" class="pagination-btn btn btn-primary ml-1">Next</a>
+				<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" class="pagination-btn btn btn-primary">Next</a>
+
 			}
 		</div>
 
