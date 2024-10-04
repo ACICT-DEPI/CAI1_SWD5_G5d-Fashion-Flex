@@ -16,10 +16,10 @@
 	{
 		customer = CustomerRepository.GetByApplicationUserId(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-			@if (customer != null)
+	@if (customer != null)
 			{
 				customerCurrOrder = OrderRepository.GetCustomerCurrOrder(customer.Id);
-				@if (customerCurrOrder != null)
+	@if (customerCurrOrder != null)
 				{
 					customerOrderItems = OrderItemRepository.GetByOrderId(customerCurrOrder.Id);
 				}
@@ -172,7 +172,8 @@
 											<option value="card">By Card</option>
 										</select>
 										<div class="dropDownSelect2"></div>
-									</div>									
+									</div>		
+									<div id="payment-method-error" role="alert"></div>
 
 								</div>
 							</div>
@@ -245,8 +246,13 @@
 
 						<div class="header-cart-buttons flex-w w-full">
 
-							<button type="submit" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
+							<button id="checkout-button" type="submit" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
 								Proceed to Checkout
+							</button>
+
+							<!-- Loading Spinner Button (Initially Hidden) -->
+							<button id="checkout-button-loading" type="button" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10" style="display: none;" disabled>
+								<div class="spinner"></div> 
 							</button>
 						</div>
 
@@ -280,7 +286,10 @@
 		}
 	</script>
 
-	<!--Change Payment Method => Toggle Card Field visibility-->
+
+
+
+	<!--Change Payment Method => Toggle Card Field visibility && Hide error message-->
 	<script>
 		function changeFunc() {
 			var paymentMethod = document.getElementById('payment-method').value;
@@ -289,6 +298,12 @@
 
 			if (paymentMethod === 'card') {
 				cardElement.style.display = 'block'; // Show the card element
+				document.getElementById('payment-method-error').textContent = ""; //Hide error message
+
+			} else if (paymentMethod === 'cod') {
+				cardElement.style.display = 'none'; // Hide the card element
+				document.getElementById('payment-method-error').textContent = ""; //Hide error message
+
 			} else {
 				cardElement.style.display = 'none'; // Hide the card element
 			}
@@ -300,55 +315,121 @@
 
 	<!--Payment Script-->
 	<script>
-		//Stripe Publishable Key
-		var stripe = Stripe('pk_test_51Q4QBrH9Tu9XpeFQYfgwrpFWlwTyDDEa9e9on0QIYuWb9qsI4BtbtdSPxyFg8k8cSHqDGgDgq9bLrzZUzQ2kIzNP00gZBhVn1q');
-		var elements = stripe.elements();
+    // Stripe Publishable Key
+    var stripe = Stripe('pk_test_51Q4QBrH9Tu9XpeFQYfgwrpFWlwTyDDEa9e9on0QIYuWb9qsI4BtbtdSPxyFg8k8cSHqDGgDgq9bLrzZUzQ2kIzNP00gZBhVn1q');
+    var elements = stripe.elements();
 
-		// Create a card element with postal code hidden
-		var card = elements.create('card', {
-			hidePostalCode: true // This hides the postal code field
-		});
+    // Create a card element with postal code hidden
+    var card = elements.create('card', {
+        hidePostalCode: true
+    });
 
-		card.mount('#card-element');
+    card.mount('#card-element');
 
-		var form = document.getElementById('payment-form');
-		form.addEventListener('submit', async function (event) {
-			event.preventDefault();
+    var form = document.getElementById('payment-form');
+    var checkoutButton = document.getElementById('checkout-button');
+    var checkoutButtonLoading = document.getElementById('checkout-button-loading');
 
-			// Get the selected payment method
-			var paymentMethod = document.getElementById('payment-method').value;
+    form.addEventListener('submit', async function (event) {
+        event.preventDefault();
 
-			// Only proceed with creating the payment intent if the payment method is 'card'
-			if (paymentMethod === 'card') {
-				// Call backend code (in StripeController/CreatePaymentIntent)
-				const { clientSecret } = await fetch('/create-payment-intent', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ amount: @customerCurrOrder.Total_Amount }) // Example amount: $5000.00
-				}).then(r => r.json());
+        // <Toggle loading indicator>
+        checkoutButton.style.display = 'none';
+        checkoutButtonLoading.style.display = 'inline-block';
 
-				const result = await stripe.confirmCardPayment(clientSecret, {
-					payment_method: {
-						card: card
-					}
-				});
+        // Get the selected payment method
+        var paymentMethod = document.getElementById('payment-method').value;
 
-				if (result.error) {
-					document.getElementById('card-errors').textContent = result.error.message;
-				} else {
-					if (result.paymentIntent.status === 'succeeded') {
-						alert('Payment successful!');
-						NewPayment(result.paymentIntent,@customerCurrOrder.Id,payment_method);
-					}
-					//rest of status
-				}
-			} else {
+        if (paymentMethod === 'card') {
+            // Payment by Card
+            await makePaymentWithCard(stripe, card);
 
-				// Handle the case for other payment methods
-				alert("Payment with cash");
-			}
-		});
-	</script>
+        } else if (paymentMethod === 'cod') {
+            // Payment by Cash
+            await markOrderAsCompleted(@customerCurrOrder.Id);
+
+        } else {
+			//Not Selected
+			document.getElementById('payment-method-error').textContent = "You have to choose a payment method.";
+		}
+
+        // <After request completes, toggle loading indicator>
+        checkoutButton.style.display = 'inline-block';
+        checkoutButtonLoading.style.display = 'none';
+    });
+
+    // Update Order Status
+    async function markOrderAsCompleted(orderId) {
+        try {
+            await $.ajax({
+                url: '/Order/UpdateOrderStatusAsCompleted',
+                type: 'POST',
+                data: { orderId: orderId },
+                success: function (result) {
+					swal({
+						title: "Order is Placed!",
+						text: "",
+						icon: "success",
+						buttons: {
+							confirm: "Ok"
+						},
+					}).then((willProceed) => {
+						window.history.back(); // Exit Cart Page
+					});
+                    
+                },
+                error: function (xhr, status, error) {
+                    alert("An error occurred: " + error);
+                    console.error("Error:", error);
+                }
+            });
+        } catch (error) {
+            console.error("Error in markOrderAsCompleted:", error);
+        }
+    }
+
+    // Make Payment with Credit Card
+    async function makePaymentWithCard(stripe, card) {
+        try {
+            // Call backend code (in StripeController/CreatePaymentIntent)
+            const response = await fetch('/create-payment-intent', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: @customerCurrOrder.Total_Amount }) // Example amount: $5000.00
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create payment intent');
+            }
+
+            const { clientSecret } = await response.json();
+
+            const result = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: {
+                    card: card
+                }
+            });
+
+
+            if (result.error) {
+                document.getElementById('card-errors').textContent = result.error.message;
+
+
+			//Success State
+            } else if (result.paymentIntent.status === 'succeeded') {
+                await markOrderAsCompleted(@customerCurrOrder.Id);
+				NewPayment(result.paymentIntent,@customerCurrOrder.Id,payment_method);
+
+            }
+
+        } catch (error) {
+            console.error("Error in makePaymentWithCard:", error);
+            document.getElementById('card-errors').textContent = error.message;
+        }
+    }
+</script>
+
+
 
 
 
@@ -367,6 +448,29 @@
 		#card-errors {
 			color: red; /* Error text color */
 			margin-top: 10px; /* Space above error messages */
+		}
+
+		#payment-method-error {
+			color: red; /* Error text color */
+			margin-top: 10px; /* Space above error messages */
+		}
+	</style>
+
+	<!-- Style for Spinner -->
+	<style>
+		.spinner {
+			border: 4px solid rgba(255, 255, 255, 0.3);
+			border-top: 4px solid #ffffff;
+			border-radius: 50%;
+			width: 20px;
+			height: 20px;
+			animation: spin 1s linear infinite;
+			margin-right: 10px;
+		}
+
+		@@keyframes spin {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
 		}
 	</style>
 
