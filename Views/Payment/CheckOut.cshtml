@@ -305,8 +305,17 @@
                 type: 'POST',
                 data: { orderId: orderId },
                 success: function (result) {
-                    alert(result);
-                    window.history.back(); // Exit Cart Page
+					swal({
+						title: "Order is Placed!",
+						text: "",
+						icon: "success",
+						buttons: {
+							confirm: "Ok"
+						},
+					}).then((willProceed) => {
+						window.history.back(); // Exit Cart Page
+					});
+                    
                 },
                 error: function (xhr, status, error) {
                     alert("An error occurred: " + error);
