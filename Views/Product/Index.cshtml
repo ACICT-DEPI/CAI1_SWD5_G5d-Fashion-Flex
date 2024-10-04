@@ -269,7 +269,7 @@
 							</div>
 							<div class="block2-txt flex-w flex-t p-t-14">
 								<div class="block2-txt-child1 flex-col-l ">
-									<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+									<a href="product-detail.html" class="js-name-detail stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
 										@product.Name
 									</a>
 									<span class="stext-105 cl3">
@@ -277,7 +277,7 @@
 									</span>
 									@if (User.Identity.IsAuthenticated)
 									{
-										<a asp-controller="Product" asp-action="AddToCart" asp-route-selectedProductId="@product.Id" class="btn-add-to-cart flex-c-m stext-101 cl2 size-101 bg0 bor1 hov-btn1 p-lr-15 trans-04 m-l-80 js-addcart-detail">
+										<a asp-controller="Product" asp-action="AddToCart" asp-route-selectedProductId="@product.Id" class="btn-add-to-cart flex-c-m stext-101 cl2 size-101 bg0 bor1 hov-btn1 p-lr-15 trans-04 m-l-80 js-addcart-dialog">
 											Add to Cart
 										</a>
 									}
@@ -342,7 +342,7 @@
 
 					<div class="col-md-6 col-lg-5 p-b-30">
 						<div class="p-r-50 p-t-5 p-lr-0-lg">
-							<h4 class="mtext-105 cl2 js-name-detail p-b-14"></h4>
+							<h4 class="mtext-105 cl2 js-name-model-detail p-b-14"></h4>
 							<span class="mtext-106 cl2 js-price-detail"></span>
 
 							<p class="stext-102 cl3 p-t-23 js-description-detail">
@@ -364,7 +364,7 @@
 											</div>
 										</div>
 
-										<a href="#" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
+										<a href="#" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-dialog-inside-model">
 											Add to cart
 										</a>
 									</div>
@@ -396,13 +396,14 @@
 				var imageUrl = 'images/' + productImage;
 
 				// Update modal content
-				$('.js-name-detail').text(productName);
+				$('.js-name-model-detail').text(productName);
 				$('.mtext-106.cl2').text(productPrice);
 				$('.js-description-detail').text(productDescription); // Update description
 				$('.js-image-detail').attr('src', imageUrl); // Update the main image
 				$('.item-slick3').attr('data-thumb', imageUrl); // Update thumbnail if needed
 				// Update the add to cart link in the modal
-				$('.js-addcart-detail').attr('href', '/Product/AddToCart?selectedProductId=' + productId);
+				$('.js-addcart-dialog-inside-model').attr('href', '/Product/AddToCart?selectedProductId=' + productId);
+				$('.js-addcart-dialog-inside-model').data('name', productName); // Store the product name as data attribute
 
 				// Show the modal
 				$('.js-modal1').fadeIn();
