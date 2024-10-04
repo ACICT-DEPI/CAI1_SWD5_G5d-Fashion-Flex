@@ -26,7 +26,7 @@
 			}
 
 	}
-	//var customeraddress = customer.Building_No + " " + customer.Street_Name + " " + customer.City + " " + customer.Governorate;
+	var customeraddress = customer.Building_No + " " + customer.Street_Name + " " + customer.City + " " + customer.Governorate;
 }
 
 <script src="https://js.stripe.com/v3/"></script>
@@ -418,7 +418,7 @@
 			//Success State
             } else if (result.paymentIntent.status === 'succeeded') {
                 await markOrderAsCompleted(@customerCurrOrder.Id);
-				NewPayment(result.paymentIntent,@customerCurrOrder.Id,payment_method);
+					NewPayment(result.paymentIntent,@customerCurrOrder.Id,payment_method,@customeraddress);
 
             }
 
