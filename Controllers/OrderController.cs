@@ -3,6 +3,7 @@ using Fashion_Flex.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace Fashion_Flex.Controllers
 {
     public class OrderController : Controller
@@ -97,5 +98,19 @@ namespace Fashion_Flex.Controllers
             }
             return View(order); //
         }
-    }
+
+		//Mark Order (As Completed)
+		public IActionResult UpdateOrderStatusAsCompleted(int orderId)
+		{
+			bool isUpdatedSuccefully = _orderRepository.updateOrderStatusAsCompleted(orderId);
+
+			if (isUpdatedSuccefully)
+			{
+				return Ok("Order is succecfuly placed");
+			} else
+            {
+				return BadRequest("Order couldn't be placed"); //
+			}
+		}
+	}
 }
