@@ -44,9 +44,7 @@ namespace Fashion_Flex.Repositories
 
 		public Product GetById(int ProductId)
 		{
-			return context.Products
-
-				.FirstOrDefault(p => p.Id == ProductId);
+			return context.Products.FirstOrDefault(p => p.Id == ProductId);
 		}
 
 		public void Save()
@@ -54,10 +52,16 @@ namespace Fashion_Flex.Repositories
 			context.SaveChanges();
 		}
 
-		public PaginatedList<Product> GetAllPaginated(int pageIndex, int pageSize, string sortOrder, string category)
+		public PaginatedList<Product> GetRefinedPages(int pageIndex, int pageSize, string sortOrder, string category, string type)
 		{
 			var products = from p in context.Products
 						   select p;
+
+			// Apply filtering by type (Women, Men, Watches, etc.)
+			if (!String.IsNullOrEmpty(type))
+			{
+				products = FilterByType(products, type);
+			}
 
 			// Apply filtering by category
 			if (!String.IsNullOrEmpty(category))
@@ -108,10 +112,23 @@ namespace Fashion_Flex.Repositories
 			return products.Where(p => p.Category == category);
 		}
 
+		public IQueryable<Product> FilterByType(IQueryable<Product> products, string type)
+		{
+			return products.Where(p => p.type == type);
+		}
+
 		public IEnumerable<string> GetCategories()
 		{
 			return context.Products
 					   .Select(p => p.Category)
+					   .Distinct()
+					   .ToList();
+		}
+
+		public IEnumerable<string> GetTypes()
+		{
+			return context.Products
+					   .Select(p => p.type)
 					   .Distinct()
 					   .ToList();
 		}
