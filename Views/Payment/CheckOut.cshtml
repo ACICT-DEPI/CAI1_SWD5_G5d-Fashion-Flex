@@ -257,7 +257,7 @@
 
 
 									<div class="rs1-select2 rs2-select2 bor8 bg0 m-b-12 m-t-9">
-										<select id="payment-method" class="js-select2" name="paymentMethod" onchange="changeFunc()">
+										<select id="payment-method" class="js-select2" name="paymentmethod" onchange="changeFunc()">
 											<option>Payment Method...</option>
 											<option value="cod">Cash On Delivery</option>
 											<option value="card">By Card</option>
@@ -334,15 +334,15 @@
 	<!--Change Payment Method => Toggle Card Field visibility && Hide error message-->
 	<script>
 		function changeFunc() {
-			var paymentMethod = document.getElementById('payment-method').value;
+			var paymentmethod = document.getElementById('payment-method').value;
 			var cardElement = document.getElementById('card-element');
 
 
-			if (paymentMethod === 'card') {
+			if (paymentmethod === 'card') {
 				cardElement.style.display = 'block'; // Show the card element
 				document.getElementById('payment-method-error').textContent = ""; //Hide error message
 
-			} else if (paymentMethod === 'cod') {
+			} else if (paymentmethod === 'cod') {
 				cardElement.style.display = 'none'; // Hide the card element
 				document.getElementById('payment-method-error').textContent = ""; //Hide error message
 
@@ -351,8 +351,6 @@
 			}
 		}
 	</script>
-
-
 
 
 	<!--Payment Script-->
@@ -381,7 +379,7 @@
 			checkoutButtonLoading.style.display = 'inline-block';
 
 			// Get the selected payment method
-			var paymentMethod = document.getElementById('payment-method').value;
+			var paymentmethod = document.getElementById('payment-method').value;
 			var orderId = @customerCurrOrder.Id;
 			// Collect address from the input fields
 			const building = document.getElementById('address-building').value;
@@ -392,12 +390,13 @@
 			// Construct the full address string
 			const address = `${building}, ${street}, ${city}, ${governorate}`;
 
-			if (paymentMethod === 'card') {
+			if (paymentmethod === 'card') {
 				// Payment by Card
-				await makePaymentWithCard(stripe, card, orderId, paymentMethod, address);
-			} else if (paymentMethod === 'cod') {
+				await makePaymentWithCard(stripe, card, orderId, paymentmethod, address);
+			} else if (paymentmethod === 'cod') {
 				// Payment by Cash
-				await markOrderAsCompleted(orderId);
+				//await markOrderAsCompleted(orderId);
+				await makePaymentWithCash(orderId, paymentmethod, address);
 			} else {
 				// Not Selected
 				document.getElementById('payment-method-error').textContent = "You have to choose a payment method.";
@@ -440,45 +439,7 @@
 			}
 		}
 
-		// async function createPaymentIntent(amount) {
-		// 	const response = await fetch('/create-payment-intent', {
-		// 		method: 'POST',
-		// 		headers: {
-		// 			'Content-Type': 'application/json'
-		// 		},
-		// 		body: JSON.stringify({ amount })
-		// 	});
-		// 	return await response.json();
-		// }
-		// async function confirmPayment(clientSecret, cardElement) {
-		// 	const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
-		// 		payment_method: {
-		// 			card: cardElement,
-		// 			billing_details: {
-		// 				name: 'Customer Name', // Gather customer info
-		// 			},
-		// 		},
-		// 	});
-
-		// 	if (error) {
-		// 		// Handle error (e.g., show an error message)
-		// 		console.error(error);
-		// 		return null;
-		// 	} else {
-		// 		return paymentIntent; // Return the confirmed payment intent
-		// 	}
-		// }
-		// async function handlePayment() {
-		// 	const paymentIntent = await confirmPayment(clientSecret, cardElement);
-
-		// 	if (paymentIntent) {
-		// 		// Send payment data to the server
-		// 		await AddNewPayment(result, @customerCurrOrder.Id, "card", @customeraddress);
-		// 	}
-		// }
-		// Make Payment with Credit Card
-
-		async function makePaymentWithCard(stripe, card, orderId, paymentMethod, address) {
+		async function makePaymentWithCard(stripe, card, orderId, paymentmethod, address) {
 			try {
 				// Call backend code (in StripeController/CreatePaymentIntent)
 				const response = await fetch('/create-payment-intent', {
@@ -503,7 +464,7 @@
 					document.getElementById('card-errors').textContent = result.error.message;
 				} else if (result.paymentIntent.status === 'succeeded') {
 					// Payment succeeded, return payment details
-					await AddNewPayment(result.paymentIntent, orderId, paymentMethod, address);
+					await AddNewPayment(orderId, paymentmethod, address, result.paymentIntent);
 					await markOrderAsCompleted(orderId);
 				}
 
@@ -517,17 +478,29 @@
 			}
 		}
 
+		//pay with cash
+		async function makePaymentWithCash(orderId, paymentmethod, address) {
+			try {
+				await AddNewPayment(orderId, "Cash", address);
+				await markOrderAsCompleted(orderId);
+
+			} catch (error) {
+				console.error("Error in makePaymentWithCash:", error);
+				return null; // Return null or an error message
+			}
+		}
+
 
 		// Add New Paymnt
-		async function AddNewPayment(paymentIntent, orderId, paymentmethod, address) {
+		async function AddNewPayment(orderId, paymentmethod, address, paymentIntent) {
 			try {
 				await $.ajax({
 					url: '/Payment/NewPayment',
 					type: 'POST',
 					data: {
-						paymentIntentId: paymentIntent.id,
-						paymentStatus: paymentIntent.status,
-						currency: paymentIntent.currency,
+						paymentIntentId: paymentIntent?.id,
+						paymentStatus: paymentIntent?.status,
+						currency: paymentIntent?.currency,
 						orderId: orderId,
 						paymentmethod: paymentmethod,
 						address: address
