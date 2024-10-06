@@ -64,7 +64,7 @@ namespace Fashion_Flex.Controllers
 				//else create new item
 				else
 				{
-					CreateNewItem(pendingOrder, selectedProduct.Id);
+					CreateNewCartItem(pendingOrder, selectedProduct.Id);
 				}
 
 				//update total amount of the order price
@@ -76,7 +76,7 @@ namespace Fashion_Flex.Controllers
 				var newOrder = createNewCart(customer, selectedProduct);
 
 				//add new item to that cart
-				CreateNewItem(newOrder, selectedProduct.Id);
+				CreateNewCartItem(newOrder, selectedProduct.Id);
 
 			}
 			return Ok("Order is added successfuly!");
@@ -92,7 +92,7 @@ namespace Fashion_Flex.Controllers
 			_orderItemRepository.Save();
 		}
 
-		private void CreateNewItem(Order order, int selectedProductId)
+		private void CreateNewCartItem(Order order, int selectedProductId)
 		{
 			var newOrder_Item = new Order_Item
 			{
