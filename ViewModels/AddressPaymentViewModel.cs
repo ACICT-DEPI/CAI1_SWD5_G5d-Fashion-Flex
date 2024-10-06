@@ -28,5 +28,6 @@ namespace Fashion_Flex.ViewModels
         public string Address { get; set; }
 
 
+
     }
 }
