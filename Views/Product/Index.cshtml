@@ -315,7 +315,7 @@
 											<i class="fs-16 zmdi zmdi-minus"></i>
 										</div>
 
-										<input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product" value="1">
+										<input id="selected-quantity" class="mtext-104 cl3 txt-center num-product" type="number" name="num-product" value="1">
 
 										<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
 											<i class="fs-16 zmdi zmdi-plus"></i>
@@ -391,20 +391,22 @@
 		$(document).on('click', '.add-to-cart-button', function () {
 			var selectedProductId = $(this).data('product-id');
 			var nameProduct = $(this).data('product-name');
+			var selectedQuantity = document.getElementById('selected-quantity').value;
 
 			$.ajax({
 				url: '/Product/AddToCart',
 				type: 'GET',
-				data: { selectedProductId: selectedProductId },
+				data: { 
+					selectedProductId: selectedProductId,
+					selectedQuantity: selectedQuantity
+				},
 				success: function (response) {
 					swal(nameProduct, "is added to cart!", "success").then(() => {
 						location.reload();
 					});
 				},
 				error: function (xhr) {
-					swal(nameProduct, "Couldn't be added", "error").then(() => {
-						location.reload();
-					});
+					swal(nameProduct, "Couldn't be added", "error");
 				}
 			});
 		});

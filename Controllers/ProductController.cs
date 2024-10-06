@@ -41,10 +41,16 @@ namespace Fashion_Flex.Controllers
 
 
 		[HttpGet]
-		public IActionResult AddToCart(int selectedProductId)
+		public IActionResult AddToCart(int selectedProductId, int selectedQuantity = 1)
 		{
 			//if the user isnt loged in redirecting him to login page
 			if (!User.Identity.IsAuthenticated)
+			{
+				return BadRequest();
+			}
+
+			//Prevent 0 input
+			if (selectedQuantity == 0)
 			{
 				return BadRequest();
 			}
@@ -59,16 +65,16 @@ namespace Fashion_Flex.Controllers
 				//if item exists, just change its quantity
 				if (_orderItemRepository.OrderItemExist(pendingOrder.Id, selectedProduct.Id))
 				{
-					IncreaseSelectedItemQuantity(pendingOrder, selectedProduct.Id);
+					IncreaseSelectedItemQuantity(pendingOrder, selectedProduct.Id, selectedQuantity);
 				}
 				//else create new item
 				else
 				{
-					CreateNewCartItem(pendingOrder, selectedProduct.Id);
+					CreateNewCartItem(pendingOrder, selectedProduct.Id, selectedQuantity);
 				}
 
 				//update total amount of the order price
-				updateTotalAmount(pendingOrder, selectedProduct);
+				updateTotalAmount(pendingOrder, selectedProduct, selectedQuantity);
 			}
 			else
 			{
@@ -76,7 +82,7 @@ namespace Fashion_Flex.Controllers
 				var newOrder = createNewCart(customer, selectedProduct);
 
 				//add new item to that cart
-				CreateNewCartItem(newOrder, selectedProduct.Id);
+				CreateNewCartItem(newOrder, selectedProduct.Id, selectedQuantity);
 
 			}
 			return Ok("Order is added successfuly!");
@@ -84,21 +90,21 @@ namespace Fashion_Flex.Controllers
 
 
 		//---------
-		private void IncreaseSelectedItemQuantity(Order pendingOrder, int selectedProductId)
+		private void IncreaseSelectedItemQuantity(Order pendingOrder, int selectedProductId, int selectedQuantity)
 		{
 			var orderItem = _orderItemRepository.GetByProductAndOrderId(pendingOrder.Id, selectedProductId);
-			orderItem.Quantity++;
+			orderItem.Quantity += selectedQuantity;
 			_orderItemRepository.Update(orderItem);
 			_orderItemRepository.Save();
 		}
 
-		private void CreateNewCartItem(Order order, int selectedProductId)
+		private void CreateNewCartItem(Order order, int selectedProductId, int selectedQuantity)
 		{
 			var newOrder_Item = new Order_Item
 			{
 				Order_Id = order.Id,
 				Product_Id = selectedProductId,
-				Quantity = 1
+				Quantity = selectedQuantity
 			};
 
 			_orderItemRepository.Add(newOrder_Item);
@@ -121,9 +127,9 @@ namespace Fashion_Flex.Controllers
 			return newOrder;
 		}
 
-		private void updateTotalAmount(Order pendingOrder, Product selectedProduct)
+		private void updateTotalAmount(Order pendingOrder, Product selectedProduct, int selectedQuantity)
 		{
-			pendingOrder.Total_Amount += selectedProduct.Price;
+			pendingOrder.Total_Amount += (selectedProduct.Price) * selectedQuantity;
 			_orderRepository.Update(pendingOrder);
 			_orderItemRepository.Save();
 		}
