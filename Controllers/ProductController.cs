@@ -20,22 +20,26 @@ namespace Fashion_Flex.Controllers
 			this._orderItemRepository = _orderItemRepository;
 			this._customerRepository = _customerRepository;
 		}
-		public IActionResult Index(int pageIndex = 1, int pageSize = 8, string sortOrder = "", string category = "")
+		public IActionResult Index(int pageIndex = 1, int pageSize = 8, string sortOrder = "", string category = "", string type = "")
 		{
 			// Track the current sorting order
 			ViewData["CurrentSort"] = sortOrder;
 			// Keep track of the selected category
 			ViewData["CurrentCategory"] = category;
+			ViewData["CurrentType"] = type;  // Track the selected type (Women, Men, Watches, etc.)
 			// List of current Categories
 			var categories = _productRepository.GetCategories();
 			ViewData["Categories"] = categories;
+			// List of current Types
+			var types = _productRepository.GetTypes();
+			ViewData["Types"] = types;
 
 			// Assign sorting parameters for the view (already done previously)
 			ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
 			ViewData["PriceSortParam"] = sortOrder == "price" ? "price_desc" : "price";
 			ViewData["DateSortParam"] = sortOrder == "date" ? "date_desc" : "date";
 
-			var paginatedProducts = _productRepository.GetAllPaginated(pageIndex, pageSize, sortOrder, category);
+			var paginatedProducts = _productRepository.GetRefinedPages(pageIndex, pageSize, sortOrder, category, type);
 			return View(paginatedProducts);
 		}
 
