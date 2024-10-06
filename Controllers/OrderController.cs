@@ -100,9 +100,9 @@ namespace Fashion_Flex.Controllers
         }
 
 		//Mark Order (As Completed)
-		public IActionResult UpdateOrderStatusAsCompleted(int orderId)
+		public IActionResult MarkOrderAsCompleted(int orderId)
 		{
-			bool isUpdatedSuccefully = _orderRepository.updateOrderStatusAsCompleted(orderId);
+			bool isUpdatedSuccefully = _orderRepository.updateOrderStatus(orderId, "Completed");
 
 			if (isUpdatedSuccefully)
 			{

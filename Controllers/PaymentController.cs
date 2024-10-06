@@ -131,7 +131,7 @@ namespace Fashion_Flex.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult NewPayment(int orderId, string paymentmethod, string address, string? paymentIntentId = null, string paymentStatus = "success", string? currency = "USD")
+		public IActionResult NewPayment(int orderId, string paymentmethod, string address, string? paymentIntentId = null, string paymentStatus = "succeeded", string? currency = "usd")
 		{			
 			var order = _orderRepository.GetOrderById(orderId);					
 
@@ -198,22 +198,6 @@ namespace Fashion_Flex.Controllers
 		{
 			return View();
 		}
-		public IActionResult OrderConfirmation(int paymentid, int orderid)
-		{
-			_paymentRepository.updatePaymentStates(paymentid);
-			_orderRepository.updateOrderStatusAsCompleted(orderid);
-			Order order = _orderRepository.GetOrderById(orderid);
-			Payment payment = _paymentRepository.GetById(paymentid);
-			_paymentRepository.Save();
-			_orderRepository.Save();
-			if (order.Order_Status.ToLower() == "complete" && payment.Payment_Status.ToLower() == "paid")
-			{
-				return View("Successful", orderid);
-			}
-			else
-			{
-				return View("Faild", orderid);
-			}
-		}
+
 	}
 }

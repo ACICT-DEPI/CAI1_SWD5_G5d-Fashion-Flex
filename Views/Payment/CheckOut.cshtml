@@ -361,7 +361,7 @@
 		async function markOrderAsCompleted(orderId) {
 			try {
 				await $.ajax({
-					url: '/Order/UpdateOrderStatusAsCompleted',
+					url: '/Order/MarkOrderAsCompleted',
 					type: 'POST',
 					data: { orderId: orderId },
 					success: function (result) {
@@ -429,7 +429,7 @@
 		//pay with cash
 		async function makePaymentWithCash(orderId, paymentmethod, address) {
 			try {
-				await AddNewPayment(orderId, "Cash", address);
+				await AddNewPayment(orderId, "cash", address);
 				await markOrderAsCompleted(orderId);
 
 			} catch (error) {

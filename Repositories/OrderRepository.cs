@@ -54,13 +54,13 @@ namespace Fashion_Flex.IRepositories.Repository
 			context.SaveChanges();
 		}
 
-		public bool updateOrderStatusAsCompleted(int orderid)
+		public bool updateOrderStatus(int orderid, string status)
 		{
 			var Order = GetOrderById(orderid);
 			if (Order != null)
 			{
 
-				Order.Order_Status = "Completed";
+				Order.Order_Status = status;
 				Order.Tracking_Code = GenerateTrackingCode();
 
 				Save();

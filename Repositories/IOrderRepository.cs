@@ -11,7 +11,7 @@ namespace Fashion_Flex.Repository
         public List<Order> GetOrdersByCustomerId(int id);
         public List<Order> GetAll();
         void Save();
-        public bool updateOrderStatusAsCompleted(int orderId);
+        public bool updateOrderStatus(int orderId, string status);
         public Order GetCustomerCurrOrder(int customerId);
     }
 }
