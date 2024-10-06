@@ -133,9 +133,7 @@ namespace Fashion_Flex.Controllers
 		[HttpPost]
 		public IActionResult NewPayment(string? paymentIntentId, string paymentStatus, string? currency, int orderId, string paymentmethod, string address)
 		{
-			var order = _orderRepository.GetOrderById(orderId);
-			order.Shipping_Address = address;
-			_orderRepository.Update(order);
+			var order = _orderRepository.GetOrderById(orderId);						
 
 			var payment = new Payment
 			{
@@ -150,6 +148,12 @@ namespace Fashion_Flex.Controllers
 
 			_paymentRepository.Add(payment);
 			_paymentRepository.Save();
+
+			order.Shipping_Address = address;
+			order.Payment_Id = payment.Id;
+			_orderRepository.Update(order);
+			_orderRepository.Save();
+
 			return RedirectToAction("Index", "Home"); // Redirect to the home page upon successful payment
 		}
 
