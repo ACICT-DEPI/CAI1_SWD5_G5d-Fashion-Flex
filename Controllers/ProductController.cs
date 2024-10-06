@@ -2,7 +2,6 @@
 using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace Fashion_Flex.Controllers
@@ -53,72 +52,80 @@ namespace Fashion_Flex.Controllers
 			var selectedProduct = _productRepository.GetById(selectedProductId);
 			var customer = _customerRepository.GetByApplicationUserId(User.FindFirstValue(ClaimTypes.NameIdentifier));
 			var pendingOrder = _orderRepository.GetCustomerCurrOrder(customer.Id);
-			//if user have any order else create one
+
+			//if user have any pending cart (add to it), or else create new one
 			if (pendingOrder != null)
 			{
-				//if user added this item before, change only its quantity
+				//if item exists, just change its quantity
 				if (_orderItemRepository.OrderItemExist(pendingOrder.Id, selectedProduct.Id))
 				{
-					var orderItem = _orderItemRepository.GetByProductAndOrderId(pendingOrder.Id, selectedProduct.Id);
-					orderItem.Quantity++;
-					_orderItemRepository.Update(orderItem);
-					_orderItemRepository.Save();
+					IncreaseSelectedItemQuantity(pendingOrder, selectedProduct.Id);
 				}
-				//else create new order item
+				//else create new item
 				else
 				{
-					var newOrder_Item = new Order_Item
-					{
-						Order_Id = pendingOrder.Id,
-						Product_Id = selectedProduct.Id,
-						Quantity = 1
-					};
-
-					_orderItemRepository.Add(newOrder_Item);
-					_orderItemRepository.Save();
+					CreateNewItem(pendingOrder, selectedProduct.Id);
 				}
 
 				//update total amount of the order price
-				pendingOrder.Total_Amount += selectedProduct.Price;
-				_orderRepository.Update(pendingOrder);
-				_orderItemRepository.Save();
+				updateTotalAmount(pendingOrder, selectedProduct);
 			}
 			else
 			{
-				var newOrder = new Order
-				{
-					Customer_Id = customer.Id,
-					Order_Date = DateTime.Now,
-					Order_Status = "Pending",
-					Shipping_Address = customer.Street_Name + customer.Building_No + customer.City + customer.Governorate,
-					Total_Amount = selectedProduct.Price,
-				};
-				_orderRepository.Add(newOrder);
-				_orderItemRepository.Save();
+				//Create new cart
+				var newOrder = createNewCart(customer, selectedProduct);
 
-				//if user added this item before change only its quantity
-				if (_orderItemRepository.OrderItemExist(newOrder.Id, selectedProduct.Id))
-				{
-					var orderItem = _orderItemRepository.GetByProductAndOrderId(newOrder.Id, selectedProduct.Id);
-					orderItem.Quantity++;
-					_orderItemRepository.Update(orderItem);
-					_orderItemRepository.Save();
-				}
-				//else create new order item
-				else
-				{
-					var newOrder_Item = new Order_Item
-					{
-						Order_Id = newOrder.Id,
-						Product_Id = selectedProduct.Id,
-						Quantity = 1
-					};
+				//add new item to that cart
+				CreateNewItem(newOrder, selectedProduct.Id);
 
-					_orderItemRepository.Add(newOrder_Item);
-					_orderItemRepository.Save();
-				}
 			}
 			return Ok("Order is added successfuly!");
+		}
+
+
+		//---------
+		private void IncreaseSelectedItemQuantity(Order pendingOrder, int selectedProductId)
+		{
+			var orderItem = _orderItemRepository.GetByProductAndOrderId(pendingOrder.Id, selectedProductId);
+			orderItem.Quantity++;
+			_orderItemRepository.Update(orderItem);
+			_orderItemRepository.Save();
+		}
+
+		private void CreateNewItem(Order order, int selectedProductId)
+		{
+			var newOrder_Item = new Order_Item
+			{
+				Order_Id = order.Id,
+				Product_Id = selectedProductId,
+				Quantity = 1
+			};
+
+			_orderItemRepository.Add(newOrder_Item);
+			_orderItemRepository.Save();
+		}
+
+		private Order createNewCart(Customer customer, Product selectedProduct)
+		{
+			var newOrder = new Order
+			{
+				Customer_Id = customer.Id,
+				Order_Date = DateTime.Now,
+				Order_Status = "Pending",
+				Shipping_Address = customer.Street_Name + customer.Building_No + customer.City + customer.Governorate,
+				Total_Amount = selectedProduct.Price,
+			};
+			_orderRepository.Add(newOrder);
+			_orderItemRepository.Save();
+
+			return newOrder;
+		}
+
+		private void updateTotalAmount(Order pendingOrder, Product selectedProduct)
+		{
+			pendingOrder.Total_Amount += selectedProduct.Price;
+			_orderRepository.Update(pendingOrder);
+			_orderItemRepository.Save();
 		}
 	}
 }
