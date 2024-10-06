@@ -109,7 +109,7 @@ namespace Fashion_Flex.Controllers
 				return Ok("Order is succecfuly placed");
 			} else
             {
-				return BadRequest("Order couldn't be placed"); //
+				return BadRequest("Order couldn't be placed");
 			}
 		}
 	}
