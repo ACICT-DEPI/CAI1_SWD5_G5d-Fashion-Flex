@@ -20,14 +20,32 @@ namespace Fashion_Flex.Controllers
 			this._orderItemRepository = _orderItemRepository;
 			this._customerRepository = _customerRepository;
 		}
-		public IActionResult Index(int pageIndex = 1, int pageSize = 8)
+		public IActionResult Index(int pageIndex = 1, int pageSize = 8, string sortOrder = "", string category = "", string type = "")
 		{
-			var paginatedProducts = _productRepository.GetPaginatedProducts(pageIndex, pageSize);
+			// Track the current sorting order
+			ViewData["CurrentSort"] = sortOrder;
+			// Keep track of the selected category
+			ViewData["CurrentCategory"] = category;
+			ViewData["CurrentType"] = type;  // Track the selected type (Women, Men, Watches, etc.)
+			// List of current Categories
+			var categories = _productRepository.GetCategories();
+			ViewData["Categories"] = categories;
+			// List of current Types
+			var types = _productRepository.GetTypes();
+			ViewData["Types"] = types;
+
+			// Assign sorting parameters for the view (already done previously)
+			ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+			ViewData["PriceSortParam"] = sortOrder == "price" ? "price_desc" : "price";
+			ViewData["DateSortParam"] = sortOrder == "date" ? "date_desc" : "date";
+
+			var paginatedProducts = _productRepository.GetRefinedPages(pageIndex, pageSize, sortOrder, category, type);
 			return View(paginatedProducts);
 		}
 
+
 		[HttpGet]
-		public IActionResult AddToCart(int selectedProductId)
+		public IActionResult AddToCart(int selectedProductId, int selectedQuantity = 1)
 		{
 			//if the user isnt loged in redirecting him to login page
 			if (!User.Identity.IsAuthenticated)
@@ -35,76 +53,89 @@ namespace Fashion_Flex.Controllers
 				return BadRequest();
 			}
 
+			//Prevent 0 input
+			if (selectedQuantity == 0)
+			{
+				return BadRequest();
+			}
+
 			var selectedProduct = _productRepository.GetById(selectedProductId);
 			var customer = _customerRepository.GetByApplicationUserId(User.FindFirstValue(ClaimTypes.NameIdentifier));
 			var pendingOrder = _orderRepository.GetCustomerCurrOrder(customer.Id);
-			//if user have any order else create one
+
+			//if user have any pending cart (add to it), or else create new one
 			if (pendingOrder != null)
 			{
-				//if user added this item before, change only its quantity
+				//if item exists, just change its quantity
 				if (_orderItemRepository.OrderItemExist(pendingOrder.Id, selectedProduct.Id))
 				{
-					var orderItem = _orderItemRepository.GetByProductAndOrderId(pendingOrder.Id, selectedProduct.Id);
-					orderItem.Quantity++;
-					_orderItemRepository.Update(orderItem);
-					_orderItemRepository.Save();
+					IncreaseSelectedItemQuantity(pendingOrder, selectedProduct.Id, selectedQuantity);
 				}
-				//else create new order item
+				//else create new item
 				else
 				{
-					var newOrder_Item = new Order_Item
-					{
-						Order_Id = pendingOrder.Id,
-						Product_Id = selectedProduct.Id,
-						Quantity = 1
-					};
-
-					_orderItemRepository.Add(newOrder_Item);
-					_orderItemRepository.Save();
+					CreateNewCartItem(pendingOrder, selectedProduct.Id, selectedQuantity);
 				}
 
 				//update total amount of the order price
-				pendingOrder.Total_Amount += selectedProduct.Price;
-				_orderRepository.Update(pendingOrder);
-				_orderItemRepository.Save();
+				updateTotalAmount(pendingOrder, selectedProduct, selectedQuantity);
 			}
 			else
 			{
-				var newOrder = new Order
-				{
-					Customer_Id = customer.Id,
-					Order_Date = DateTime.Now,
-					Order_Status = "Pending",
-					Shipping_Address = customer.Address,
-					Total_Amount = selectedProduct.Price,
-					Tracking_Number = 0
-				};
-				_orderRepository.Add(newOrder);
-				_orderItemRepository.Save();
+				//Create new cart
+				var newOrder = createNewCart(customer, selectedProduct);
 
-				//if user added this item before change only its quantity
-				if (_orderItemRepository.OrderItemExist(newOrder.Id, selectedProduct.Id))
-				{
-					var orderItem = _orderItemRepository.GetByProductAndOrderId(newOrder.Id, selectedProduct.Id);
-					orderItem.Quantity++;
-					_orderItemRepository.Update(orderItem);
-					_orderItemRepository.Save();
-				}
-				//else create new order item
-				else
-				{
-					var newOrder_Item = new Order_Item
-					{
-						Order_Id = newOrder.Id,
-						Product_Id = selectedProduct.Id,
-						Quantity = 1
-					};
+				//add new item to that cart
+				CreateNewCartItem(newOrder, selectedProduct.Id, selectedQuantity);
 
-					_orderItemRepository.Add(newOrder_Item);
-					_orderItemRepository.Save();
-				}
 			}
-			return RedirectToAction("Index", "Product");
+			return Ok("Order is added successfuly!");
+		}
+
+
+		//---------
+		private void IncreaseSelectedItemQuantity(Order pendingOrder, int selectedProductId, int selectedQuantity)
+		{
+			var orderItem = _orderItemRepository.GetByProductAndOrderId(pendingOrder.Id, selectedProductId);
+			orderItem.Quantity += selectedQuantity;
+			_orderItemRepository.Update(orderItem);
+			_orderItemRepository.Save();
+		}
+
+		private void CreateNewCartItem(Order order, int selectedProductId, int selectedQuantity)
+		{
+			var newOrder_Item = new Order_Item
+			{
+				Order_Id = order.Id,
+				Product_Id = selectedProductId,
+				Quantity = selectedQuantity
+			};
+
+			_orderItemRepository.Add(newOrder_Item);
+			_orderItemRepository.Save();
+		}
+
+		private Order createNewCart(Customer customer, Product selectedProduct)
+		{
+			var newOrder = new Order
+			{
+				Customer_Id = customer.Id,
+				Order_Date = DateTime.Now,
+				Order_Status = "Pending",
+				Shipping_Address = customer.Street_Name + customer.Building_No + customer.City + customer.Governorate,
+				Total_Amount = selectedProduct.Price,
+			};
+			_orderRepository.Add(newOrder);
+			_orderItemRepository.Save();
+
+			return newOrder;
+		}
+
+		private void updateTotalAmount(Order pendingOrder, Product selectedProduct, int selectedQuantity)
+		{
+			pendingOrder.Total_Amount += (selectedProduct.Price) * selectedQuantity;
+			_orderRepository.Update(pendingOrder);
+			_orderItemRepository.Save();
 		}
 	}
 }

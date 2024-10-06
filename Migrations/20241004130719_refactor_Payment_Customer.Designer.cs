@@ -4,6 +4,7 @@ using Fashion_Flex.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fashion_Flex.Migrations
 {
     [DbContext(typeof(FFContext))]
-    partial class FFContextModelSnapshot : ModelSnapshot
+    [Migration("20241004130719_refactor_Payment_Customer")]
+    partial class refactor_Payment_Customer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -201,8 +204,8 @@ namespace Fashion_Flex.Migrations
                     b.Property<decimal>("Total_Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Tracking_Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Tracking_Number")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -248,6 +251,7 @@ namespace Fashion_Flex.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Currency")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Order_Id")
@@ -312,10 +316,6 @@ namespace Fashion_Flex.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

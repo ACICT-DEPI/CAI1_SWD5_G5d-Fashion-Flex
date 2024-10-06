@@ -3,6 +3,7 @@ using Fashion_Flex.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace Fashion_Flex.Controllers
 {
     public class OrderController : Controller
@@ -81,7 +82,7 @@ namespace Fashion_Flex.Controllers
 
 
         // Get order history for a customer
-        public IActionResult OrderHistory(int customerId)
+        public IActionResult OrdersHistory(int customerId)
         {
             var orders = _orderRepository.GetOrdersByCustomerId(customerId); //Get all the orders a customer made
             return View(orders); //
@@ -97,5 +98,19 @@ namespace Fashion_Flex.Controllers
             }
             return View(order); //
         }
-    }
+
+		//Mark Order (As Completed)
+		public IActionResult MarkOrderAsCompleted(int orderId)
+		{
+			bool isUpdatedSuccefully = _orderRepository.updateOrderStatus(orderId, "Completed");
+
+			if (isUpdatedSuccefully)
+			{
+				return Ok("Order is succecfuly placed");
+			} else
+            {
+				return BadRequest("Order couldn't be placed");
+			}
+		}
+	}
 }

@@ -1,14 +1,18 @@
 ﻿using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace Fashion_Flex.IRepositories.Repository
 {
 	public class OrderRepository : IOrderRepository
 	{
+		private static readonly Random random = new Random();
+
+
 		private readonly FFContext context;
-        static Random rng = new Random();
-        public OrderRepository(FFContext context)
+		static Random rng = new Random();
+		public OrderRepository(FFContext context)
 		{
 			this.context = context;
 		}
@@ -47,60 +51,49 @@ namespace Fashion_Flex.IRepositories.Repository
 
 		public void Save()
 		{
-			throw new NotImplementedException();
+			context.SaveChanges();
 		}
-        /*public int generaterandomnum()
-        {
-            int min = 1;
-            int max = 100;
 
-            List<int> numbers = new List<int>();
+		public bool updateOrderStatus(int orderid, string status)
+		{
+			var Order = GetOrderById(orderid);
+			if (Order != null)
+			{
 
-            for (int i = min; i < max; i++)
-            {
-                numbers.Add(i);
-            }
+				Order.Order_Status = status;
+				Order.Tracking_Code = GenerateTrackingCode();
 
-            // Shuffle the list
-            Shuffle(numbers);
-            return numbers;
-
-        }
-
-
-        static void Shuffle<T>(IList<T> list)
-        {
-            int n = list.Count;
-            while (n > 1)
-            {
-                int k = rng.Next(n--);
-                T value = list[n];
-                list[n] = list[k];
-                list[k] = value;
-            }
-        }*/
-
-        public void updateOrderStates(int orderid)
-        {
-            var Order = GetOrderById(orderid);
-            if (Order != null)
-            {
-
-                Order.Order_Status = "Completed";
-                Order.Order_Date = DateTime.Now;
-                //Order.Tracking_Number = generaterandomnum();
-
-            }
-            else
-            {
-                throw new InvalidOperationException($"Order with id:{orderid} is not found");
-            }
-        }
+				Save();
+				return true;
+			}
+			else
+			{
+				return false;
+				throw new InvalidOperationException($"Order with id:{orderid} is not found");
+			}
+		}
 
 		public Order GetCustomerCurrOrder(int customerId)
 		{
 			return context.Orders.Where(o => o.Order_Status == "Pending" && o.Customer_Id == customerId).FirstOrDefault();
 		}
 
+
+		private string GenerateTrackingCode()
+		{
+			int length = 6;
+
+			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			StringBuilder stringBuilder = new StringBuilder(length);
+
+			for (int i = 0; i < length; i++)
+			{
+				// Directly append characters to StringBuilder
+				stringBuilder.Append(chars[random.Next(chars.Length)]);
+			}
+
+			return stringBuilder.ToString(); // Convert to string at the end
+		}
 	}
 }
+

@@ -1,7 +1,8 @@
-﻿@{
+﻿@model PaginatedList<Product>
+@{
+	ViewData["Title"] = "Store";
 	Layout = "_CozaStoreLayout";
 }
-@model PaginatedList<Product>
 
 
 <!-- Product -->
@@ -9,29 +10,21 @@
 	<div class="container">
 		<div class="flex-w flex-sb-m p-b-52">
 			<div class="flex-w flex-l-m filter-tope-group m-tb-10">
-				<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
+				<a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="" class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 @(String.IsNullOrEmpty(ViewData["CurrentType"] as string) ? "how-active1" : "")" data-filter="*">
 					All Products
-				</button>
+				</a>
 
-				<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".women">
-					Women
-				</button>
+				@foreach (var type in ViewData["Types"] as List<string>)
+				{
+					<a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@type" class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 @(ViewData["CurrentType"] as string == type ? "how-active1" : "")" data-filter=".@type">
+						@type
+					</a>
+				}
 
-				<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".men">
-					Men
-				</button>
+				@* <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".men">
+				Men
+				</button> *@
 
-				<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".bag">
-					Bag
-				</button>
-
-				<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".shoes">
-					Shoes
-				</button>
-
-				<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
-					Watches
-				</button>
 			</div>
 
 			<div class="flex-w flex-c-m m-tb-10">
@@ -69,40 +62,30 @@
 
 						<ul>
 							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04">
+								<a asp-action="Index" asp-route-sortOrder="" asp-route-category="@ViewData["CurrentCategory"]" class="filter-link stext-106 trans-04 @(String.IsNullOrEmpty(ViewData["CurrentSort"] as string) ? "filter-link-active" : "")">
 									Default
 								</a>
 							</li>
 
-							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04">
-									Popularity
-								</a>
-							</li>
 
 							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04">
-									Average rating
-								</a>
-							</li>
-
-							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04 filter-link-active">
+								<a asp-action="Index" asp-route-sortOrder="newness" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@ViewData["CurrentType"]" class="filter-link stext-106 trans-04 @(ViewData["CurrentSort"] as string == "newness" ? "filter-link-active" : "")">
 									Newness
 								</a>
 							</li>
 
 							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04">
+								<a asp-action="Index" asp-route-sortOrder="price" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@ViewData["CurrentType"]" class="filter-link stext-106 trans-04 @(ViewData["CurrentSort"] as string == "price" ? "filter-link-active" : "")">
 									Price: Low to High
 								</a>
 							</li>
 
 							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04">
+								<a asp-action="Index" asp-route-sortOrder="price_desc" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@ViewData["CurrentType"]" class="filter-link stext-106 trans-04 @(ViewData["CurrentSort"] as string == "price_desc" ? "filter-link-active" : "")">
 									Price: High to Low
 								</a>
 							</li>
+
 						</ul>
 					</div>
 
@@ -152,69 +135,25 @@
 
 					<div class="filter-col3 p-r-15 p-b-27">
 						<div class="mtext-102 cl2 p-b-15">
-							Color
+							Filter By Category
 						</div>
 
 						<ul>
 							<li class="p-b-6">
-								<span class="fs-15 lh-12 m-r-6" style="color: #222;">
-									<i class="zmdi zmdi-circle"></i>
-								</span>
-
-								<a href="#" class="filter-link stext-106 trans-04">
-									Black
+								<a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="" asp-route-type="@ViewData["CurrentType"]" class="filter-link stext-106 trans-04 @(String.IsNullOrEmpty(ViewData["CurrentCategory"] as string) ? "filter-link-active" : "")">
+									All Categories
 								</a>
 							</li>
 
-							<li class="p-b-6">
-								<span class="fs-15 lh-12 m-r-6" style="color: #4272d7;">
-									<i class="zmdi zmdi-circle"></i>
-								</span>
+							@foreach (var category in ViewData["Categories"] as List<string>)
+							{
+								<li class="p-b-6">
+									<a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@category" asp-route-type="@ViewData["CurrentType"]" class="filter-link stext-106 trans-04 @(ViewData["CurrentCategory"] as string == category ? "filter-link-active" : "")">
+										@category
+									</a>
+								</li>
+							}
 
-								<a href="#" class="filter-link stext-106 trans-04 filter-link-active">
-									Blue
-								</a>
-							</li>
-
-							<li class="p-b-6">
-								<span class="fs-15 lh-12 m-r-6" style="color: #b3b3b3;">
-									<i class="zmdi zmdi-circle"></i>
-								</span>
-
-								<a href="#" class="filter-link stext-106 trans-04">
-									Grey
-								</a>
-							</li>
-
-							<li class="p-b-6">
-								<span class="fs-15 lh-12 m-r-6" style="color: #00ad5f;">
-									<i class="zmdi zmdi-circle"></i>
-								</span>
-
-								<a href="#" class="filter-link stext-106 trans-04">
-									Green
-								</a>
-							</li>
-
-							<li class="p-b-6">
-								<span class="fs-15 lh-12 m-r-6" style="color: #fa4251;">
-									<i class="zmdi zmdi-circle"></i>
-								</span>
-
-								<a href="#" class="filter-link stext-106 trans-04">
-									Red
-								</a>
-							</li>
-
-							<li class="p-b-6">
-								<span class="fs-15 lh-12 m-r-6" style="color: #aaa;">
-									<i class="zmdi zmdi-circle-o"></i>
-								</span>
-
-								<a href="#" class="filter-link stext-106 trans-04">
-									White
-								</a>
-							</li>
 						</ul>
 					</div>
 
@@ -257,13 +196,19 @@
 					<div class="block2">
 						<div class="block2-pic hov-img0">
 							<img src="~/images/@product.Image" alt="IMG-PRODUCT">
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
+							   data-id="@product.Id"
+							   data-name="@product.Name"
+							   data-price="@product.Price.ToString("C")"
+							   data-image="@product.Image"
+							   data-description="@product.Description">
+								<!-- Add description if needed -->
 								Quick View
 							</a>
 						</div>
 						<div class="block2-txt flex-w flex-t p-t-14">
 							<div class="block2-txt-child1 flex-col-l ">
-								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+								<a href="product-detail.html" class="js-name-detail stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
 									@product.Name
 								</a>
 								<span class="stext-105 cl3">
@@ -271,9 +216,9 @@
 								</span>
 								@if (User.Identity.IsAuthenticated)
 								{
-									<a asp-controller="Product" asp-action="AddToCart" asp-route-selectedProductId="@product.Id" class="btn-add-to-cart flex-c-m stext-101 cl2 size-101 bg0 bor1 hov-btn1 p-lr-15 trans-04 m-l-80">
+									<button data-product-id="@product.Id" data-product-name="@product.Name" class="add-to-cart-button flex-c-m stext-101 cl2 size-101 bg0 bor1 hov-btn1 p-lr-15 trans-04 m-l-80">
 										Add to Cart
-									</a>
+									</button>
 								}
 							</div>
 						</div>
@@ -286,50 +231,166 @@
 		<div class="flex-c-m flex-w w-full p-t-45">
 			@if (Model.HasPreviousPage)
 			{
-				<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex - 1)" class="btn btn-secondary mr-1">Previous</a>
+				<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex - 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@ViewData["CurrentType"]" class="btn btn-secondary mr-1">Previous</a>
 			}
 
 			@for (int i = 1; i <= Model.TotalPages; i++)
 			{
 				if (i == Model.PageIndex)
 				{
-					<a asp-action="Index" asp-route-pageIndex="@i" style="pointer-events: none;" class="btn btn-primary">@i</a>
+					<a asp-action="Index" asp-route-pageIndex="@i" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@ViewData["CurrentType"]" style="pointer-events: none;" class="btn btn-primary">@i</a>
 				}
 				else
 				{
-					<a asp-action="Index" asp-route-pageIndex="@i" class="btn btn-secondary">@i</a>
+					<a asp-action="Index" asp-route-pageIndex="@i" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@ViewData["CurrentType"]" class="btn btn-secondary">@i</a>
 				}
 			}
 
 			@if (Model.HasNextPage)
 			{
-				<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" class="btn btn-secondary ml-1">Next</a>
+				<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@ViewData["CurrentType"]" class="btn btn-secondary ml-1">Next</a>
 			}
 		</div>
 
 	</div>
 </div>
 
+<!-- Modal1 -->
+<div class="wrap-modal1 js-modal1 p-t-60 p-b-20" style="display:none;">
+	<!-- Added style to hide the modal by default -->
+	<div class="overlay-modal1 js-hide-modal1"></div>
+
+	<div class="container">
+		<div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
+			<button class="how-pos3 hov3 trans-04 js-hide-modal1">
+				<img src="images/icons/icon-close.png" alt="CLOSE">
+			</button>
+
+			<div class="row">
+				<div class="col-md-6 col-lg-7 p-b-30">
+					<div class="p-l-25 p-r-30 p-lr-0-lg">
+						<div class="wrap-slick3 flex-sb flex-w">
+							<div class="wrap-slick3-dots"></div>
+							<div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
+
+							<img src="~/images/product-detail-01.jpg" alt="IMG-PRODUCT" height="500" width="410" class="js-image-detail">
+
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-6 col-lg-5 p-b-30">
+					<div class="p-r-50 p-t-5 p-lr-0-lg">
+						<h4 class="mtext-105 cl2 js-name-model-detail p-b-14"></h4>
+						<span class="mtext-106 cl2 js-price-detail"></span>
+
+						<p class="stext-102 cl3 p-t-23 js-description-detail">
+							<!-- This will be populated dynamically -->
+						</p>
+
+						<div class="p-t-33">
+							<div class="flex-w flex-r-m p-b-10">
+								<div class="size-204 flex-w flex-m respon6-next">
+									<div class="wrap-num-product flex-w m-r-20 m-tb-10">
+										<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+											<i class="fs-16 zmdi zmdi-minus"></i>
+										</div>
+
+										<input id="selected-quantity" class="mtext-104 cl3 txt-center num-product" type="number" name="num-product" value="1">
+
+										<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+											<i class="fs-16 zmdi zmdi-plus"></i>
+										</div>
+									</div>
+								</div>
+
+								<a href="#" class="add-to-cart-button flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+									Add to cart
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
 @section Scripts {
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");
 	}
-	@* <script>
-		function addToCart(productId) {
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+		$(document).ready(function () {
+
+			// When the "Quick View" button is clicked
+			$('.js-show-modal1').on('click', function (e) {
+				e.preventDefault(); // Prevent the default action
+
+				// Get the product details from data attributes
+				var productId = $(this).data('id'); // Get product ID
+				var productName = $(this).data('name');
+				var productPrice = $(this).data('price');
+				var productImage = $(this).data('image'); // Assuming this is a relative path
+				var productDescription = $(this).data('description'); // Get product description
+
+				// Construct the image URL using the format provided
+				var imageUrl = 'images/' + productImage;
+
+				// Update modal content
+				$('.js-name-model-detail').text(productName);
+				$('.mtext-106.cl2').text(productPrice);
+				$('.js-description-detail').text(productDescription); // Update description
+				$('.js-image-detail').attr('src', imageUrl); // Update the main image
+				$('.item-slick3').attr('data-thumb', imageUrl); // Update thumbnail if needed
+				// Update the add to cart data params
+				$('.add-to-cart-button').data('product-id', productId);
+				$('.add-to-cart-button').data('product-name', productName);
+
+				// Show the modal
+				$('.js-modal1').fadeIn();
+			});
+
+			// Hide modal when clicking on close button
+			$('.js-hide-modal1').on('click', function () {
+				$('.js-modal1').fadeOut();
+			});
+		});
+	</script>
+
+	<script>
+		$(document).on('click', '.add-to-cart-button', function () {
+			var selectedProductId = $(this).data('product-id');
+			var nameProduct = $(this).data('product-name');
+			var selectedQuantity = document.getElementById('selected-quantity').value;
+
 			$.ajax({
 				url: '/Product/AddToCart',
-				type: 'POST',
-				data: {
-					selectedProductId: productId
+				type: 'GET',
+				data: { 
+					selectedProductId: selectedProductId,
+					selectedQuantity: selectedQuantity
 				},
 				success: function (response) {
-					alert('Product added to cart successfully!');
+					swal(nameProduct, "is added to cart!", "success").then(() => {
+						location.reload();
+					});
 				},
-				error: function (xhr, status, error) {
-					alert('Error: ' + error);
+				error: function (xhr) {
+					swal(nameProduct, "Couldn't be added", "error");
 				}
 			});
-		}
-	</script> *@
+		});
+	</script>
 
 }

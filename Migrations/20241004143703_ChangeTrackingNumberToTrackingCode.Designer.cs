@@ -4,6 +4,7 @@ using Fashion_Flex.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fashion_Flex.Migrations
 {
     [DbContext(typeof(FFContext))]
-    partial class FFContextModelSnapshot : ModelSnapshot
+    [Migration("20241004143703_ChangeTrackingNumberToTrackingCode")]
+    partial class ChangeTrackingNumberToTrackingCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,17 +101,13 @@ namespace Fashion_Flex.Migrations
                     b.Property<DateTime>("Account_Creation_Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ApplicationUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Building_No")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateOnly>("Date_Of_Birth")
                         .HasColumnType("date");
@@ -118,10 +117,6 @@ namespace Fashion_Flex.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("First_Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Governorate")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -136,10 +131,6 @@ namespace Fashion_Flex.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone_Number")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Street_Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -247,7 +238,11 @@ namespace Fashion_Flex.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Currency")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Order_Id")
@@ -265,6 +260,7 @@ namespace Fashion_Flex.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Transaction_Id")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -312,10 +308,6 @@ namespace Fashion_Flex.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
