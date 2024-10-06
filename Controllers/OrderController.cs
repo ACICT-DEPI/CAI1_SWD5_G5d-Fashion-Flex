@@ -82,7 +82,7 @@ namespace Fashion_Flex.Controllers
 
 
         // Get order history for a customer
-        public IActionResult OrderHistory(int customerId)
+        public IActionResult OrdersHistory(int customerId)
         {
             var orders = _orderRepository.GetOrdersByCustomerId(customerId); //Get all the orders a customer made
             return View(orders); //
