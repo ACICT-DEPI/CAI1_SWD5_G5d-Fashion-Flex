@@ -147,6 +147,7 @@
 								<div class="p-t-15">
 									<div class="bor8 bg0 m-b-12">
 										<input class="stext-111 cl8 plh3 size-111 p-lr-15"
+											   id="email"
 											   type="email"
 											   name="email"
 											   placeholder="Enter your email address"
@@ -156,6 +157,7 @@
 
 									<div class="bor8 bg0 m-b-12">
 										<input class="stext-111 cl8 plh3 size-111 p-lr-15"
+											   id="phone"
 											   type="tel"
 											   name="phone"
 											   placeholder="Enter your phone number"
@@ -514,6 +516,43 @@
 			100% {
 				transform: rotate(360deg);
 			}
+		}
+	</style>
+
+	<!-- Style for Placeholders for Each Element -->
+	<style>
+		#email::placeholder {
+			color: #888; 
+			opacity: 0.8;
+		}
+
+		#phone::placeholder {
+			color: #888; 
+			opacity: 0.8;
+		}
+
+		#address-building::placeholder {
+			color: #888; 
+			opacity: 0.8;
+		}
+
+		#address-street::placeholder {
+			color: #888; 
+			opacity: 0.8;
+		}
+
+		#address-city::placeholder {
+			color: #888; 
+			opacity: 0.8;
+		}
+
+		#address-governorate::placeholder {
+			color: #888;
+			opacity: 0.8;
+		}
+
+		#email, #phone, #address-building, #address-street, #address-city, #address-governorate {
+			color: #000; 
 		}
 	</style>
 
