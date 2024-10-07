@@ -1,5 +1,6 @@
 ﻿using Fashion_Flex.IRepositories;
 using Fashion_Flex.Models;
+using Fashion_Flex.Repositories;
 using Fashion_Flex.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -20,7 +21,7 @@ namespace Fashion_Flex.Controllers
 			this._orderItemRepository = _orderItemRepository;
 			this._customerRepository = _customerRepository;
 		}
-		public IActionResult Index(int pageIndex = 1, int pageSize = 8, string sortOrder = "", string category = "", string type = "")
+		public IActionResult Index(int pageIndex = 1, int pageSize = 8, string sortOrder = "", string category = "", string type = "", string searchString ="")
 		{
 			// Track the current sorting order
 			ViewData["CurrentSort"] = sortOrder;
@@ -39,8 +40,18 @@ namespace Fashion_Flex.Controllers
 			ViewData["PriceSortParam"] = sortOrder == "price" ? "price_desc" : "price";
 			ViewData["DateSortParam"] = sortOrder == "date" ? "date_desc" : "date";
 
+			var products = ProductRepository.GetAll();
+
+			if (!string.IsNullOrEmpty(searchString))
+			{
+				products = products.Where(p => p.Name.Contains(searchString));
+			}
+
 			var paginatedProducts = _productRepository.GetRefinedPages(pageIndex, pageSize, sortOrder, category, type);
 			return View(paginatedProducts);
+
+
+
 		}
 
 
