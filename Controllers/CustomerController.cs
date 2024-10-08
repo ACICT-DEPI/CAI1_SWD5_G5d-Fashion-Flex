@@ -173,7 +173,7 @@ namespace Fashion_Flex.Controllers
 				Date_Of_Birth = customer.Date_Of_Birth,
 				Phone_Number = customer.Phone_Number,
 				Phone_Country_Code = customer.Phone_Country_Code,
-				Is_Active = true //customer.Is_Active
+				Is_Active = customer.Is_Active
 			};
 
 			return View(model);
