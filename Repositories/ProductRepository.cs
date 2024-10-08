@@ -52,10 +52,11 @@ namespace Fashion_Flex.Repositories
 			context.SaveChanges();
 		}
 
-		public PaginatedList<Product> GetRefinedPages(int pageIndex, int pageSize, string sortOrder, string category, string type)
+		public PaginatedList<Product> GetRefinedPages(int pageIndex, int pageSize, string sortOrder, string category, string type, string searchString)
 		{
 			var products = from p in context.Products
 						   select p;
+			products = SearchStringByName(products, searchString);
 
 			// Apply filtering by type (Women, Men, Watches, etc.)
 			if (!String.IsNullOrEmpty(type))
@@ -111,7 +112,13 @@ namespace Fashion_Flex.Repositories
 		{
 			return products.Where(p => p.Category == category);
 		}
-
+		public IQueryable<Product> SearchStringByName(IQueryable<Product> products, string searchString)
+		{
+			var filteredProducts = string.IsNullOrEmpty(searchString)
+			? products
+			: products.Where(p => p.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase));
+			return filteredProducts;
+		}
 		public IQueryable<Product> FilterByType(IQueryable<Product> products, string type)
 		{
 			return products.Where(p => p.type == type);

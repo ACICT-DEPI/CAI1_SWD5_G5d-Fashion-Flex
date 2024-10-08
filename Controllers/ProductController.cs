@@ -40,17 +40,10 @@ namespace Fashion_Flex.Controllers
 			ViewData["PriceSortParam"] = sortOrder == "price" ? "price_desc" : "price";
 			ViewData["DateSortParam"] = sortOrder == "date" ? "date_desc" : "date";
 
-			var products = ProductRepository.GetAll();
 
-			if (!string.IsNullOrEmpty(searchString))
-			{
-				products = products.Where(p => p.Name.Contains(searchString));
-			}
 
-			var paginatedProducts = _productRepository.GetRefinedPages(pageIndex, pageSize, sortOrder, category, type);
+			var paginatedProducts = _productRepository.GetRefinedPages(pageIndex, pageSize, sortOrder, category, type, searchString);
 			return View(paginatedProducts);
-
-
 
 		}
 
