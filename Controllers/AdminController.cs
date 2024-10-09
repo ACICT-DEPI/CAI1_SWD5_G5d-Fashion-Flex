@@ -2,22 +2,19 @@
 using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
 using Fashion_Flex.ViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Stripe;
-using Stripe.Climate;
-using System.Drawing;
 using Product = Fashion_Flex.Models.Product;
 
 namespace Fashion_Flex.Controllers
 {
-	[Authorize(Roles = "Admin")]
+//	[Authorize(Roles = "Admin")]
 	public class AdminController : Controller
 	{
 		private readonly ICustomerRepository _customerRepository;
 		private readonly IProductRepository _productRepository;
+		private readonly IOrderRepository _orderRepository;
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly SignInManager<ApplicationUser> _signInManager;
 		List<SelectListItem> countryPhoneCodes = new List<SelectListItem>
@@ -120,12 +117,13 @@ namespace Fashion_Flex.Controllers
 				// Add more countries as needed...
 			};
 		public AdminController(ICustomerRepository _customerRepository, UserManager<ApplicationUser> _userManager,
-			   SignInManager<ApplicationUser> _signInManager, IProductRepository _productRepository)
+			   SignInManager<ApplicationUser> _signInManager, IProductRepository _productRepository, IOrderRepository _orderRepository)
 		{
 			this._customerRepository = _customerRepository;
 			this._userManager = _userManager;
 			this._signInManager = _signInManager;
 			this._productRepository = _productRepository;
+			this._orderRepository = _orderRepository;
 		}
 		//Dashboard
 		public IActionResult Index()
@@ -416,11 +414,27 @@ namespace Fashion_Flex.Controllers
 		}
 		#endregion
 
-		//Order Actions
+
+		#region Orders
+		//Orders Actions
+		[HttpGet]
 		public IActionResult Orders()
 		{
-			ViewData["currTab"] = "orders";
-			return View();
+			ViewData["currTab"] = "Orders";
+            List<Order> orders = _orderRepository.GetAll();
+
+            ViewBag.OrderCount = orders.Count;
+
+			decimal totalAmount = 0;
+			for(int i = 0; i<orders.Count; i++)
+			{
+				totalAmount += orders[i].Total_Amount;
+            }
+
+            ViewBag.OrdersTotalAmount = totalAmount;
+
+            return View(orders);
 		}
+		#endregion
 	}
 }

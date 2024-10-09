@@ -46,8 +46,11 @@ namespace Fashion_Flex.IRepositories.Repository
 
 		public List<Order> GetAll()
 		{
-			return context.Orders.ToList();
-		}
+
+            return context.Orders
+					.Include(o => o.Customer) 
+					.ToList();
+        }
 
 		public void Save()
 		{

@@ -4,12 +4,13 @@
 
 <h2>Orders</h2>
 <p>Total Orders: @ViewBag.OrderCount</p>
+<p>Total Amount: @ViewBag.OrdersTotalAmount</p>
 
 <table class="table mt-3">
     <thead>
         <tr>
             <th>Order ID</th>
-            <th>Customer</th>
+            <th>Customer Name</th>
             <th>Total Amount</th>
             <th>Actions</th>
         </tr>
@@ -19,12 +20,10 @@
         {
             <tr>
                 <td>@order.Id</td>
-                <td>@order.CustomerName</td>
-                <td>@order.TotalAmount</td>
+                <td>@order.Customer.First_Name</td>
+                <td>@order.Total_Amount</td>
                 <td>
                     <a href="/Admin/ViewOrder/@order.Id" class="btn btn-info">View</a>
-                    <a href="/Admin/EditOrder/@order.Id" class="btn btn-warning">Edit</a>
-                    <a href="/Admin/DeleteOrder/@order.Id" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }
