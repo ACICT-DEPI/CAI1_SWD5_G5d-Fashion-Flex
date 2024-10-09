@@ -1,4 +1,5 @@
-﻿using Fashion_Flex.Models;
+﻿using Fashion_Flex.IRepositories;
+using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
 using Fashion_Flex.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Stripe;
+using Stripe.Climate;
+using System.Drawing;
+using Product = Fashion_Flex.Models.Product;
 
 namespace Fashion_Flex.Controllers
 {
@@ -13,6 +17,7 @@ namespace Fashion_Flex.Controllers
 	public class AdminController : Controller
 	{
 		private readonly ICustomerRepository _customerRepository;
+		private readonly IProductRepository _productRepository;
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly SignInManager<ApplicationUser> _signInManager;
 		List<SelectListItem> countryPhoneCodes = new List<SelectListItem>
@@ -114,11 +119,13 @@ namespace Fashion_Flex.Controllers
 				new SelectListItem { Value = "+352", Text = "Luxembourg +352" },
 				// Add more countries as needed...
 			};
-		public AdminController(ICustomerRepository _customerRepository, UserManager<ApplicationUser> _userManager, SignInManager<ApplicationUser> _signInManager)
+		public AdminController(ICustomerRepository _customerRepository, UserManager<ApplicationUser> _userManager,
+			   SignInManager<ApplicationUser> _signInManager, IProductRepository _productRepository)
 		{
 			this._customerRepository = _customerRepository;
 			this._userManager = _userManager;
 			this._signInManager = _signInManager;
+			this._productRepository = _productRepository;
 		}
 		//Dashboard
 		public IActionResult Index()
@@ -305,12 +312,107 @@ namespace Fashion_Flex.Controllers
 
 
 		//Product Actions
+		[HttpGet]
 		public IActionResult Products()
+		{
+			ViewData["currTab"] = "products";
+			var products = _productRepository.GetAll();
+
+			return View(products);
+		}
+		[HttpGet]
+		public IActionResult CreateProduct()
 		{
 			ViewData["currTab"] = "products";
 			return View();
 		}
+		[HttpPost]
+		public IActionResult CreateProduct(Product model, IFormFile image)
+		{
+			// Clear the ModelState entry for the Image & Color
+			ModelState.Remove(nameof(Product.Image));
+			ModelState.Remove(nameof(Product.Color));
 
+			if (ModelState.IsValid)
+			{
+				if (image != null && image.Length > 0)
+				{
+					// Save the image to the server
+					var imagePath = Path.Combine("wwwroot/images/", image.FileName);
+
+					using (var stream = new FileStream(imagePath, FileMode.Create))
+					{
+						image.CopyTo(stream);
+					}
+
+					// Update the image filename in the database					
+					model.Image = image.FileName;
+				}
+
+				model.Added_Date = DateTime.Now;
+				model.Color = "defualt";
+				model.Discount = 0;
+				_productRepository.Add(model);
+				_productRepository.Save();
+				ViewData["currTab"] = "products";
+				return RedirectToAction("Products", "Admin");
+			}
+
+			ViewData["currTab"] = "products";
+			return View("CreateProduct", model);
+		}
+		[HttpGet]
+		public IActionResult EditProduct(int id)
+		{
+			ViewData["currTab"] = "products";
+			var product = _productRepository.GetById(id);
+
+			return View(product);
+		}
+		[HttpPost]
+		public IActionResult EditProduct(Product editedProduct, IFormFile image)
+		{
+			var oldProduct = _productRepository.GetById(editedProduct.Id);
+			if (ModelState.IsValid)
+			{
+				if (image != null && image.Length > 0)
+				{
+					// Save the image to the server
+					var imagePath = Path.Combine("wwwroot/images/", image.FileName);
+
+					using (var stream = new FileStream(imagePath, FileMode.Create))
+					{
+						image.CopyTo(stream);
+					}
+
+					oldProduct.Image = image.FileName;
+				}
+
+				oldProduct.Name = editedProduct.Name;
+				oldProduct.Description = editedProduct.Description;
+				oldProduct.Price = editedProduct.Price;
+				oldProduct.Available_Quantity = editedProduct.Available_Quantity;
+				oldProduct.Category = editedProduct.Category;
+				oldProduct.type = editedProduct.type;
+				oldProduct.Discount = editedProduct.Discount;
+				oldProduct.Color = editedProduct.Color;
+
+				_productRepository.Update(oldProduct);
+				_productRepository.Save();
+				ViewData["currTab"] = "products";
+				return RedirectToAction("Products");
+			}
+
+			ViewData["currTab"] = "products";
+			return View("EditProduct", editedProduct);
+		}
+		[HttpGet]
+		public IActionResult DeleteProduct(int id)
+		{
+			_productRepository.Delete(id);
+			_productRepository.Save();
+			return RedirectToAction("Products");
+		}
 
 		//Order Actions
 		public IActionResult Orders()
