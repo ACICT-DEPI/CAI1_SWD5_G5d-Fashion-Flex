@@ -1,32 +1,38 @@
-﻿@{
+﻿@model List<Product>
+@{
 	Layout = "_SidebarLayout";
 }
 
-<h2>Products</h2>
-<p>Total Products: @ViewBag.ProductCount</p>
-<a href="/Admin/CreateProduct" class="btn btn-success">Add New Product</a>
 
-<table class="table mt-3">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Stock</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var product in Model)
-        {
+
+<div class="container">
+    <h2>Product Managment</h2>
+    <p>Total Products: @Model.Count() </p>
+    <a asp-action="CreateProduct" asp-controller="Admin" class="btn btn-success">Add New Product</a>
+    <table class="table table-bordered mt-3">
+        <thead>
             <tr>
-                <td>@product.Name</td>
-                <td>@product.Price</td>
-                <td>@product.Stock</td>
-                <td>
-                    <a href="/Admin/EditProduct/@product.Id" class="btn btn-warning">Edit</a>
-                    <a href="/Admin/DeleteProduct/@product.Id" class="btn btn-danger">Delete</a>
-                </td>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Category</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.Price</td>
+                    <td>@product.Available_Quantity</td>
+                    <td>@product.Category</td>
+                    <td>
+                        <a asp-action="EditProduct" asp-controller="Admin" asp-route-id="@product.Id" class="btn btn-warning">Edit</a>
+                        <a asp-action="DeleteProduct" asp-controller="Admin" asp-route-id="@product.Id" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
