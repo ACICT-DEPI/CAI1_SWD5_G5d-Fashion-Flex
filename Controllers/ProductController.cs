@@ -27,13 +27,21 @@ namespace Fashion_Flex.Controllers
 			ViewData["CurrentSort"] = sortOrder;
 			// Keep track of the selected category
 			ViewData["CurrentCategory"] = category;
-			ViewData["CurrentType"] = type;  // Track the selected type (Women, Men, Watches, etc.)
+			// Track the selected type (Women, Men, Watches, etc.)
+			ViewData["CurrentType"] = type;
+
 			// List of current Categories
 			var categories = _productRepository.GetCategories();
 			ViewData["Categories"] = categories;
+
 			// List of current Types
 			var types = _productRepository.GetTypes();
 			ViewData["Types"] = types;
+
+			// Track the current search string
+			ViewData["CurrentSearch"] = searchString;
+
+
 
 			// Assign sorting parameters for the view (already done previously)
 			ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
@@ -42,7 +50,10 @@ namespace Fashion_Flex.Controllers
 
 
 
+
+
 			var paginatedProducts = _productRepository.GetRefinedPages(pageIndex, pageSize, sortOrder, category, type, searchString);
+
 			return View(paginatedProducts);
 
 		}

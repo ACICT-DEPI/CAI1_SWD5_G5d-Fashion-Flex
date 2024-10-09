@@ -116,7 +116,7 @@ namespace Fashion_Flex.Repositories
 		{
 			var filteredProducts = string.IsNullOrEmpty(searchString)
 			? products
-			: products.Where(p => p.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase));
+			:products.Where(p => p.Name.ToUpper().Contains(searchString.ToUpper()));
 			return filteredProducts;
 		}
 		public IQueryable<Product> FilterByType(IQueryable<Product> products, string type)
