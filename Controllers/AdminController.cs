@@ -1,17 +1,25 @@
-﻿using Fashion_Flex.Models;
+﻿using Fashion_Flex.IRepositories;
+using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
 using Fashion_Flex.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Stripe;
+using Stripe.Climate;
+using System.Drawing;
+using Product = Fashion_Flex.Models.Product;
 
 namespace Fashion_Flex.Controllers
 {
-	public class CustomerController : Controller
+	[Authorize(Roles = "Admin")]
+	public class AdminController : Controller
 	{
-		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly ICustomerRepository _customerRepository;
+		private readonly IProductRepository _productRepository;
+		private readonly UserManager<ApplicationUser> _userManager;
+		private readonly SignInManager<ApplicationUser> _signInManager;
 		List<SelectListItem> countryPhoneCodes = new List<SelectListItem>
 			{
 				new SelectListItem { Value = "+1", Text = "United States +1" },
@@ -109,51 +117,125 @@ namespace Fashion_Flex.Controllers
 				new SelectListItem { Value = "+423", Text = "Liechtenstein +423" },
 				new SelectListItem { Value = "+370", Text = "Lithuania +370" },
 				new SelectListItem { Value = "+352", Text = "Luxembourg +352" },
-                // Add more countries as needed...
-            };
-
-		public CustomerController(UserManager<ApplicationUser> userManager, ICustomerRepository customerRepository)
+				// Add more countries as needed...
+			};
+		public AdminController(ICustomerRepository _customerRepository, UserManager<ApplicationUser> _userManager,
+			   SignInManager<ApplicationUser> _signInManager, IProductRepository _productRepository)
 		{
-			_userManager = userManager;
-			_customerRepository = customerRepository;
+			this._customerRepository = _customerRepository;
+			this._userManager = _userManager;
+			this._signInManager = _signInManager;
+			this._productRepository = _productRepository;
+		}
+		//Dashboard
+		public IActionResult Index()
+		{
+			ViewData["currTab"] = "dashboard";
+			return View();
+		}
+
+
+		#region customer actions
+		//Customer Actions
+		[HttpGet]
+		public IActionResult Customers()
+		{
+			ViewData["currTab"] = "customers";
+			var customers = _customerRepository.GetAll();
+			return View(customers);
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> Details()
+		public IActionResult CreateCustomer()
 		{
-			var userId = _userManager.GetUserId(User);
-			var customer = await _customerRepository.GetByUserIdAsync(userId);
+			ViewData["currTab"] = "customers";
+			ViewData["Roles"] = new List<string> { "Admin", "Customer" };
+			ViewBag.CountryPhoneCodes = countryPhoneCodes;
+			return View();
+		}
 
-			if (customer == null)
+		[HttpPost]
+		public async Task<IActionResult> CreateCustomer(RegisterViewModel model, string role)
+		{
+			if (ModelState.IsValid)
 			{
-				return NotFound();
+				// Create new ApplicationUser object
+				var newUser = new ApplicationUser
+				{
+					UserName = model.Email,
+					Email = model.Email,
+				};
+
+				// Save new user in the database using Identity
+				var result = await _userManager.CreateAsync(newUser, model.Password);
+
+				if (result.Succeeded)
+				{
+					// Create new Customer and link it to the ApplicationUser
+					var newCustomer = new Models.Customer
+					{
+						Account_Creation_Date = DateTime.Now,
+						Street_Name = model.Street_Name,
+						Building_No = model.Building_No,
+						City = model.City,
+						Governorate = model.Governorate,
+						Date_Of_Birth = model.Date_Of_Birth,
+						Email = model.Email,
+						Phone_Number = model.PhoneNumber,
+						Phone_Country_Code = model.Phone_Country_Code,
+						First_Name = model.First_Name.Trim(),
+						Last_Name = model.Last_Name.Trim(),
+						Is_Active = model.Is_Active,
+						ApplicationUserId = newUser.Id // Link to ApplicationUser
+					};
+
+					// Save the Customer in the database via the repository
+					_customerRepository.Add(newCustomer);
+					_customerRepository.Save();
+
+					//Assign Role for the new Customer
+					await _userManager.AddToRoleAsync(newUser, role);
+
+					return RedirectToAction("Customers", "Admin");
+				}
+
+				// Handle errors
+				foreach (var error in result.Errors)
+				{
+					switch (error.Code)
+					{
+						case "DuplicateUserName":
+						case "InvalidUserName":
+							ModelState.AddModelError(nameof(model.Email), error.Description);
+							break;
+
+						case "PasswordTooShort":
+						case "PasswordRequiresNonAlphanumeric":
+						case "PasswordRequiresDigit":
+						case "PasswordRequiresUpper":
+							ModelState.AddModelError(nameof(model.Password), error.Description);
+							break;
+
+						default:
+							// If the error doesn't map to a specific field, add it as a general error
+							ModelState.AddModelError("", error.Description);
+							break;
+					}
+				}
 			}
 
-			var model = new ProfileViewModel
-			{
-				Id = customer.Id,
-				First_Name = customer.First_Name,
-				Last_Name = customer.Last_Name,
-				Email = customer.Email,
-				Street_Name = customer.Street_Name,
-				Building_No = customer.Building_No,
-				City = customer.City,
-				Governorate = customer.Governorate,
-				Date_Of_Birth = customer.Date_Of_Birth,
-				Phone_Number = customer.Phone_Number,
-				Phone_Country_Code = customer.Phone_Country_Code,
-				Is_Active = customer.Is_Active
-			};
-
+			ViewData["currTab"] = "customers";
+			ViewBag.CountryPhoneCodes = countryPhoneCodes;
+			ViewData["Roles"] = new List<string> { "Admin", "Customer" };
 			return View(model);
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> Edit()
+		public IActionResult EditCustomer(int id)
 		{
-			var userId = _userManager.GetUserId(User);
-			var customer = await _customerRepository.GetByUserIdAsync(userId);
+			ViewData["currTab"] = "customers";
 			ViewBag.CountryPhoneCodes = countryPhoneCodes;
+			var customer = _customerRepository.GetById(id);
 
 			if (customer == null)
 			{
@@ -171,8 +253,8 @@ namespace Fashion_Flex.Controllers
 				City = customer.City,
 				Governorate = customer.Governorate,
 				Date_Of_Birth = customer.Date_Of_Birth,
-				Phone_Number = customer.Phone_Number,
 				Phone_Country_Code = customer.Phone_Country_Code,
+				Phone_Number = customer.Phone_Number,
 				Is_Active = customer.Is_Active
 			};
 
@@ -181,12 +263,11 @@ namespace Fashion_Flex.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(ProfileViewModel model)
+		public IActionResult EditCustomer(ProfileViewModel model)
 		{
 			if (ModelState.IsValid)
 			{
-				var userId = _userManager.GetUserId(User);
-				var customer = await _customerRepository.GetByUserIdAsync(userId);
+				var customer = _customerRepository.GetById(model.Id);
 
 				if (customer == null)
 				{
@@ -202,18 +283,144 @@ namespace Fashion_Flex.Controllers
 				customer.City = model.City;
 				customer.Governorate = model.Governorate;
 				customer.Date_Of_Birth = model.Date_Of_Birth;
-				customer.Phone_Number = model.Phone_Number;
 				customer.Phone_Country_Code = model.Phone_Country_Code;
-				customer.Is_Active = true; // model.Is_Active;
+				customer.Phone_Number = model.Phone_Number;
+				customer.Is_Active = model.Is_Active;
 
 				_customerRepository.Update(customer);
 				_customerRepository.Save();
 
-				return RedirectToAction("Details");
+				return RedirectToAction("Customers");
 			}
 
 			return View(model);
 		}
 
+		[HttpGet]
+		public async Task<IActionResult> DeleteCustomer(int id)
+		{
+			var customer = _customerRepository.GetById(id);
+			var user = await _userManager.FindByEmailAsync(customer.Email);
+			_customerRepository.Delete(id);
+			if (user != null)
+			{
+				var result = await _userManager.DeleteAsync(user);
+			}
+			_customerRepository.Save();
+			return RedirectToAction("Customers");
+		}
+		#endregion
+
+		#region Product Actions
+		//Product Actions
+		[HttpGet]
+		public IActionResult Products()
+		{
+			ViewData["currTab"] = "products";
+			var products = _productRepository.GetAll();
+
+			return View(products);
+		}
+		[HttpGet]
+		public IActionResult CreateProduct()
+		{
+			ViewData["currTab"] = "products";
+			return View();
+		}
+		[HttpPost]
+		public IActionResult CreateProduct(Product model, IFormFile image)
+		{
+			// Clear the ModelState entry for the Image & Color
+			ModelState.Remove(nameof(Product.Image));
+			ModelState.Remove(nameof(Product.Color));
+
+			if (ModelState.IsValid)
+			{
+				if (image != null && image.Length > 0)
+				{
+					// Save the image to the server
+					var imagePath = Path.Combine("wwwroot/images/", image.FileName);
+
+					using (var stream = new FileStream(imagePath, FileMode.Create))
+					{
+						image.CopyTo(stream);
+					}
+
+					// Update the image filename in the database					
+					model.Image = image.FileName;
+				}
+
+				model.Added_Date = DateTime.Now;
+				model.Color = "defualt";
+				model.Discount = 0;
+				_productRepository.Add(model);
+				_productRepository.Save();
+				ViewData["currTab"] = "products";
+				return RedirectToAction("Products", "Admin");
+			}
+
+			ViewData["currTab"] = "products";
+			return View("CreateProduct", model);
+		}
+		[HttpGet]
+		public IActionResult EditProduct(int id)
+		{
+			ViewData["currTab"] = "products";
+			var product = _productRepository.GetById(id);
+
+			return View(product);
+		}
+		[HttpPost]
+		public IActionResult EditProduct(Product editedProduct, IFormFile image)
+		{
+			var oldProduct = _productRepository.GetById(editedProduct.Id);
+			if (ModelState.IsValid)
+			{
+				if (image != null && image.Length > 0)
+				{
+					// Save the image to the server
+					var imagePath = Path.Combine("wwwroot/images/", image.FileName);
+
+					using (var stream = new FileStream(imagePath, FileMode.Create))
+					{
+						image.CopyTo(stream);
+					}
+
+					oldProduct.Image = image.FileName;
+				}
+
+				oldProduct.Name = editedProduct.Name;
+				oldProduct.Description = editedProduct.Description;
+				oldProduct.Price = editedProduct.Price;
+				oldProduct.Available_Quantity = editedProduct.Available_Quantity;
+				oldProduct.Category = editedProduct.Category;
+				oldProduct.type = editedProduct.type;
+				oldProduct.Discount = editedProduct.Discount;
+				oldProduct.Color = editedProduct.Color;
+
+				_productRepository.Update(oldProduct);
+				_productRepository.Save();
+				ViewData["currTab"] = "products";
+				return RedirectToAction("Products");
+			}
+
+			ViewData["currTab"] = "products";
+			return View("EditProduct", editedProduct);
+		}
+		[HttpGet]
+		public IActionResult DeleteProduct(int id)
+		{
+			_productRepository.Delete(id);
+			_productRepository.Save();
+			return RedirectToAction("Products");
+		}
+		#endregion
+
+		//Order Actions
+		public IActionResult Orders()
+		{
+			ViewData["currTab"] = "orders";
+			return View();
+		}
 	}
 }

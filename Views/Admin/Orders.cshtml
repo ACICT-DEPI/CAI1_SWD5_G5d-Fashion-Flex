@@ -1,0 +1,32 @@
+﻿@{
+	Layout = "_SidebarLayout";
+}
+
+<h2>Orders</h2>
+<p>Total Orders: @ViewBag.OrderCount</p>
+
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Total Amount</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.CustomerName</td>
+                <td>@order.TotalAmount</td>
+                <td>
+                    <a href="/Admin/ViewOrder/@order.Id" class="btn btn-info">View</a>
+                    <a href="/Admin/EditOrder/@order.Id" class="btn btn-warning">Edit</a>
+                    <a href="/Admin/DeleteOrder/@order.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
