@@ -10,13 +10,13 @@
 	<div class="container">
 		<div class="flex-w flex-sb-m p-b-52">
 			<div class="flex-w flex-l-m filter-tope-group m-tb-10">
-				<a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="" class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 @(String.IsNullOrEmpty(ViewData["CurrentType"] as string) ? "how-active1" : "")" data-filter="*">
+				<a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="" asp-route-searchString="@ViewData["CurrentSearch"]" class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 @(String.IsNullOrEmpty(ViewData["CurrentType"] as string) ? "how-active1" : "")" data-filter="*">
 					All Products
 				</a>
 
 				@foreach (var type in ViewData["Types"] as List<string>)
 				{
-					<a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@type" class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 @(ViewData["CurrentType"] as string == type ? "how-active1" : "")" data-filter=".@type">
+					<a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@type" asp-route-searchString="@ViewData["CurrentSearch"]" class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 @(ViewData["CurrentType"] as string == type ? "how-active1" : "")" data-filter=".@type">
 						@type
 					</a>
 				}
@@ -54,6 +54,10 @@
 
 			<div class="dis-none panel-search w-full p-t-10 p-b-15">
 				<form asp-action="Index" method="get">
+					<input type="hidden" name="sortOrder" value="@ViewData["CurrentSort"]" />
+					<input type="hidden" name="category" value="@ViewData["CurrentCategory"]" />
+					<input type="hidden" name="type" value="@ViewData["CurrentType"]" />
+
 					<input type="text" name="searchString" value="@ViewData["CurrentSearch"]" placeholder="Search products..." />
 					<input type="submit" value="Search" />
 				</form>
@@ -147,7 +151,7 @@
 
 						<ul>
 							<li class="p-b-6">
-								<a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="" asp-route-type="@ViewData["CurrentType"]" class="filter-link stext-106 trans-04 @(String.IsNullOrEmpty(ViewData["CurrentCategory"] as string) ? "filter-link-active" : "")">
+								<a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="" asp-route-type="@ViewData["CurrentType"]" asp-route-searchString="@ViewData["CurrentSearch"]" class="filter-link stext-106 trans-04 @(String.IsNullOrEmpty(ViewData["CurrentCategory"] as string) ? "filter-link-active" : "")">
 									All Categories
 								</a>
 							</li>
@@ -155,7 +159,7 @@
 							@foreach (var category in ViewData["Categories"] as List<string>)
 							{
 								<li class="p-b-6">
-									<a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@category" asp-route-type="@ViewData["CurrentType"]" class="filter-link stext-106 trans-04 @(ViewData["CurrentCategory"] as string == category ? "filter-link-active" : "")">
+									<a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@category" asp-route-type="@ViewData["CurrentType"]" asp-route-searchString="@ViewData["CurrentSearch"]" class="filter-link stext-106 trans-04 @(ViewData["CurrentCategory"] as string == category ? "filter-link-active" : "")">
 										@category
 									</a>
 								</li>
@@ -238,24 +242,24 @@
 		<div class="flex-c-m flex-w w-full p-t-45">
 			@if (Model.HasPreviousPage)
 			{
-				<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex - 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@ViewData["CurrentType"]" class="btn btn-secondary mr-1">Previous</a>
+				<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex - 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@ViewData["CurrentType"]" asp-route-searchString="@ViewData["CurrentSearch"]" class="btn btn-secondary mr-1">Previous</a>
 			}
 
 			@for (int i = 1; i <= Model.TotalPages; i++)
 			{
 				if (i == Model.PageIndex)
 				{
-					<a asp-action="Index" asp-route-pageIndex="@i" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@ViewData["CurrentType"]" style="pointer-events: none;" class="btn btn-primary">@i</a>
+					<a asp-action="Index" asp-route-pageIndex="@i" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@ViewData["CurrentType"]" asp-route-searchString="@ViewData["CurrentSearch"]" style="pointer-events: none;" class="btn btn-primary">@i</a>
 				}
 				else
 				{
-					<a asp-action="Index" asp-route-pageIndex="@i" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@ViewData["CurrentType"]" class="btn btn-secondary">@i</a>
+					<a asp-action="Index" asp-route-pageIndex="@i" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@ViewData["CurrentType"]" asp-route-searchString="@ViewData["CurrentSearch"]" class="btn btn-secondary">@i</a>
 				}
 			}
 
 			@if (Model.HasNextPage)
 			{
-				<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@ViewData["CurrentType"]" class="btn btn-secondary ml-1">Next</a>
+				<a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-category="@ViewData["CurrentCategory"]" asp-route-type="@ViewData["CurrentType"]" asp-route-searchString="@ViewData["CurrentSearch"]" class="btn btn-secondary ml-1">Next</a>
 			}
 		</div>
 
