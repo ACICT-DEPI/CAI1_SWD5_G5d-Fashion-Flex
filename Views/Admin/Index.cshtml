@@ -14,7 +14,7 @@
 			</div>
 		</div>
 
-	</div>	
+	</div>
 
 	<!-- Orders Stats -->
 	<div class="col-md-4">
@@ -22,9 +22,8 @@
 			<div class="card-body">
 				<h2>Orders Overview</h2>
 				<h5>Total Number of Orders: @ViewData["totalOrders"]</h5>
-				<h5>Total Revenues: $@ViewData["totalRevenue"]</h5>
 				<canvas id="orderStatusChart" width="400" height="400" class="mt-5"></canvas>
-			</div>			
+			</div>
 		</div>
 	</div>
 
@@ -33,13 +32,13 @@
 		<div class="card">
 			<div class="card-body">
 				<h2>Products Overview</h2>
-				<h5>Total Number of Orders: @ViewData["totalOrders"]</h5>
+				<h5>Total Number of Products : @ViewData["totalProducts"]</h5>
 				<h5>Total Revenues: $@ViewData["totalRevenue"]</h5>
-				<canvas id="orderStatusChart" width="400" height="400" class="mt-5"></canvas>
+				<canvas id="paymentChart" width="400" height="400" class="mt-5"></canvas>
 			</div>
 		</div>
 	</div>
-	
+
 </div>
 
 
@@ -66,7 +65,51 @@
 				maintainAspectRatio: false // Prevent aspect ratio from restricting size
 			}
 		});
-	</script>	
+	</script>
+
+	<!-- Payment Bar Chart -->
+	<script>
+		// Ensure data is correctly serialized from ViewData
+		var paymentStats = @Html.Raw(Json.Serialize(ViewData["PaymentStats"]));
+
+		// Log the data to the browser's console to debug
+		console.log(paymentStats);
+
+		// Prepare labels and data for the chart
+		var labels = paymentStats.map(item => item.paymentDay);
+		var data = paymentStats.map(item => item.successCount);
+
+
+		console.log(labels, data);  // Verify if these arrays contain valid data
+
+		// Initialize Chart.js
+		var ctx = document.getElementById('paymentChart').getContext('2d');
+		var paymentChart = new Chart(ctx, {
+			type: 'line',
+			data: {
+				labels: labels,
+				datasets: [{
+					label: 'Successful Payments',
+					data: data,
+					backgroundColor: 'rgba(75, 192, 192, 0.2)',
+					borderColor: 'rgba(75, 192, 192, 1)',
+					borderWidth: 1
+				}]
+			},
+			options: {
+				responsive: true,
+				scales: {
+					x: {
+						beginAtZero: true
+					},
+					y: {
+						beginAtZero: true
+					}
+				}
+			}
+		});
+	</script>
+
 
 
 }

@@ -132,8 +132,8 @@ namespace Fashion_Flex.Controllers
 
 		[HttpPost]
 		public IActionResult NewPayment(int orderId, string paymentmethod, string address, string? paymentIntentId = null, string paymentStatus = "succeeded", string? currency = "usd")
-		{			
-			var order = _orderRepository.GetOrderById(orderId);					
+		{
+			var order = _orderRepository.GetOrderById(orderId);
 
 			var payment = new Payment
 			{
