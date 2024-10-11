@@ -418,22 +418,24 @@ namespace Fashion_Flex.Controllers
 		#region Orders
 		//Orders Actions
 		[HttpGet]
-		public IActionResult Orders()
+		public IActionResult Orders(string status = "All")
 		{
-			ViewData["currTab"] = "orders";
-            List<Order> orders = _orderRepository.GetAll();
+			// Retrieve all orders from the service
+			var orders = _orderRepository.GetAll();
 
-            ViewBag.OrderCount = orders.Count;
-
-			decimal totalAmount = 0;
-			for(int i = 0; i<orders.Count; i++)
+			// Filter orders by status if not "All"
+			if (status != "All")
 			{
-				totalAmount += orders[i].Total_Amount;
-            }
+				orders = orders.Where(o => o.Order_Status == status).ToList();
+			}
 
-            ViewBag.OrdersTotalAmount = totalAmount;
+			// Calculate total amount of filtered orders
+			ViewBag.OrdersTotalAmount = orders.Sum(o => o.Total_Amount);
 
-            return View(orders);
+			// Pass the selected status to the view for keeping the dropdown value selected
+			ViewBag.SelectedStatus = status;
+
+			return View(orders);
 		}
 
 		[HttpGet]

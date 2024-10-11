@@ -1,15 +1,32 @@
 ﻿@model List<Order>
 @{
-	Layout = "_SidebarLayout";
+    Layout = "_SidebarLayout";
+    var statuses = new List<string> { "All", "Completed", "Pending" };
 }
 
-
-
 <h2>Orders</h2>
-<p>Total Count: @Model.Count() </p>
-<p>Total Amount: @ViewBag.OrdersTotalAmount </p>
 
-<table class="table table-bordered mt-3">
+<!-- Info Row: Total Count, Total Amount, Filter Dropdown -->
+<div class="row mb-3 align-items-center">
+    <div class="col-md-8">
+        <p class="card-text"><strong>Total Count: </strong>@Model.Count()</p>
+        <p class="card-text"><strong>Total Amount: </strong>@ViewBag.OrdersTotalAmount</p>
+    </div>
+    <div class=" bor8 bg0 m-b-12 m-t-9 col-md-4 text-end">
+        <select id="statusFilter" class="js-select2" onchange="filterOrders()" style="width: 100%; padding: 10px; border-radius: 10px;">
+            @foreach (var status in statuses)
+            {
+                <option value="@status">@status</option>
+            }
+        </select>
+        <div class="dropDownSelect2"></div>
+    </div>
+
+</div>
+
+
+<!-- Orders Table -->
+<table class="table table-bordered mt-3" id="ordersTable">
     <thead>
         <tr>
             <th>ID</th>
@@ -22,7 +39,7 @@
     <tbody>
         @foreach (var order in Model)
         {
-            <tr>
+            <tr data-status="@order.Order_Status">
                 <td>@order.Id</td>
                 <td>@order.Customer.First_Name @order.Customer.Last_Name</td>
                 <td>@order.Total_Amount</td>
@@ -35,3 +52,18 @@
     </tbody>
 </table>
 
+<script>
+    function filterOrders() {
+        var filterValue = document.getElementById("statusFilter").value;
+        var rows = document.querySelectorAll("#ordersTable tbody tr");
+
+        rows.forEach(function (row) {
+            var status = row.getAttribute("data-status");
+            if (filterValue === "All" || status === filterValue) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+</script>
