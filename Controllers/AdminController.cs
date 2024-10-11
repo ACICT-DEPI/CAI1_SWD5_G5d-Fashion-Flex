@@ -443,22 +443,16 @@ namespace Fashion_Flex.Controllers
 		#region Orders
 		//Orders Actions
 		[HttpGet]
-		public IActionResult Orders(string status = "All")
+		public IActionResult Orders()
 		{
 			// Retrieve all orders from the service
 			var orders = _orderRepository.GetAll();
 
-			// Filter orders by status if not "All"
-			if (status != "All")
-			{
-				orders = orders.Where(o => o.Order_Status == status).ToList();
-			}
 
 			// Calculate total amount of filtered orders
 			ViewBag.OrdersTotalAmount = orders.Sum(o => o.Total_Amount);
 
 			// Pass the selected status to the view for keeping the dropdown value selected
-			ViewBag.SelectedStatus = status;
 
 			return View(orders);
 		}
