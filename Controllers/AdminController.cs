@@ -420,7 +420,7 @@ namespace Fashion_Flex.Controllers
 		[HttpGet]
 		public IActionResult Orders()
 		{
-			ViewData["currTab"] = "Orders";
+			ViewData["currTab"] = "orders";
             List<Order> orders = _orderRepository.GetAll();
 
             ViewBag.OrderCount = orders.Count;
@@ -434,6 +434,16 @@ namespace Fashion_Flex.Controllers
             ViewBag.OrdersTotalAmount = totalAmount;
 
             return View(orders);
+		}
+
+		[HttpGet]
+		public IActionResult ViewOrder(int id)
+		{
+			ViewData["currTab"] = "orders";
+
+            Order order = _orderRepository.GetOrderById(id);
+
+            return View(order);
 		}
 		#endregion
 	}

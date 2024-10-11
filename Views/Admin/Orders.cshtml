@@ -15,6 +15,7 @@
             <th>ID</th>
             <th>Name</th>
             <th>Price</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -25,8 +26,9 @@
                 <td>@order.Id</td>
                 <td>@order.Customer.First_Name @order.Customer.Last_Name</td>
                 <td>@order.Total_Amount</td>
+                <td>@order.Order_Status</td>
                 <td>
-                    <a href="/Admin/ViewOrder/@order.Id" class="btn btn-info">View</a>
+                    <a asp-action="ViewOrder" asp-controller="Admin" asp-route-id="@order.Id" class="btn btn-info">View</a>
                 </td>
             </tr>
         }
