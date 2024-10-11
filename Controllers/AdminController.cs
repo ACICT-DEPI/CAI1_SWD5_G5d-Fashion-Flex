@@ -1,11 +1,15 @@
 ﻿using Fashion_Flex.IRepositories;
+using Fashion_Flex.IRepositories.Repository;
 using Fashion_Flex.Models;
+using Fashion_Flex.Repositories;
 using Fashion_Flex.Repository;
 using Fashion_Flex.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 using Product = Fashion_Flex.Models.Product;
 
 namespace Fashion_Flex.Controllers
@@ -130,6 +134,26 @@ namespace Fashion_Flex.Controllers
 		public IActionResult Index()
 		{
 			ViewData["currTab"] = "dashboard";
+			//Customer Stats
+			ViewData["totalCustomers"] = _customerRepository.GetAll().Count();
+			ViewData["newCustomerMonthly"] = _customerRepository.GetAll().Count(o => o.Account_Creation_Date.Month == DateTime.Now.Month &&
+																				 o.Account_Creation_Date.Year == DateTime.Now.Year);
+			ViewData["CustomerDemographics"] = _customerRepository.GetAll()
+																.GroupBy(c => c.City)
+																.Select(g => new { City = g.Key, Count = g.Count() })
+																.ToList();
+
+			//Product Stats
+			ViewData["totalProducts"] = _productRepository.GetAll().Count();
+
+			//Order Stats
+			ViewData["totalOrders"] = _orderRepository.GetAll().Count();
+			ViewData["totalRevenue"] = _orderRepository.GetAll().Sum(o => o.Total_Amount);
+			var pendingOrders = _orderRepository.GetAll().Count(o => o.Order_Status == "Pending");
+			var shippedOrders = _orderRepository.GetAll().Count(o => o.Order_Status == "Completed");
+			var deliveredOrders = _orderRepository.GetAll().Count(o => o.Order_Status == "Delivered");
+
+			ViewData["OrderStatusData"] = new int[] { pendingOrders, shippedOrders, deliveredOrders };
 			return View();
 		}
 

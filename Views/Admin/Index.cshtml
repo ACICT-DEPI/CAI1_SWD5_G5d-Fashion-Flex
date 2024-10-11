@@ -1,3 +1,73 @@
 ﻿@{
 	Layout = "_SidebarLayout";
 }
+
+
+<div class="row">
+	<!-- Customers Stats -->
+	<div class="col-md-4">
+		<div class="card">
+			<div class="card-body">
+				<h2>Customers Overview</h2>
+				<h5 class="card-title">Our Registered Customers : @ViewData["totalCustomers"]</h5>
+				<h5 class="card-title">Newly Registered Customers (Last Month) : @ViewData["newCustomerMonthly"]</h5>
+			</div>
+		</div>
+
+	</div>	
+
+	<!-- Orders Stats -->
+	<div class="col-md-4">
+		<div class="card">
+			<div class="card-body">
+				<h2>Orders Overview</h2>
+				<h5>Total Number of Orders: @ViewData["totalOrders"]</h5>
+				<h5>Total Revenues: $@ViewData["totalRevenue"]</h5>
+				<canvas id="orderStatusChart" width="400" height="400" class="mt-5"></canvas>
+			</div>			
+		</div>
+	</div>
+
+	<!-- Products Stats -->
+	<div class="col-md-4">
+		<div class="card">
+			<div class="card-body">
+				<h2>Products Overview</h2>
+				<h5>Total Number of Orders: @ViewData["totalOrders"]</h5>
+				<h5>Total Revenues: $@ViewData["totalRevenue"]</h5>
+				<canvas id="orderStatusChart" width="400" height="400" class="mt-5"></canvas>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+
+@section Scripts {
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+	<!-- Orders Status Pie Chart -->
+	<script>
+		// Convert the C# data array to JavaScript array
+		var orderStatusData = @Html.Raw(Json.Serialize(ViewData["OrderStatusData"]));
+		var ctx = document.getElementById('orderStatusChart').getContext('2d');
+		var orderStatusChart = new Chart(ctx, {
+			type: 'pie',
+			data: {
+				labels: ['Pending', 'Shipped', 'Delivered'],
+				datasets: [{
+					label: 'Order Status',
+					data: orderStatusData,
+					backgroundColor: ['#f39c12', '#00c0ef', '#00a65a'],
+				}]
+			},
+			options: {
+				responsive: false, // Disable responsiveness
+				maintainAspectRatio: false // Prevent aspect ratio from restricting size
+			}
+		});
+	</script>	
+
+
+}
+
