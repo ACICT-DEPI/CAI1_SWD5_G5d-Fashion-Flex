@@ -107,6 +107,13 @@ namespace Fashion_Flex.Controllers
 			return Ok("Order is added successfuly!");
 		}
 
+		[HttpGet]
+		public IActionResult Details(int Id)
+		{
+			var product = _productRepository.GetById(Id);
+			return View(product);
+		}
+
 
 		//---------
 		private void IncreaseSelectedItemQuantity(Order pendingOrder, int selectedProductId, int selectedQuantity)
