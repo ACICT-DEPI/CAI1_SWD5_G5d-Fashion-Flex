@@ -2,6 +2,7 @@
 using Fashion_Flex.Models;
 using Fashion_Flex.Repository;
 using Fashion_Flex.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -9,8 +10,8 @@ using Product = Fashion_Flex.Models.Product;
 
 namespace Fashion_Flex.Controllers
 {
-//	[Authorize(Roles = "Admin")]
-	public class AdminController : Controller
+    [Authorize(Roles = "Admin")]
+    public class AdminController : Controller
 	{
 		private readonly ICustomerRepository _customerRepository;
 		private readonly IProductRepository _productRepository;
