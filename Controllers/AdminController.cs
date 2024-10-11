@@ -1,23 +1,25 @@
 ﻿using Fashion_Flex.IRepositories;
+using Fashion_Flex.IRepositories.Repository;
 using Fashion_Flex.Models;
+using Fashion_Flex.Repositories;
 using Fashion_Flex.Repository;
 using Fashion_Flex.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Stripe;
-using Stripe.Climate;
+using Microsoft.EntityFrameworkCore;
 using System.Drawing;
 using Product = Fashion_Flex.Models.Product;
 
 namespace Fashion_Flex.Controllers
 {
-	[Authorize(Roles = "Admin")]
-	public class AdminController : Controller
+    [Authorize(Roles = "Admin")]
+    public class AdminController : Controller
 	{
 		private readonly ICustomerRepository _customerRepository;
 		private readonly IProductRepository _productRepository;
+		private readonly IOrderRepository _orderRepository;
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly SignInManager<ApplicationUser> _signInManager;
 		List<SelectListItem> countryPhoneCodes = new List<SelectListItem>
@@ -120,17 +122,38 @@ namespace Fashion_Flex.Controllers
 				// Add more countries as needed...
 			};
 		public AdminController(ICustomerRepository _customerRepository, UserManager<ApplicationUser> _userManager,
-			   SignInManager<ApplicationUser> _signInManager, IProductRepository _productRepository)
+			   SignInManager<ApplicationUser> _signInManager, IProductRepository _productRepository, IOrderRepository _orderRepository)
 		{
 			this._customerRepository = _customerRepository;
 			this._userManager = _userManager;
 			this._signInManager = _signInManager;
 			this._productRepository = _productRepository;
+			this._orderRepository = _orderRepository;
 		}
 		//Dashboard
 		public IActionResult Index()
 		{
 			ViewData["currTab"] = "dashboard";
+			//Customer Stats
+			ViewData["totalCustomers"] = _customerRepository.GetAll().Count();
+			ViewData["newCustomerMonthly"] = _customerRepository.GetAll().Count(o => o.Account_Creation_Date.Month == DateTime.Now.Month &&
+																				 o.Account_Creation_Date.Year == DateTime.Now.Year);
+			ViewData["CustomerDemographics"] = _customerRepository.GetAll()
+																.GroupBy(c => c.City)
+																.Select(g => new { City = g.Key, Count = g.Count() })
+																.ToList();
+
+			//Product Stats
+			ViewData["totalProducts"] = _productRepository.GetAll().Count();
+
+			//Order Stats
+			ViewData["totalOrders"] = _orderRepository.GetAll().Count();
+			ViewData["totalRevenue"] = _orderRepository.GetAll().Sum(o => o.Total_Amount);
+			var pendingOrders = _orderRepository.GetAll().Count(o => o.Order_Status == "Pending");
+			var shippedOrders = _orderRepository.GetAll().Count(o => o.Order_Status == "Completed");
+			var deliveredOrders = _orderRepository.GetAll().Count(o => o.Order_Status == "Delivered");
+
+			ViewData["OrderStatusData"] = new int[] { pendingOrders, shippedOrders, deliveredOrders };
 			return View();
 		}
 
@@ -416,11 +439,39 @@ namespace Fashion_Flex.Controllers
 		}
 		#endregion
 
-		//Order Actions
-		public IActionResult Orders()
+
+		#region Orders
+		//Orders Actions
+		[HttpGet]
+		public IActionResult Orders(string status = "All")
+		{
+			// Retrieve all orders from the service
+			var orders = _orderRepository.GetAll();
+
+			// Filter orders by status if not "All"
+			if (status != "All")
+			{
+				orders = orders.Where(o => o.Order_Status == status).ToList();
+			}
+
+			// Calculate total amount of filtered orders
+			ViewBag.OrdersTotalAmount = orders.Sum(o => o.Total_Amount);
+
+			// Pass the selected status to the view for keeping the dropdown value selected
+			ViewBag.SelectedStatus = status;
+
+			return View(orders);
+		}
+
+		[HttpGet]
+		public IActionResult ViewOrder(int id)
 		{
 			ViewData["currTab"] = "orders";
-			return View();
+
+            Order order = _orderRepository.GetOrderById(id);
+
+            return View(order);
 		}
+		#endregion
 	}
 }

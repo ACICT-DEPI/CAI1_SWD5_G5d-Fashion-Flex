@@ -1,0 +1,35 @@
+﻿@model Order
+@{
+    Layout = "_SidebarLayout";
+}
+
+<h2>Order Details</h2>
+
+<div class="card">
+    <div class="card-body">
+        <p class="card-text"><strong>ID: </strong>@Model.Id</p>
+        <p class="card-text"><strong>Name: </strong>@Model.Customer.First_Name @Model.Customer.Last_Name</p>
+        <p class="card-text"><strong>Items: </strong></p>
+        <ul>
+            @if (Model.Order_Items != null && Model.Order_Items.Any())
+            {
+                foreach (var item in Model.Order_Items)
+                {
+                    <li>
+                        @item.Product.Name  (Quantity: @item.Quantity)
+                    </li>
+                }
+            }
+            else
+            {
+                <li>No items in this order.</li>
+            }
+        </ul>
+        <p class="card-text"><strong>Price: </strong>@Model.Total_Amount</p>
+
+        <div style="display: flex; justify-content: space-between;">
+            <p class="card-text"><strong>Status: </strong>@Model.Order_Status</p>
+            <p class="card-text"><strong>Date of Creation: </strong>@Model.Order_Date.ToString("MMMM dd, yyyy")</p>
+        </div>
+    </div>
+</div>

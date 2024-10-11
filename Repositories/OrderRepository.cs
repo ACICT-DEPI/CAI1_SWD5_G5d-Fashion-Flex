@@ -11,7 +11,6 @@ namespace Fashion_Flex.IRepositories.Repository
 
 
 		private readonly FFContext context;
-		static Random rng = new Random();
 		public OrderRepository(FFContext context)
 		{
 			this.context = context;
@@ -34,7 +33,11 @@ namespace Fashion_Flex.IRepositories.Repository
 		//Get Order
 		public Order GetOrderById(int orderId)
 		{
-			return context.Orders.FirstOrDefault(d => d.Id == orderId);
+			return context.Orders
+				.Include(o => o.Customer)
+				.Include(o => o.Order_Items) // Include order items
+				.ThenInclude(o => o.Product) // Include products in order items
+				.FirstOrDefault(o => o.Id == orderId);
 		}
 
 		public List<Order> GetOrdersByCustomerId(int customerId)
@@ -46,8 +49,11 @@ namespace Fashion_Flex.IRepositories.Repository
 
 		public List<Order> GetAll()
 		{
-			return context.Orders.ToList();
-		}
+
+            return context.Orders
+					.Include(o => o.Customer) 
+					.ToList();
+        }
 
 		public void Save()
 		{

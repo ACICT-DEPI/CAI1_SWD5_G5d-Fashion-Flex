@@ -3,33 +3,33 @@
 	Layout = "_SidebarLayout";
 }
 
-<div class="container mt-4">
-	<h2>Customers Management</h2>
-	<p>Total Customers: @Model.Count()</p>
-	<a asp-controller="Admin" asp-action="CreateCustomer" class="btn btn-primary mb-3">Create a new customer</a>
 
-	<table class="table table-hover">
-		<thead class="thead-dark">
+<h2>Customers Management</h2>
+<p>Total Customers: @Model.Count()</p>
+<a asp-controller="Admin" asp-action="CreateCustomer" class="btn btn-primary mb-3">Create a new customer</a>
+
+<table class="table table-hover">
+	<thead class="thead-dark">
+		<tr>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Phone</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var customer in Model)
+		{
 			<tr>
-				<th>Name</th>
-				<th>Email</th>
-				<th>Phone</th>
-				<th>Actions</th>
+				<td>@customer.First_Name @customer.Last_Name</td>
+				<td>@customer.Email</td>
+				<td>@customer.Phone_Country_Code@customer.Phone_Number</td>
+				<td>
+					<a asp-controller="Admin" asp-action="EditCustomer" asp-route-id="@customer.Id" class="btn btn-warning">Edit</a>
+					<a asp-controller="Admin" asp-action="DeleteCustomer" asp-route-id="@customer.Id" class="btn btn-danger">Delete</a>
+				</td>
 			</tr>
-		</thead>
-		<tbody>
-			@foreach (var customer in Model)
-			{
-				<tr>
-					<td>@customer.First_Name @customer.Last_Name</td>
-					<td>@customer.Email</td>
-					<td>@customer.Phone_Country_Code@customer.Phone_Number</td>
-					<td>
-						<a asp-controller="Admin" asp-action="EditCustomer" asp-route-id="@customer.Id" class="btn btn-warning">Edit</a>
-						<a asp-controller="Admin" asp-action="DeleteCustomer" asp-route-id="@customer.Id" class="btn btn-danger">Delete</a>
-					</td>
-				</tr>
-			}
-		</tbody>
-	</table>
-</div>
+		}
+	</tbody>
+</table>
+
