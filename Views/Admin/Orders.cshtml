@@ -1,17 +1,20 @@
-﻿@{
+﻿@model List<Order>
+@{
 	Layout = "_SidebarLayout";
 }
 
-<h2>Orders</h2>
-<p>Total Orders: @ViewBag.OrderCount</p>
-<p>Total Amount: @ViewBag.OrdersTotalAmount</p>
 
-<table class="table mt-3">
+
+<h2>Orders</h2>
+<p>Total Count: @Model.Count() </p>
+<p>Total Amount: @ViewBag.OrdersTotalAmount </p>
+
+<table class="table table-bordered mt-3">
     <thead>
         <tr>
-            <th>Order ID</th>
-            <th>Customer Name</th>
-            <th>Total Amount</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -20,7 +23,7 @@
         {
             <tr>
                 <td>@order.Id</td>
-                <td>@order.Customer.First_Name</td>
+                <td>@order.Customer.First_Name @order.Customer.Last_Name</td>
                 <td>@order.Total_Amount</td>
                 <td>
                     <a href="/Admin/ViewOrder/@order.Id" class="btn btn-info">View</a>
@@ -29,3 +32,4 @@
         }
     </tbody>
 </table>
+
