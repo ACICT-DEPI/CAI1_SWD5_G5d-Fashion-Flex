@@ -140,10 +140,29 @@ namespace Fashion_Flex.Controllers
 			//Customer Stats
 			ViewData["totalCustomers"] = _customerRepository.GetAll().Count();
 			ViewData["newCustomerMonthly"] = _customerRepository.GetAll().Count(o => o.Account_Creation_Date.Month == DateTime.Now.Month &&
-																				 o.Account_Creation_Date.Year == DateTime.Now.Year);
+																					 o.Account_Creation_Date.Year == DateTime.Now.Year);
+			ViewData["customerDemographicsByCity"] = _customerRepository.GetAll()
+																.GroupBy(c => c.City)
+																.Select(g => new
+																{
+																	Location = g.Key,           // City name
+																	CustomerCount = g.Count()   // Number of customers in each city
+																})
+																.OrderByDescending(g => g.CustomerCount)
+																.ToList();
 
 			//Product Stats
 			ViewData["totalProducts"] = _productRepository.GetAll().Count();
+			ViewData["PaymentStats"] = _paymentRepository.GetAll()
+													   .Where(p => p.Payment_Status == "succeeded")
+													   .GroupBy(p => p.Payment_Date.Date)
+													   .Select(g => new
+													   {
+														   PaymentDay = g.Key.ToString("yyyy-MM-dd"), // Format date as string
+														   SuccessCount = g.Count()
+													   })
+													   .OrderBy(p => p.PaymentDay)
+													   .ToList();
 
 			//Order Stats
 			ViewData["totalOrders"] = _orderRepository.GetAll().Count();
@@ -151,18 +170,9 @@ namespace Fashion_Flex.Controllers
 			var pendingOrders = _orderRepository.GetAll().Count(o => o.Order_Status == "Pending");
 			var shippedOrders = _orderRepository.GetAll().Count(o => o.Order_Status == "Completed");
 			var deliveredOrders = _orderRepository.GetAll().Count(o => o.Order_Status == "Delivered");
-			var successfulPayments = _paymentRepository.GetAll()
-													   .Where(p => p.Payment_Status == "succeeded")
-													   .GroupBy(p => p.Payment_Date.Date)
-													   .Select(g => new
-													   { PaymentDay = g.Key.ToString("yyyy-MM-dd"), // Format date as string
-														   SuccessCount = g.Count()})
-													   .OrderBy(p => p.PaymentDay)
-													   .ToList();
-			Console.WriteLine(JsonConvert.SerializeObject(successfulPayments));
-			ViewData["PaymentStats"] = successfulPayments;
-
 			ViewData["OrderStatusData"] = new int[] { pendingOrders, shippedOrders, deliveredOrders };
+			
+
 			return View();
 		}
 
