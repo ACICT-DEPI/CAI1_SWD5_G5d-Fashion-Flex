@@ -1,3 +1,4 @@
+using Fashion_Flex.IRepositories;
 using Fashion_Flex.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -7,15 +8,21 @@ namespace Fashion_Flex.Controllers
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
+        private readonly IProductRepository _productRepository;
 
-		public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IProductRepository _productRepository)
 		{
 			_logger = logger;
-		}
+            this._productRepository = _productRepository;
+        }
 
 		public IActionResult Index()
 		{
-			return View();
+
+			List<Product> products = _productRepository.GetAll();
+
+
+            return View(products);
 		}
 
 		public IActionResult About()
