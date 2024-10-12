@@ -227,48 +227,77 @@
 		<!-- Menu Mobile -->
 		<div class="menu-mobile">
 			<ul class="topbar-mobile">
+				<!-- Left Section -->
 				<li>
 					<div class="left-top-bar">
 						Free shipping for standard order over $100
 					</div>
 				</li>
 
+				<!-- Right Section -->
 				<li>
 					<div class="right-top-bar flex-w h-full">
-						<a href="#" class="flex-c-m p-lr-10 trans-04">
-							My Account
-						</a>
+						@if (User.Identity.IsAuthenticated)
+						{
+							<p class="flex-c-m trans-04 p-lr-10 text-light">
+								Welcome, @customer.First_Name
+							</p>
+
+							@if (User.IsInRole("Admin"))
+							{
+								<a asp-controller="Role" asp-action="AddRole" class="flex-c-m trans-04 p-lr-10">
+									Add Role
+								</a>
+								<a asp-controller="Admin" asp-action="Index" class="flex-c-m trans-04 p-lr-10">
+									Admin Dashboard
+								</a>
+							}
+
+							<a asp-controller="Customer" asp-action="Details" class="flex-c-m trans-04 p-lr-10">
+								My Account
+							</a>
+
+							<!-- Logout link using JavaScript for POST request -->
+							<a href="javascript:void(0);" class="flex-c-m trans-04 p-lr-10" onclick="document.getElementById('logoutForm').submit();">
+								Logout
+							</a>
+							<!-- Hidden logout form -->
+							<form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post" style="display: none;">
+								@Html.AntiForgeryToken()
+							</form>
+						}
+						else
+						{
+							<p class="flex-c-m trans-04 p-lr-10 text-danger">
+								Create An Account To Start Ordering
+							</p>
+							<a asp-controller="Account" asp-action="Register" class="flex-c-m trans-04 p-lr-10">
+								Register
+							</a>
+							<a asp-controller="Account" asp-action="Login" class="flex-c-m trans-04 p-lr-10">
+								Login
+							</a>
+						}
 					</div>
 				</li>
 			</ul>
 
+
 			<ul class="main-menu-m">
 				<li>
-					<a href="index.html">Home</a>
-
-					<span class="arrow-main-menu-m">
-						<i class="fa fa-angle-right" aria-hidden="true"></i>
-					</span>
+					<a asp-controller="Home" asp-action="Index">Home</a>
 				</li>
 
 				<li>
-					<a href="product.html">Shop</a>
+					<a asp-controller="Product" asp-action="Index">Shop</a>
 				</li>
 
 				<li>
-					<a href="shoping-cart.html" class="label1 rs1" data-label1="hot">Features</a>
+					<a asp-controller="Home" asp-action="About">About Us</a>
 				</li>
 
 				<li>
-					<a href="blog.html">Blog</a>
-				</li>
-
-				<li>
-					<a href="about.html">About</a>
-				</li>
-
-				<li>
-					<a href="contact.html">Contact</a>
+					<a asp-controller="Home" asp-action="Contact">Contact</a>
 				</li>
 			</ul>
 		</div>
