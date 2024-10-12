@@ -9,17 +9,19 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Drawing;
 using Product = Fashion_Flex.Models.Product;
 
 namespace Fashion_Flex.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    public class AdminController : Controller
+	[Authorize(Roles = "Admin")]
+	public class AdminController : Controller
 	{
 		private readonly ICustomerRepository _customerRepository;
 		private readonly IProductRepository _productRepository;
 		private readonly IOrderRepository _orderRepository;
+		private readonly IPaymentRepository _paymentRepository;
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly SignInManager<ApplicationUser> _signInManager;
 		List<SelectListItem> countryPhoneCodes = new List<SelectListItem>
@@ -122,13 +124,14 @@ namespace Fashion_Flex.Controllers
 				// Add more countries as needed...
 			};
 		public AdminController(ICustomerRepository _customerRepository, UserManager<ApplicationUser> _userManager,
-			   SignInManager<ApplicationUser> _signInManager, IProductRepository _productRepository, IOrderRepository _orderRepository)
+			   SignInManager<ApplicationUser> _signInManager, IProductRepository _productRepository, IOrderRepository _orderRepository, IPaymentRepository _paymentRepository)
 		{
 			this._customerRepository = _customerRepository;
 			this._userManager = _userManager;
 			this._signInManager = _signInManager;
 			this._productRepository = _productRepository;
 			this._orderRepository = _orderRepository;
+			this._paymentRepository = _paymentRepository;
 		}
 		//Dashboard
 		public IActionResult Index()
@@ -137,14 +140,29 @@ namespace Fashion_Flex.Controllers
 			//Customer Stats
 			ViewData["totalCustomers"] = _customerRepository.GetAll().Count();
 			ViewData["newCustomerMonthly"] = _customerRepository.GetAll().Count(o => o.Account_Creation_Date.Month == DateTime.Now.Month &&
-																				 o.Account_Creation_Date.Year == DateTime.Now.Year);
-			ViewData["CustomerDemographics"] = _customerRepository.GetAll()
+																					 o.Account_Creation_Date.Year == DateTime.Now.Year);
+			ViewData["customerDemographicsByCity"] = _customerRepository.GetAll()
 																.GroupBy(c => c.City)
-																.Select(g => new { City = g.Key, Count = g.Count() })
+																.Select(g => new
+																{
+																	Location = g.Key,           // City name
+																	CustomerCount = g.Count()   // Number of customers in each city
+																})
+																.OrderByDescending(g => g.CustomerCount)
 																.ToList();
 
 			//Product Stats
 			ViewData["totalProducts"] = _productRepository.GetAll().Count();
+			ViewData["PaymentStats"] = _paymentRepository.GetAll()
+													   .Where(p => p.Payment_Status == "succeeded")
+													   .GroupBy(p => p.Payment_Date.Date)
+													   .Select(g => new
+													   {
+														   PaymentDay = g.Key.ToString("yyyy-MM-dd"), // Format date as string
+														   SuccessCount = g.Count()
+													   })
+													   .OrderBy(p => p.PaymentDay)
+													   .ToList();
 
 			//Order Stats
 			ViewData["totalOrders"] = _orderRepository.GetAll().Count();
@@ -152,8 +170,9 @@ namespace Fashion_Flex.Controllers
 			var pendingOrders = _orderRepository.GetAll().Count(o => o.Order_Status == "Pending");
 			var shippedOrders = _orderRepository.GetAll().Count(o => o.Order_Status == "Completed");
 			var deliveredOrders = _orderRepository.GetAll().Count(o => o.Order_Status == "Delivered");
-
 			ViewData["OrderStatusData"] = new int[] { pendingOrders, shippedOrders, deliveredOrders };
+			
+
 			return View();
 		}
 
@@ -255,9 +274,7 @@ namespace Fashion_Flex.Controllers
 
 		[HttpGet]
 		public IActionResult EditCustomer(int id)
-		{
-			ViewData["currTab"] = "customers";
-			ViewBag.CountryPhoneCodes = countryPhoneCodes;
+		{			
 			var customer = _customerRepository.GetById(id);
 
 			if (customer == null)
@@ -281,6 +298,8 @@ namespace Fashion_Flex.Controllers
 				Is_Active = customer.Is_Active
 			};
 
+			ViewData["currTab"] = "customers";
+			ViewBag.CountryPhoneCodes = countryPhoneCodes;
 			return View(model);
 		}
 
@@ -300,7 +319,7 @@ namespace Fashion_Flex.Controllers
 				// Update customer details
 				customer.First_Name = model.First_Name;
 				customer.Last_Name = model.Last_Name;
-				customer.Email = model.Email;
+				//customer.Email = model.Email; //Admin not authorized to change user email
 				customer.Street_Name = model.Street_Name;
 				customer.Building_No = model.Building_No;
 				customer.City = model.City;
@@ -313,9 +332,12 @@ namespace Fashion_Flex.Controllers
 				_customerRepository.Update(customer);
 				_customerRepository.Save();
 
+				ViewData["currTab"] = "customers";				
 				return RedirectToAction("Customers");
 			}
 
+			ViewData["currTab"] = "customers";
+			ViewBag.CountryPhoneCodes = countryPhoneCodes;
 			return View(model);
 		}
 
@@ -439,7 +461,6 @@ namespace Fashion_Flex.Controllers
 		}
 		#endregion
 
-
 		#region Orders
 		//Orders Actions
 		[HttpGet]
@@ -462,9 +483,9 @@ namespace Fashion_Flex.Controllers
 		{
 			ViewData["currTab"] = "orders";
 
-            Order order = _orderRepository.GetOrderById(id);
+			Order order = _orderRepository.GetOrderById(id);
 
-            return View(order);
+			return View(order);
 		}
 		#endregion
 	}

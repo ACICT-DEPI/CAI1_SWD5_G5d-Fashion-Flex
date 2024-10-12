@@ -2,7 +2,6 @@
 	Layout = "_SidebarLayout";
 }
 
-
 <div class="row">
 	<!-- Customers Stats -->
 	<div class="col-md-4">
@@ -10,11 +9,12 @@
 			<div class="card-body">
 				<h2>Customers Overview</h2>
 				<h5 class="card-title">Our Registered Customers : @ViewData["totalCustomers"]</h5>
-				<h5 class="card-title">Newly Registered Customers (Last Month) : @ViewData["newCustomerMonthly"]</h5>
+				<h5 class="card-title">Newly Registered This Month : @ViewData["newCustomerMonthly"]</h5>
+				<canvas id="customerDemographicsByCity" width="400" height="400" class="mt-5"></canvas>
 			</div>
 		</div>
 
-	</div>	
+	</div>
 
 	<!-- Orders Stats -->
 	<div class="col-md-4">
@@ -24,7 +24,7 @@
 				<h5>Total Number of Orders: @ViewData["totalOrders"]</h5>
 				<h5>Total Revenues: $@ViewData["totalRevenue"]</h5>
 				<canvas id="orderStatusChart" width="400" height="400" class="mt-5"></canvas>
-			</div>			
+			</div>
 		</div>
 	</div>
 
@@ -33,18 +33,47 @@
 		<div class="card">
 			<div class="card-body">
 				<h2>Products Overview</h2>
-				<h5>Total Number of Orders: @ViewData["totalOrders"]</h5>
-				<h5>Total Revenues: $@ViewData["totalRevenue"]</h5>
-				<canvas id="orderStatusChart" width="400" height="400" class="mt-5"></canvas>
+				<h5>Total Number of Products : @ViewData["totalProducts"]</h5>
+				<canvas id="paymentChart" width="400" height="400" class="mt-5"></canvas>
 			</div>
 		</div>
 	</div>
-	
+
 </div>
 
 
 @section Scripts {
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+	<!-- Customer Demographics By City Bar Chart -->
+	<script>
+		// Ensure data is correctly serialized from ViewData
+		var customerCityData = @Html.Raw(Json.Serialize(ViewData["customerDemographicsByCity"]));
+
+		// Prepare labels and data for the chart
+		var labels = customerCityData.map(item => item.location);
+		var data = customerCityData.map(item => item.customerCount);
+
+		// Initialize Chart.js
+		var ctx = document.getElementById('customerDemographicsByCity').getContext('2d');
+		var customerChart = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: labels,
+				datasets: [{
+					label: "Customers In Area",
+					data: data,
+					backgroundColor: 'rgba(75, 192, 192, 0.2)',
+					borderColor: 'rgba(75, 192, 192, 1)',
+					borderWidth: 1
+				}]
+			},
+			options: {
+				responsive: true, // Disable responsiveness
+				maintainAspectRatio: true // Prevent aspect ratio from restricting size
+			}
+		});
+	</script>
 
 	<!-- Orders Status Pie Chart -->
 	<script>
@@ -54,20 +83,49 @@
 		var orderStatusChart = new Chart(ctx, {
 			type: 'pie',
 			data: {
-				labels: ['Pending', 'Shipped', 'Delivered'],
+				labels: ['Pending', 'Completed', 'Delivered'],
 				datasets: [{
-					label: 'Order Status',
+					label: 'No. of Orders',
 					data: orderStatusData,
-					backgroundColor: ['#f39c12', '#00c0ef', '#00a65a'],
+					backgroundColor: ['#f39c12', '#00a65a','#00c0ef'],
 				}]
 			},
 			options: {
-				responsive: false, // Disable responsiveness
-				maintainAspectRatio: false // Prevent aspect ratio from restricting size
+				responsive: true, // Disable responsiveness
+				maintainAspectRatio: true // Prevent aspect ratio from restricting size
 			}
 		});
-	</script>	
+	</script>
 
+	<!-- Payment Bar Chart -->
+	<script>
+		// Ensure data is correctly serialized from ViewData
+		var paymentStats = @Html.Raw(Json.Serialize(ViewData["PaymentStats"]));
+
+		// Prepare labels and data for the chart
+		var labels = paymentStats.map(item => item.paymentDay);
+		var data = paymentStats.map(item => item.successCount);
+
+		// Initialize Chart.js
+		var ctx = document.getElementById('paymentChart').getContext('2d');
+		var paymentChart = new Chart(ctx, {
+			type: 'line',
+			data: {
+				labels: labels,
+				datasets: [{
+					label: 'Successful Payments per Day',
+					data: data,
+					backgroundColor: 'rgba(75, 192, 192, 0.2)',
+					borderColor: 'rgba(75, 192, 192, 1)',
+					borderWidth: 1
+				}]
+			},
+			options: {
+				responsive: true, // Disable responsiveness
+				maintainAspectRatio: true // Prevent aspect ratio from restricting size
+			}
+		});
+	</script>
 
 }
 
