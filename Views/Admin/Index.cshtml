@@ -2,7 +2,6 @@
 	Layout = "_SidebarLayout";
 }
 
-
 <div class="row">
 	<!-- Customers Stats -->
 	<div class="col-md-4">
@@ -49,7 +48,7 @@
 	<!-- Customer Demographics By City Bar Chart -->
 	<script>
 		// Ensure data is correctly serialized from ViewData
-		var customerCityData = @Html.Raw(Json.Serialize(ViewData["customerDemographicsByCity"]));		
+		var customerCityData = @Html.Raw(Json.Serialize(ViewData["customerDemographicsByCity"]));
 
 		// Prepare labels and data for the chart
 		var labels = customerCityData.map(item => item.location);
@@ -62,7 +61,7 @@
 			data: {
 				labels: labels,
 				datasets: [{
-					label: labels,
+					label: "Customers In Area",
 					data: data,
 					backgroundColor: 'rgba(75, 192, 192, 0.2)',
 					borderColor: 'rgba(75, 192, 192, 1)',
@@ -84,11 +83,11 @@
 		var orderStatusChart = new Chart(ctx, {
 			type: 'pie',
 			data: {
-				labels: ['Pending', 'Shipped', 'Delivered'],
+				labels: ['Pending', 'Completed', 'Delivered'],
 				datasets: [{
 					label: 'No. of Orders',
 					data: orderStatusData,
-					backgroundColor: ['#f39c12', '#00c0ef', '#00a65a'],
+					backgroundColor: ['#f39c12', '#00a65a','#00c0ef'],
 				}]
 			},
 			options: {
@@ -105,7 +104,7 @@
 
 		// Prepare labels and data for the chart
 		var labels = paymentStats.map(item => item.paymentDay);
-		var data = paymentStats.map(item => item.successCount);		
+		var data = paymentStats.map(item => item.successCount);
 
 		// Initialize Chart.js
 		var ctx = document.getElementById('paymentChart').getContext('2d');
@@ -114,7 +113,7 @@
 			data: {
 				labels: labels,
 				datasets: [{
-					label: 'Successful Payments',
+					label: 'Successful Payments per Day',
 					data: data,
 					backgroundColor: 'rgba(75, 192, 192, 0.2)',
 					borderColor: 'rgba(75, 192, 192, 1)',

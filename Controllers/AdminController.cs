@@ -274,9 +274,7 @@ namespace Fashion_Flex.Controllers
 
 		[HttpGet]
 		public IActionResult EditCustomer(int id)
-		{
-			ViewData["currTab"] = "customers";
-			ViewBag.CountryPhoneCodes = countryPhoneCodes;
+		{			
 			var customer = _customerRepository.GetById(id);
 
 			if (customer == null)
@@ -300,6 +298,8 @@ namespace Fashion_Flex.Controllers
 				Is_Active = customer.Is_Active
 			};
 
+			ViewData["currTab"] = "customers";
+			ViewBag.CountryPhoneCodes = countryPhoneCodes;
 			return View(model);
 		}
 
@@ -319,7 +319,7 @@ namespace Fashion_Flex.Controllers
 				// Update customer details
 				customer.First_Name = model.First_Name;
 				customer.Last_Name = model.Last_Name;
-				customer.Email = model.Email;
+				//customer.Email = model.Email; //Admin not authorized to change user email
 				customer.Street_Name = model.Street_Name;
 				customer.Building_No = model.Building_No;
 				customer.City = model.City;
@@ -332,9 +332,12 @@ namespace Fashion_Flex.Controllers
 				_customerRepository.Update(customer);
 				_customerRepository.Save();
 
+				ViewData["currTab"] = "customers";				
 				return RedirectToAction("Customers");
 			}
 
+			ViewData["currTab"] = "customers";
+			ViewBag.CountryPhoneCodes = countryPhoneCodes;
 			return View(model);
 		}
 
@@ -457,7 +460,6 @@ namespace Fashion_Flex.Controllers
 			return RedirectToAction("Products");
 		}
 		#endregion
-
 
 		#region Orders
 		//Orders Actions
