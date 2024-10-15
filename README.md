@@ -53,7 +53,7 @@ Fashion Flex is packed with several key features that provide a seamless shoppin
    - **Order Management**: View and manage customer orders, including updating order status (e.g., shipped, delivered).
      ![home](wwwroot/images/adhome.jpg)
      ![customer](wwwroot/images/customerTab.jpg)
-     ![product](wwwroot/images/productTab.jpg.jpg)
+     ![product](wwwroot/images/productTab.jpg)
      ![order](wwwroot/images/orderTab.jpg)
 
 ## Installation
