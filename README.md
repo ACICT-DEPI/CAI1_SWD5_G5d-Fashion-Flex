@@ -6,10 +6,7 @@ Fashion Flex is a modern e-commerce platform built with ASP.NET Core. It allows 
 ## Table of Contents
 - Features
 - Installation
-- Usage
-- Screenshots
 - Technologies Used
-- License
 
 ## Features
 
@@ -63,11 +60,13 @@ Fashion Flex is packed with several key features that provide a seamless shoppin
    git clone https://github.com/Omnia-Rowezak/Fashion-Flex.git
    ```
 2. Set up the database from package manager console
-   ```Update-Database
+   ```
+   Update-Database
    ```
 
 3. Insert your Stripe Key for a working payment gateway at checkout file
-   ```var stripe = Stripe('your key');
+   ```
+   var stripe = Stripe('your key');
    ```
 
 ### **Technologies Used**
