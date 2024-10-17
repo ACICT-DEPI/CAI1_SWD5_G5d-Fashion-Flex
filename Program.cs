@@ -6,12 +6,13 @@ using Fashion_Flex.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Fashion_Flex
 {
 	public class Program
 	{
-		public static void Main(string[] args)
+		public static async Task Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
@@ -53,26 +54,36 @@ namespace Fashion_Flex
 			// Add services to the container
 			builder.Services.AddControllersWithViews();
 
-            // Register Repositories
-            builder.Services.AddTransient<IOrderRepository, OrderRepository>();
-            builder.Services.AddTransient<IOrderItemRepository, OrderItemRepository>();
-            builder.Services.AddTransient<ICustomerRepository, CustomerRepository>();
-            builder.Services.AddTransient<IProductRepository ,ProductRepository>();
+			// Register Repositories
+			builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+			builder.Services.AddTransient<IOrderItemRepository, OrderItemRepository>();
+			builder.Services.AddTransient<ICustomerRepository, CustomerRepository>();
+			builder.Services.AddTransient<IProductRepository, ProductRepository>();
 			builder.Services.AddTransient<IPaymentRepository, PaymentRepository>();
 
+			// Configure Stripe settings
+			builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+			StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe")["SecretKey"];
 
-            // Configure Stripe settings
-            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
-
-            // Configure Stripe API key
-            StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe")["SecretKey"];
-
-            
 			var app = builder.Build();
 
+			// Seed roles
+			using (var scope = app.Services.CreateScope())
+			{
+				var services = scope.ServiceProvider;
+				try
+				{
+					await RoleSeeder.SeedRolesAsync(services); // Seed roles during startup
+				}
+				catch (Exception ex)
+				{
+					// Handle errors, if any
+					Console.WriteLine($"Error occurred during role seeding: {ex.Message}");
+				}
+			}
 
-            // Configure the HTTP request pipeline
-            if (!app.Environment.IsDevelopment())
+			// Configure the HTTP request pipeline
+			if (!app.Environment.IsDevelopment())
 			{
 				app.UseExceptionHandler("/Home/Error");
 				app.UseHsts();

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fashion_Flex.Models
@@ -17,11 +18,20 @@ namespace Fashion_Flex.Models
         public DbSet<Payment> Payment { get; set; }
         public DbSet<FavoriteList> FavoriteList { get; set; }
 
+		protected override void OnModelCreating(ModelBuilder builder)
+		{
+			base.OnModelCreating(builder);
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlServer("ConnectionString");
-        //    base.OnConfiguring(optionsBuilder);
-        //}
-    }
+			// Optionally, you can add some default roles directly in the database using the ModelBuilder
+			builder.Entity<IdentityRole>().HasData(
+				new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" },
+				new IdentityRole { Name = "Customer", NormalizedName = "CUSTOMER" }
+			);
+		}
+		//protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		//{
+		//    optionsBuilder.UseSqlServer("ConnectionString");
+		//    base.OnConfiguring(optionsBuilder);
+		//}
+	}
 }
