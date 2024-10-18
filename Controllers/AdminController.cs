@@ -171,7 +171,7 @@ namespace Fashion_Flex.Controllers
 			var shippedOrders = _orderRepository.GetAll().Count(o => o.Order_Status == "Completed");
 			var deliveredOrders = _orderRepository.GetAll().Count(o => o.Order_Status == "Delivered");
 			ViewData["OrderStatusData"] = new int[] { pendingOrders, shippedOrders, deliveredOrders };
-			
+
 
 			return View();
 		}
@@ -274,7 +274,7 @@ namespace Fashion_Flex.Controllers
 
 		[HttpGet]
 		public IActionResult EditCustomer(int id)
-		{			
+		{
 			var customer = _customerRepository.GetById(id);
 
 			if (customer == null)
@@ -332,7 +332,7 @@ namespace Fashion_Flex.Controllers
 				_customerRepository.Update(customer);
 				_customerRepository.Save();
 
-				ViewData["currTab"] = "customers";				
+				ViewData["currTab"] = "customers";
 				return RedirectToAction("Customers");
 			}
 
@@ -474,7 +474,7 @@ namespace Fashion_Flex.Controllers
 			ViewBag.OrdersTotalAmount = orders.Sum(o => o.Total_Amount);
 
 			// Pass the selected status to the view for keeping the dropdown value selected
-
+			ViewData["currTab"] = "orders";
 			return View(orders);
 		}
 

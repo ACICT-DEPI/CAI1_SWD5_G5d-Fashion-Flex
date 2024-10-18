@@ -17,9 +17,8 @@ namespace Fashion_Flex.Controllers
             this._productRepository = _productRepository;
         }
 
-		public IActionResult Index(int pageIndex = 1, int pageSize = 8, string sortOrder = "", string category = "", string type = "", string searchString = "")
+		public IActionResult Index(int pageIndex = 1, int pageSize = 4, string sortOrder = "", string category = "", string type = "", string searchString = "")
 		{
-
 			// Track the current sorting order
 			ViewData["CurrentSort"] = sortOrder;
 			// Keep track of the selected category
@@ -38,18 +37,15 @@ namespace Fashion_Flex.Controllers
 			// Track the current search string
 			ViewData["CurrentSearch"] = searchString;
 
-
-
 			// Assign sorting parameters for the view (already done previously)
 			ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
 			ViewData["PriceSortParam"] = sortOrder == "price" ? "price_desc" : "price";
 			ViewData["DateSortParam"] = sortOrder == "date" ? "date_desc" : "date";
 
 
-			List<Product> products = _productRepository.GetAll();
+			var paginatedProducts = _productRepository.GetRefinedPages(pageIndex, pageSize, sortOrder, category, type, searchString);
 
-
-            return View(products);
+			return View(paginatedProducts);
 		}
 
 		public IActionResult About()
