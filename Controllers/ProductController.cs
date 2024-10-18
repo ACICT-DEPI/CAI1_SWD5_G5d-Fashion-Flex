@@ -41,21 +41,15 @@ namespace Fashion_Flex.Controllers
 			// Track the current search string
 			ViewData["CurrentSearch"] = searchString;
 
-
-
 			// Assign sorting parameters for the view (already done previously)
 			ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
 			ViewData["PriceSortParam"] = sortOrder == "price" ? "price_desc" : "price";
 			ViewData["DateSortParam"] = sortOrder == "date" ? "date_desc" : "date";
 
 
-
-
-
 			var paginatedProducts = _productRepository.GetRefinedPages(pageIndex, pageSize, sortOrder, category, type, searchString);
 
 			return View(paginatedProducts);
-
 		}
 
 
